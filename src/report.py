@@ -33,6 +33,6 @@ def generate() -> str:
         result = _fill_template(template)
         with out_path.open("w", encoding="utf-8") as f:
             f.write(result)
-        logging.info("The report has been generated.")
+        logging.info("The new report has been generated.")
     else:
         logging.error("Some images were missing. The report could not be generated.")
