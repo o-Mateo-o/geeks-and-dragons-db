@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     # Perform all the possible steps
     if args.fill:
-        logging.info("The database has been filled with the random values.")
+        logging.info("The database has been filled with random values.")
     if args.report:
         report.generate()
     if args.open:

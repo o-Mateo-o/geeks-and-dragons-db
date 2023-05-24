@@ -22,13 +22,14 @@ def generate() -> str:
     """Read the template report file, fill the placeholders and save the results
     in the new report file.
     """
-    template = Path("assets", "static", "template", "report_template.html").read_text()
-    out_path = Path("reports", "report.html")
-
     try:
+        template = Path("assets", "static", "template", "areport_template.html").read_text()
+        out_path = Path("reports", "repodt.html")
+
         result = _fill_template(template)
         with out_path.open("w", encoding="utf-8") as f:
             f.write(result)
-        logging.info("The new report has been generated.")
+        logging.info("New report has been generated.")
+        
     except FileNotFoundError:
         logging.error("Some assets were missing. The report could not be generated.")
