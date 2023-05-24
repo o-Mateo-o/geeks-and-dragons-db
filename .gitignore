@@ -163,3 +163,4 @@ cython_debug/
 .venv/
 notebooks/draft/
 *log
+reports/report*
