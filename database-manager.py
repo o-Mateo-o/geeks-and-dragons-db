@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 import argparse
 import os
-import logging  # ! TO BE DELETED
 
-from src import browser, fillup, logs, report
+from src import analysis, browser, fillup, logs, report
 
 # Prepare the parser
 parser = argparse.ArgumentParser(
@@ -38,8 +37,9 @@ if __name__ == "__main__":
 
     # Perform all the possible steps
     if args.fill:
-        logging.info("The database has been filled with random values.")
+        fillup.push()
     if args.report:
+        analysis.generate()
         report.generate()
     if args.open:
         browser.open_report()
