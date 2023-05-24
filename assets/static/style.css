@@ -53,10 +53,10 @@ header {
     align-items: stretch;
     justify-content: space-evenly;
     gap: 15px;
-    
+
 }
 
-.title-area {
+.top-area {
     background-image: url('top-image.jpg');
     /* image from feepik.com */
     background-repeat: no-repeat;
@@ -84,11 +84,18 @@ h6 {
     margin-top: 0px;
     margin-bottom: 0px;
     color: #fff;
-    font-weight: 700;
+    font-family: 'Lilita One';
+    font-weight: normal;
 }
 
-.title-area h1 {
-    width: 30%;
+
+#title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+a.pink {
+    color: #ec6090;
 }
 
 h2 {
@@ -100,6 +107,10 @@ h2 {
 
 h3 {
     text-transform: uppercase;
+}
+
+h4 {
+    color: #ec6090;
 }
 
 .content h2::before {
