@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 import argparse
 import os
-import logging # ! TO BE DELETED
+import logging  # ! TO BE DELETED
 
-from src import logs, report
+from src import browser, fillup, logs, report
 
 # Prepare the parser
 parser = argparse.ArgumentParser(
@@ -42,4 +42,4 @@ if __name__ == "__main__":
     if args.report:
         report.generate()
     if args.open:
-        logging.info("The report has been opened in a browser.")
+        browser.open_report()
