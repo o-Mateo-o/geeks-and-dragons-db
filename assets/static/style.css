@@ -1,0 +1,114 @@
+/* main areas */
+
+body {
+    background-color: #1e1e1e;
+    padding: 0;
+    margin: 0;
+    color: #fff;
+    font-size: medium;
+}
+
+header {
+    min-height: 70px;
+    background-color: #1e1e1e;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.header-area {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    flex-wrap: wrap;
+    margin-left: 20px;
+    margin-right: 20px;
+    align-content: space-around;
+}
+
+.content {
+    margin: 50px;
+    background-color: #27292a;
+    padding: 60px;
+    border-radius: 23px;
+    display: flex;
+    gap: 40px 0px;
+    justify-content: space-around;
+    flex-direction: column;
+    counter-reset: h2counter;
+}
+
+/* minor areas */
+
+.section {
+    background-color: #1e1e1e;
+    padding: 60px;
+    border-radius: 23px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-evenly;
+    gap: 15px;
+    
+}
+
+.title-area {
+    background-image: url('top-image.jpg');
+    /* image from feepik.com */
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-height: 200px;
+    height: 40%;
+    filter: saturate(40%);
+    padding-left: 40px;
+}
+
+.text {
+    background-color: #27292a;
+    border-radius: 23px;
+    padding: 10px 40px 10px 40px;
+}
+
+/* headers */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    color: #fff;
+    font-weight: 700;
+}
+
+.title-area h1 {
+    width: 30%;
+}
+
+h2 {
+    counter-reset: h3counter;
+    color: #ec6090;
+    margin-bottom: 0.5em;
+    text-transform: uppercase;
+}
+
+h3 {
+    text-transform: uppercase;
+}
+
+.content h2::before {
+    counter-increment: h2counter;
+    content: counter(h2counter) ".";
+    margin-right: 0.5em;
+}
+
+.content h3::before {
+    counter-increment: h3counter;
+    content: counter(h2counter) "." counter(h3counter) ".";
+}
