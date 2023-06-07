@@ -1,0 +1,13 @@
+{
+  "mysqlOptions": {
+    "authProtocol": "default"
+  },
+  "previewLimit": 50,
+  "server": "giniewicz.it",
+  "port": 3306,
+  "driver": "MariaDB",
+  "name": "Geeks&Dragons",
+  "database": "jamniczki",
+  "username": "team17",
+  "password": "" // do not upload password to the repo
+}
