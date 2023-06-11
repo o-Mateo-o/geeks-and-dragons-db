@@ -3,9 +3,9 @@
     "version": "2.2.11",
     "width": 2000,
     "height": 2000,
-    "scrollTop": -746,
-    "scrollLeft": -441,
-    "zoomLevel": 0.6,
+    "scrollTop": -1259.0000000000027,
+    "scrollLeft": -133.1428571428572,
+    "zoomLevel": 0.8,
     "show": {
       "tableComment": true,
       "columnComment": true,
@@ -80,7 +80,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -103,7 +103,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -126,7 +126,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -149,7 +149,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -195,7 +195,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -241,7 +241,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": true
+              "notNull": false
             },
             "ui": {
               "active": false,
@@ -257,7 +257,7 @@
           },
           {
             "name": "from_date",
-            "comment": "when employed",
+            "comment": "",
             "dataType": "DATE",
             "default": "",
             "option": {
@@ -272,7 +272,7 @@
               "fk": false,
               "pfk": false,
               "widthName": 60.53173828125,
-              "widthComment": 93.05712890625,
+              "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
@@ -327,9 +327,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 581.4623,
+          "left": 582.8909,
           "top": 1660.0344,
-          "zIndex": 18,
+          "zIndex": 159,
           "widthName": 60,
           "widthComment": 60
         },
@@ -591,7 +591,7 @@
           "active": false,
           "left": 1317.0943,
           "top": 228.6665,
-          "zIndex": 8,
+          "zIndex": 4,
           "widthName": 60,
           "widthComment": 60
         },
@@ -766,9 +766,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 417.9849,
-          "top": 1156.5582,
-          "zIndex": 26,
+          "left": 423.6992,
+          "top": 1126.5582,
+          "zIndex": 76,
           "widthName": 60,
           "widthComment": 60
         },
@@ -853,7 +853,7 @@
           "active": false,
           "left": 901.9882,
           "top": 572.6896,
-          "zIndex": 13,
+          "zIndex": 8,
           "widthName": 61.97900390625,
           "widthComment": 60
         },
@@ -896,7 +896,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -919,7 +919,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -942,7 +942,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -965,7 +965,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -1028,9 +1028,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 60,
-          "top": 409.733,
-          "zIndex": 2,
+          "left": 62.8571,
+          "top": 409.1617,
+          "zIndex": 75,
           "widthName": 61.9599609375,
           "widthComment": 60
         },
@@ -1065,7 +1065,7 @@
             "id": "81d6f029-f030-46ae-9061-aca748c80a6c"
           },
           {
-            "name": "competition_id",
+            "name": "tournament_id",
             "comment": "",
             "dataType": "INT",
             "default": "",
@@ -1080,7 +1080,7 @@
               "pk": false,
               "fk": true,
               "pfk": false,
-              "widthName": 85.8271484375,
+              "widthName": 85.10986328125,
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
@@ -1119,7 +1119,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -1142,7 +1142,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -1205,9 +1205,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 56.6667,
-          "top": 853.8813,
-          "zIndex": 11,
+          "left": 67.5236,
+          "top": 837.8813,
+          "zIndex": 107,
           "widthName": 78.59716796875,
           "widthComment": 60
         },
@@ -1219,7 +1219,7 @@
         "comment": "",
         "columns": [
           {
-            "name": "competition_id",
+            "name": "tournament_id",
             "comment": "",
             "dataType": "INT",
             "default": "",
@@ -1234,7 +1234,7 @@
               "pk": true,
               "fk": false,
               "pfk": false,
-              "widthName": 85.8271484375,
+              "widthName": 85.10986328125,
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
@@ -1250,7 +1250,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -1265,15 +1265,15 @@
             "id": "6075365b-bbd3-4b1a-9e50-e5b1333a7204"
           },
           {
-            "name": "date",
+            "name": "start_time",
             "comment": "",
-            "dataType": "DATE",
+            "dataType": "TIME",
             "default": "",
             "option": {
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -1319,7 +1319,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -1382,7 +1382,7 @@
           {
             "name": "sign_up_deadline",
             "comment": "",
-            "dataType": "TIMESTAMP",
+            "dataType": "DATE",
             "default": "",
             "option": {
               "autoIncrement": false,
@@ -1397,10 +1397,33 @@
               "pfk": false,
               "widthName": 103.92431640625,
               "widthComment": 60,
-              "widthDataType": 76.87060546875,
+              "widthDataType": 60,
               "widthDefault": 60
             },
             "id": "a997f0f3-02b8-45b4-8d37-be59da56c434"
+          },
+          {
+            "name": "matches",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "ff3081dd-f084-469d-b6c3-8ea8ad1fa4d9"
           },
           {
             "name": "updated_at",
@@ -1428,9 +1451,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 53.1403,
-          "top": 1387.3891,
-          "zIndex": 15,
+          "left": 59.1046,
+          "top": 1401.032,
+          "zIndex": 161,
           "widthName": 74.26171875,
           "widthComment": 60
         },
@@ -1515,7 +1538,7 @@
           "active": false,
           "left": 1013.0076,
           "top": 1174.5972,
-          "zIndex": 21,
+          "zIndex": 13,
           "widthName": 72.82080078125,
           "widthComment": 60
         },
@@ -1738,7 +1761,7 @@
           "active": false,
           "left": 577.5884,
           "top": 724.0525,
-          "zIndex": 24,
+          "zIndex": 14,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1892,7 +1915,7 @@
           "active": false,
           "left": 1141.9837,
           "top": 1479.3882,
-          "zIndex": 20,
+          "zIndex": 12,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1977,7 +2000,7 @@
           "active": false,
           "left": 768.3673,
           "top": 83.3331,
-          "zIndex": 9,
+          "zIndex": 5,
           "widthName": 76.42626953125,
           "widthComment": 60
         },
@@ -2108,7 +2131,7 @@
           "active": false,
           "left": 1107.0559,
           "top": 1766.3171,
-          "zIndex": 19,
+          "zIndex": 11,
           "widthName": 74.9853515625,
           "widthComment": 60
         },
@@ -2216,7 +2239,7 @@
           "active": false,
           "left": 1591.2177734375,
           "top": 1716.4966,
-          "zIndex": 12,
+          "zIndex": 7,
           "widthName": 60,
           "widthComment": 60
         },
@@ -2370,7 +2393,7 @@
           "active": false,
           "left": 1558.3148,
           "top": 1284.5831,
-          "zIndex": 6,
+          "zIndex": 3,
           "widthName": 139.31884765625,
           "widthComment": 60
         },
@@ -2478,7 +2501,7 @@
           "active": false,
           "left": 1175.3688,
           "top": 936.3633,
-          "zIndex": 25,
+          "zIndex": 15,
           "widthName": 60,
           "widthComment": 60
         },
@@ -2511,8 +2534,8 @@
           "columnIds": [
             "15acb08b-5d8d-4f04-92d5-4220d8dfbb63"
           ],
-          "x": 629.2187867187499,
-          "y": 1156.5582,
+          "x": 634.93308671875,
+          "y": 1126.5582,
           "direction": "top"
         },
         "constraintName": "fk_categories_to_game",
@@ -2537,7 +2560,7 @@
           "columnIds": [
             "fa86fe76-9822-4690-a1d5-09d572f7d66c"
           ],
-          "x": 925.8195998046875,
+          "x": 937.9625145833334,
           "y": 1660.0344,
           "direction": "top"
         },
@@ -2563,8 +2586,8 @@
           "columnIds": [
             "f8fbc454-720b-4369-b5eb-e7c7c5f631aa"
           ],
-          "x": 463.6787109375,
-          "y": 462.858,
+          "x": 466.5358109375,
+          "y": 462.2867,
           "direction": "right"
         },
         "constraintName": "fk_adress_to_competitors",
@@ -2580,8 +2603,8 @@
           "columnIds": [
             "3a93cb07-5c1f-434a-b9e2-80f76b7dad3b"
           ],
-          "x": 261.83935546875,
-          "y": 622.233,
+          "x": 264.69645546875,
+          "y": 621.6617,
           "direction": "bottom"
         },
         "end": {
@@ -2589,8 +2612,8 @@
           "columnIds": [
             "3e3a31cf-c74b-4c14-baec-f554de26373b"
           ],
-          "x": 269.357373828125,
-          "y": 853.8813,
+          "x": 280.214273828125,
+          "y": 837.8813,
           "direction": "top"
         },
         "constraintName": "fk_competitors_to_",
@@ -2606,18 +2629,18 @@
           "columnIds": [
             "1095e4d0-3573-45b5-9497-10ab11463012"
           ],
-          "x": 629.2187867187499,
-          "y": 1369.0582,
-          "direction": "bottom"
+          "x": 423.6992,
+          "y": 1232.8082,
+          "direction": "left"
         },
         "end": {
           "tableId": "be2de2e4-2446-4a0d-aeb2-03e2b843f3eb",
           "columnIds": [
             "3947f1c1-8f2b-488f-8ca4-10f7943e9420"
           ],
-          "x": 535.8600265625,
-          "y": 1429.6391,
-          "direction": "right"
+          "x": 179.784531640625,
+          "y": 1401.032,
+          "direction": "top"
         },
         "constraintName": "fk_game_to_competitions",
         "visible": true,
@@ -2625,15 +2648,15 @@
       },
       {
         "identification": false,
-        "relationshipType": "OneN",
+        "relationshipType": "ZeroN",
         "startRelationshipType": "Dash",
         "start": {
           "tableId": "be2de2e4-2446-4a0d-aeb2-03e2b843f3eb",
           "columnIds": [
             "84cb4dab-13d4-4931-aa8f-f2f39a6da3a0"
           ],
-          "x": 294.50016328125,
-          "y": 1387.3891,
+          "x": 421.144394921875,
+          "y": 1401.032,
           "direction": "top"
         },
         "end": {
@@ -2641,8 +2664,8 @@
           "columnIds": [
             "77ea0b04-1ef1-4ef0-afb1-379c313487db"
           ],
-          "x": 269.357373828125,
-          "y": 1066.3813,
+          "x": 280.214273828125,
+          "y": 1050.3813,
           "direction": "bottom"
         },
         "constraintName": "fk_competitions_to_participations",
@@ -2658,8 +2681,8 @@
           "columnIds": [
             "1095e4d0-3573-45b5-9497-10ab11463012"
           ],
-          "x": 840.4526734374999,
-          "y": 1315.9332,
+          "x": 846.1669734375,
+          "y": 1285.9332,
           "direction": "right"
         },
         "end": {
@@ -2693,8 +2716,8 @@
           "columnIds": [
             "34bd8017-98d3-4501-a007-b636f527d324"
           ],
-          "x": 840.4526734374999,
-          "y": 1209.6832,
+          "x": 846.1669734375,
+          "y": 1179.6832,
           "direction": "right"
         },
         "constraintName": "fk_game_types_to_game",
@@ -2736,8 +2759,8 @@
           "columnIds": [
             "3a93cb07-5c1f-434a-b9e2-80f76b7dad3b"
           ],
-          "x": 463.6787109375,
-          "y": 569.108,
+          "x": 466.5358109375,
+          "y": 568.5367,
           "direction": "right"
         },
         "end": {
@@ -2814,7 +2837,7 @@
           "columnIds": [
             "e6bc696e-75bd-4500-80b6-55fa9285e30c"
           ],
-          "x": 1040.6053664062501,
+          "x": 1008.9768375,
           "y": 1738.7844,
           "direction": "right"
         },
@@ -2866,7 +2889,7 @@
           "columnIds": [
             "e6bc696e-75bd-4500-80b6-55fa9285e30c"
           ],
-          "x": 696.2480666015625,
+          "x": 795.93386875,
           "y": 1660.0344,
           "direction": "top"
         },
@@ -2892,7 +2915,7 @@
           "columnIds": [
             "e6bc696e-75bd-4500-80b6-55fa9285e30c"
           ],
-          "x": 1040.6053664062501,
+          "x": 1008.9768375,
           "y": 1896.2844,
           "direction": "right"
         },
@@ -2918,17 +2941,17 @@
           "columnIds": [
             "e6bc696e-75bd-4500-80b6-55fa9285e30c"
           ],
-          "x": 581.4623,
-          "y": 1817.5344,
-          "direction": "left"
+          "x": 653.9052229166666,
+          "y": 1660.0344,
+          "direction": "top"
         },
         "end": {
           "tableId": "be2de2e4-2446-4a0d-aeb2-03e2b843f3eb",
           "columnIds": [
             "63214b84-3e9e-4971-99cf-2572137a7854"
           ],
-          "x": 535.8600265625,
-          "y": 1514.1391,
+          "x": 541.8243265625,
+          "y": 1469.532,
           "direction": "right"
         },
         "constraintName": "fk_staff_to_tournaments",
@@ -2979,8 +3002,8 @@
           "columnIds": [
             "99b89315-8501-4511-afc9-5ad2aec7535c"
           ],
-          "x": 535.8600265625,
-          "y": 1598.6391,
+          "x": 541.8243265625,
+          "y": 1606.532,
           "direction": "right"
         },
         "constraintName": "fk_payments_to_tournaments",
@@ -3057,8 +3080,8 @@
           "columnIds": [
             "6cd41225-3e62-4c5c-99b8-fd26e8eb8eb4"
           ],
-          "x": 482.04804765625,
-          "y": 960.1313,
+          "x": 492.90494765625,
+          "y": 944.1313,
           "direction": "right"
         },
         "constraintName": "fk_payments_to_participations",
