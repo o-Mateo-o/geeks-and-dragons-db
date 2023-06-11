@@ -1,4 +1,4 @@
-# XXX
+# Dokumentacja konstrukcji bazy danych
 
 Dokumnetujemy tu działanie bazy danych dla stacjonarnego sklepu Geeks & Dragons, funkcjonującego we Wrocławiu od dwóch lat[^1]. Zajmuje się on sprzedażą i wypożyczaniem gier planszowych (oraz podobnych) oraz organizacją turniejów w tych grach.
 
@@ -46,7 +46,7 @@ Zależności funkcyjne to:
 - {`fee_payment_id`} $\rightarrow$ {`particip_id`, `tournament_id`, `customer_id`, `place`, `sign_up_date`, `updated_at`}
 - {`tournament_id`, `customer_id`} $\rightarrow$ {`particip_id`, `place`, `sign_up_date`, `fee_payment_id`, `updated_at`}
 
-Poza działaniem opisanym wyżej, zajęte miejsca nie identyfikują żadnych wierszy. Wiele uczestników może też się w jednym momencie zapisać. Płatności zawsze są zaś dokonywane osobno. 
+Poza działaniem opisanym wyżej, zajęte miejsca nie identyfikują żadnych wierszy. Wiele uczestników może też się w jednym momencie zapisać. Płatności zawsze są zaś dokonywane osobno.
 
 Para identyfikatora turnieju oraz klienta jest sama w sobie kluczem kandydującym, bo określa jednoznacznie zapis.
 
@@ -105,7 +105,7 @@ Wiemy, że omawiane atrybuty rozpoczynające zależności są nadkluczami, ponie
 
 ## Schemat bazy danych
 
-Diagram ER omawianej bazy danych przedstawiamy na poniższej interaktywnej wizualizacji. Jeżeli używany przez Ciebie silnik MD nie generuje ilustracji z kodu `mermaid`, możesz zobaczyć także [zapis tej ilustracji](images/ERD.svg).
+Diagram ER omawianej bazy danych przedstawiamy na poniższej interaktywnej wizualizacji. Jeżeli używany przez Ciebie silnik MD nie generuje ilustracji z kodu `mermaid`, możesz zobaczyć także [zapis tej ilustracji](images/ERD.svg) (jest to plik _svg_; najlepiej otwierać go po pobraniu w przeglądarce). Dostępna jest też uproszczona wersja schematu (bez atrybutów i ich typów) w formacie _png_. Możesz go zobaczyć [tutaj](images/ERD_simplified.png).
 
 ```mermaid
 erDiagram
