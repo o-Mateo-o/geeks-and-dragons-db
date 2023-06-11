@@ -32,7 +32,7 @@ Jest to zbiór przypisań uczestników do turniejów. Każdy uczestnik może bow
 
 | Atrybut | Opis |
 |-------------|--------|
-| `id` | numer identyfikacyjny (PK) |
+| `particip_id` | numer identyfikacyjny (PK) |
 | `tournament_id` | numer identyfikacyjny turnieju (FK) |
 | `customer_id` | numer identyfikacyjny klienta (FK)  |
 | `place` | miejsce zajęte przez uczestnika na danym turnieju |
@@ -42,9 +42,9 @@ Jest to zbiór przypisań uczestników do turniejów. Każdy uczestnik może bow
 
 Zależności funkcyjne to:
 
-- {`id`} $\rightarrow$ {`tournament_id`, `customer_id`, `place`, `sign_up_date`, `fee_payment_id`, `updated_at`}
-- {`fee_payment_id`} $\rightarrow$ {`id`, `tournament_id`, `customer_id`, `place`, `sign_up_date`, `updated_at`}
-- {`tournament_id`, `customer_id`} $\rightarrow$ {`id`, `place`, `sign_up_date`, `fee_payment_id`, `updated_at`}
+- {`particip_id`} $\rightarrow$ {`tournament_id`, `customer_id`, `place`, `sign_up_date`, `fee_payment_id`, `updated_at`}
+- {`fee_payment_id`} $\rightarrow$ {`particip_id`, `tournament_id`, `customer_id`, `place`, `sign_up_date`, `updated_at`}
+- {`tournament_id`, `customer_id`} $\rightarrow$ {`particip_id`, `place`, `sign_up_date`, `fee_payment_id`, `updated_at`}
 
 Poza działaniem opisanym wyżej, zajęte miejsca nie identyfikują żadnych wierszy. Wiele uczestników może też się w jednym momencie zapisać. Płatności zawsze są zaś dokonywane osobno. 
 
@@ -105,8 +105,165 @@ Wiemy, że omawiane atrybuty rozpoczynające zależności są nadkluczami, ponie
 
 ## Schemat bazy danych
 
+Diagram ER omawianej bazy danych przedstawiamy na poniższej interaktywnej wizualizacji. Jeżeli używany przez Ciebie silnik MD nie generuje ilustracji z kodu `mermaid`, możesz zobaczyć także [zapis tej ilustracji](images/ERD.svg).
+
 ```mermaid
 erDiagram
+    CITY ||--|{ CUSTOMERS : ""
+    CUSTOMERS ||--o{ PARTICIPATIONS : ""
+    PARTICIPATIONS ||--o{ TOURNAMENTS : ""
+    CUSTOMERS ||--o{ RENTAL : ""
+    INVENTORY ||--o{ RENTAL : ""
+    STAFF ||--o{ RENTAL : ""
+    RENTAL ||--|| PAYMENTS : ""
+    STAFF ||--o{ SALES : ""
+    SALES ||--|| INVENTORY : ""
+    SALES ||--|| PAYMENTS : ""
+    CITY ||--|{ STAFF : ""
+    STAFF ||--o{ RELATIONSHIPS : ""
+    PARTNERS ||--|{ RELATIONSHIPS : ""
+    PAYMENTS ||--|| INVENTORY : ""
+    PAYMENTS ||--|| TOURNAMENTS : ""
+    PAYMENTS ||--|| SALES : ""
+    PAYMENTS ||--|| RENTAL : ""
+    PAYMENTS ||--|| PARTICIPATIONS : ""
+    MAINTENANCE_EXPENSES ||--|| PAYMENTS : ""
+    STAFF ||--o{ TOURNAMENTS : ""
+    TOURNAMENTS ||--|| GAMES : ""
+    GAME_CATEGORIES ||--o{ GAMES : ""
+    GAME_TYPES ||--o{ GAMES : ""
+    GAMES ||--o{ INVENTORY : ""
+    GAME_PRICES ||--|{ INVENTORY : ""
+
+    CITY {
+        INT city_id PK
+        VARCHAR(40) city
+        TIMESTAMP updated_at
+    }
+    CUSTOMERS {
+        INT customer_id PK
+        VARCHAR(30) first_name
+        VARCHAR(40) last_name
+        VARCHAR(10) phone
+        VARCHAR(80) email
+        INT city_id FK
+        TIMESTAMP updated_at
+    }
+    PARTICIPATIONS {
+        INT particip_id PK
+        INT tournament_id FK
+        INT customer_id FK
+        INT place
+        TIMESTAMP sign_up_date
+        INT fee_payment_id FK
+        TIMESTAMP updated_at
+    }
+    TOURNAMENTS {
+        INT tournament_id PK
+        VARCHAR(60) name
+        INT game_id FK        
+        TIME start_time
+        INT matches
+        DECIMAL(4p2) fee
+        INT staff_id FK
+        INT expenses_payments_id FK
+        DATE sign_up_deadline
+        TIMESTAMP updated_at
+    }
+    RENTAL {
+        INT rental_id PK
+        INT inventory_id FK
+        INT customer_id FK
+        TIMESTAMP rental_date
+        TIMESTAMP return_date
+        INT staff_id FK
+        INT payment_id FK
+        INT rate
+        TIMESTAMP updated_at
+    }
+    INVENTORY {
+        INT inventory_id PK
+        INT game_id FK
+        BOOLEAN rentable
+        INT price_id FK
+        BOOLEAN price_id
+        INT purchase_payment_id FK
+        TIMESTAMP updated_at
+    }
+    STAFF {
+        INT staff_id PK
+        VARCHAR(30) first_name
+        VARCHAR(40) last_name
+        VARCHAR(10) phone
+        VARCHAR(80) email
+        INT city_id FK
+        DECIMAL(6p2) current_salary
+        BOOLEAN is_manager
+        CHAR(1) gender
+        DATE from_date
+        DATE to_date
+        TIMESTAMP updated_at
+    }
+    RELATIONSHIPS {
+        INT relationship_id PK
+        INT staff_id FK
+        INT partner_id FK
+        INT dates_number
+        TIMESTAMP updated_at
+    }
+    PARTNERS {
+        INT partner_id PK
+        VARCHAR(30) name
+        CHAR(1) gender
+        TIMESTAMP updated_at
+    }
+    PAYMENTS {
+        INT payment_id PK
+        DECIMAL(7p2) amount
+        TIMESTAMP payment_date
+        TIMESTAMP updated_at
+    }
+    MAINTENANCE_EXPENSES {
+        INT spend_id PK
+        VARCHAR(50) title
+        VARCHAR(50) type
+        INT date FK
+        TIMESTAMP date
+        TIMESTAMP updated_at
+    }
+    SALES {
+        INT sale_id PK
+        INT inventory_id FK
+        INT staff_id FK
+        INT payment_id FK
+        TIMESTAMP date
+        TIMESTAMP updated_at
+    }
+    GAMES {
+        INT game_id PK
+        VARCHAR(255) title
+        TEXT description
+        INT category_id FK
+        INT type_id FK
+        BOOLEAN competitivity
+        TIMESTAMP updated_at
+    }
+    GAME_CATEGORIES {
+        INT category_id PK
+        VARCHAR(40) name
+        TIMESTAMP updated_at
+    }
+    GAME_TYPES {
+        INT type_id PK
+        VARCHAR(40) game_type
+        TIMESTAMP updated_at
+    }
+    GAME_PRICES {
+        INT price_id PK
+        DECIMAL(5p2) reference_price
+        TIMESTAMP updated_at
+    }
+
 
 ```
 
