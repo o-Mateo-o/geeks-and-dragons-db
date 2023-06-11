@@ -2,9 +2,27 @@
 
 Dokumnetujemy tu działanie bazy danych dla stacjonarnego sklepu Geeks & Dragons, funkcjonującego we Wrocławiu od dwóch lat[^1]. Zajmuje się on sprzedażą i wypożyczaniem gier planszowych (oraz podobnych) oraz organizacją turniejów w tych grach.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Table of Contents - TBA
+
 ## Zawartość tabel oraz zależności funkcyjne
 
-Po kolei opiszemy, co znajduje się w poszczególnych tabelach kreśląc generalną mechanikę, jaką przyjęliśmy. Dla każdej tabeli wypisujemy też wraz z komentarzem listę zależności funkcyjnych (nieredundantne pokrycie). Pomijamy jednocześnie w oczywisty sposób zależności trywialne.
+Po kolei opiszemy, co znajduje się w poszczególnych tabelach, kreśląc generalną mechanikę, jaką przyjęliśmy. Dla każdej tabeli wypisujemy też wraz z komentarzem listę zależności funkcyjnych (a właściwie __nieredundantne pokrycie__). Pomijamy zatem zależności, które można wywnioskować trzema regułami Armstronga, a w szczególności oczywiście zależności trywialne.
+
+### Tabela `city`
+
+Jest to spis wszystkich miejscowości (w naszym przypadku są to dla uproszczenia miasta Dolnego Śląska), które dotyczą bądź kiedyś dotyczyły obsługi oraz klientów.
+
+| Atrybut | Opis |
+|-------------|--------|
+| `city_id` | numer identyfikacyjny miasta (PK) |
+| `city` | nazwa miejscowości |
+| `updated_ad` | moment ostatniej zmiany w krotce |
+
+Zależności funkcyjne to:
+
+- {`city_id`} $\rightarrow$ {`city`, `updated_at`}
+
+Nie może się tu wiele więcej zdarzyć. Możnaby też myśleć o sytuacji, gdzie klucz główny zależy od nazwy miasta. Zwróćmy jednak uwagę, że na ogół występują różne miejscowości o takich samych nazwach. Z tego powodu pomijamy tego typu zapis.
 
 ### Tabela `customers`
 
@@ -32,7 +50,7 @@ Jest to zbiór przypisań uczestników do turniejów. Każdy uczestnik może bow
 
 | Atrybut | Opis |
 |-------------|--------|
-| `particip_id` | numer identyfikacyjny (PK) |
+| `particip_id` | numer identyfikacyjny zapisu (PK) |
 | `tournament_id` | numer identyfikacyjny turnieju (FK) |
 | `customer_id` | numer identyfikacyjny klienta (FK)  |
 | `place` | miejsce zajęte przez uczestnika na danym turnieju |
@@ -52,46 +70,135 @@ Para identyfikatora turnieju oraz klienta jest sama w sobie kluczem kandydujący
 
 ### Tabela `tournaments`
 
-Są to turnieje organizowane przez sklep. Jeden turniej dotyczy jednej konkretnej gry. Każdy składa się z konkretnej ilości meczy i ma jednego pracownika-opiekuna. Każdy rekord przechowuje dodatkowe dane na temat wydarzenia samego w sobie. Wydatki na organizację obejmują zakup nagród itp. W jednym czasie zaś może odbywać się wyłącznie jednen turniej. Zakładamy, że lokal nie ma możliwości na więcej.
+Są to turnieje organizowane przez sklep. Jeden turniej dotyczy jednej konkretnej gry. Każdy składa się z konkretnej ilości meczy i ma jednego pracownika-opiekuna. Każdy rekord przechowuje dodatkowe dane na temat wydarzenia samego w sobie. Wydatki na organizację obejmują zakup nagród itp. (przy czym traktujemy wszystkie wydatki razem, jako jedna płatność). W jednym czasie zaś może odbywać się wyłącznie jednen turniej. Zakładamy, że lokal nie ma możliwości na więcej.
 
 | Atrybut | Opis |
 |-------------|--------|
 | `tournament_id` | numer identyfikacyjny turnieju (PK) |
 | `name` | nazwa turnieju |
-| `start_time` | dzień i godzina, w którym zaczyna się turniej |
 | `game_id` | numer identyfikacyjny gry używanej w turnieju (FK) |
+| `start_time` | dzień i godzina, w którym zaczyna się turniej |
+| `matches` | liczba partii w obrębie turnieju |
 | `fee` | ustalona wpisowa opłata za uczestnictwo |
+| `sign_up_deadline` | ostatni dzień, w którym otwarte są zapisy |
 | `staff_id` | numer identyfikacyjny pracownika odpowiedzialnego za turniej (FK) |
 | `expenses_payments_id` | numer identyfikacyjny płatności związanych z wydatkami na organizację (FK)  |
-| `sign_up_deadline` | ostatni dzień, w którym otwarte są zapisy |
-| `matches` | liczba partii w obrębie turnieju |
 | `updated_at` | moment ostatniej zmiany w krotce |
 
 Zależności funkcyjne to:
 
-- {`tournament_id`} $\rightarrow$ {`name`, `start_time`, `game_id`, `fee`, `staff_id`, `expenses_payments_id`, `sign_up_deadline`, `matches`, `updated_at`}
-- {`start_time`} $\rightarrow$ {`tournament_id`, `name`, `game_id`, `fee`, `staff_id`, `expenses_payments_id`, `sign_up_deadline`, `matches`, `updated_at`}
+- {`tournament_id`} $\rightarrow$ {`name`, `game_id`, `start_time`, `matches`, `fee`, `sign_up_deadline`, `staff_id`, `expenses_payments_id`, `updated_at`}
+- {`start_time`} $\rightarrow$ {`tournament_id`, `name`,  `game_id`, `matches`, `fee`, `sign_up_deadline`, `staff_id`, `expenses_payments_id`, `updated_at`}
 
 Sama nazwa turnieju nie identyfikuje wydarzenia, gdyż potencjalnie cykliczność może narzucić tę samą nazwę. Pozostałe (poza numerem oraz datą) atrybuty, nawet wzięte razem, nie mogą z zupełną pewnością zidentyfikować wydarzenia.
 
-### Tabela `staff`
+### Tabela `rental`
 
-W niej przechowujemy informacje o pracownikach. Część atrybutów jest analogiczna do występujących w `customers`. Nie będziemy się nad tymi szczegółowo pochylać ponownie.
+Ta tabela jest rejestrem wszystkich wypożyczeń w historii sklepu. Wypożyczana jest gra z magazynu (tylko z puli tych, które są na to przeznaczone) i wydawana klientowi na okres 5 dni za stałą ustaloną kwotę, obliczaną dla każdej gry. Dodatkowo, każdy dzień przekroczenia terminu skutkuje kumulowanym naliczeniem kary w wysokości 30% ceny jednorazowego wypożyczenia gry. Zakładamy, że opłata za wypożyczenie naliczana jest od razu, a kara przy zwrocie produktu. Jeśli klient jest terminowy, płatność kary pozostawiona jest z pustym identyfikatorem. Przypadek klienta, który nigdy nie oddaje gry nie wpływa na mechanikę bazy. Jego płatność kary może być tylko inna, niż przewidują podstawowe zasady, ale o tym zdecyduje sąd.
 
 | Atrybut | Opis |
 |-------------|--------|
-| `staff_id` | numer identyfikacyjny klienta (PK) |
+| `rental_id` | numer identyfikacyjny wypożyczenia (PK) |
+| `inventory_id` | numer identyfikacyjny pozycji w magazynie (FK) |
+| `customer_id` | numer identyifkacyjny klienta (FK) |
+| `rental_date` | data i godzina wypożyczenia |
+| `return_date` | data i godzina zwrotu (pusta, jeśli wypożyczenie wciąż trwa) |
+| `staff_id` | numer identyfikacyjny pracownika wydającego grę (FK) |
+| `payment_id` | numer identyfikacyjny płatności za usługę (FK) |
+| `penalty_payment_id` | numer identyfikacyjny ewentualnej płatności kary (FK) |
+| `rate` | ocena gry przez klienta (od 1 do 10; opcjonalna) |
+| `updated_at` | moment ostatniej zmiany w krotce |
+
+Zależności funkcyjne to:
+
+- {`rental_id`} $\rightarrow$ {`inventory_id`, `customer_id`, `rental_date`, `return_date`, `staff_id`, `payment_id`, `penalty_payment_id`, `rate`, `updated_at`}
+- {`inventory_id`, `rental_date`} $\rightarrow$ {`rental_id`, `customer_id`, `return_date`, `staff_id`, `payment_id`, `penalty_payment_id`, `rate`, `updated_at`}
+- {`payment_id`} $\rightarrow$ {`rental_id`, `inventory_id`, `customer_id`, `rental_date`, `return_date`, `staff_id`, `penalty_payment_id`, `rate`, `updated_at`}
+
+Konkretny prodykukt w jednym momencie wzkazukje na wszystkie pola rekordu, bo jest unikalny. Para kliena i daty wypożyczenia, bez wskazania produktu, nie identyfikuje usługi. Klient może chcieć za jednym razem przecież kilka gier. Podobnie klient i produkt, gdyż każdy może wypożyczać produkt wiele razy. Płatność zaś identyfikuje konkretną pozycję. Przy okazji tabeli `payments` omówimy, iż faktycznie klient może w teorii robić większe zakupy na jeden rachunek. W takim przypadku poszczególne "płatności" są grupowane w cały "koszyk" już w tamtej tabeli. Reszta faktów jest dość oczywista, m.in. opcjonalny identyfikator płatności kary nie może niczego wskazywać.
+
+### Tabela `inventory`
+
+Wszystkie posiadane kiedykolwiek przez sklep gry, bo Geeks & Dragons ma na stanie wyłącznie gry. Te, które są cały czas na magazynie (lub są wypożyczone i jeszcze nie oddane) mają status aktywnych (`active = TRUE`). Jeżeli są już zniszczone, zaginą itd., ich status jest negatywny. Pozostają wtedy zatem jedynie historycznym zapisem. Każda gra jest kiedyś zakupowana przez sklep jeżeli jest w obrocie, ma ustalaną cenę. Cena będzie oczywiście mniejsza dla wynajmu. Każdy produkt ma też osobne przeznaczenie - albo jest do sprzedaży (`S`), albo na wypożyczenie (`R`), albo do użytku turniejowego (`T`). Nigdy te przeznaczenia nie są mieszane w jednym momencie, gdyż nie można wypożyczać produktu, który ma być używany w turnieju, a z drugiej strony, używane gry nie będą sprzedawane. Mamy więc ekskluzywność kategorii.
+
+| Atrybut | Opis |
+|-------------|--------|
+| `inventory_id` | numer identyfikacyjny produktu (PK) |
+| `game_id` | numer identyfikacyjny gry, jaką stanowi produkt (FK) |
+| `destination` | przeznaczenie (`S` - 'sales', `R` - 'rental', `T` - 'tournaments')|
+| `price_id` | numer identyfikacyjny ceny (FK) |
+| `active` | status posiadania gry na stanie |
+| `purchase_payment_id` | numer identyfikacyjny płatności związanej z zakupem (FK) |
+| `delivery_date` | data i godzina wprowadzenia nowego produktu do magazynu |
+| `updated_at` | moment ostatniej zmiany w krotce |
+
+Zależności funkcyjne to:
+
+- {`inventory_id`} $\rightarrow$ {`game_id`, `destination`, `price_id`, `active`, `purchase_payment_id`, `delivery_date`, `updated_at`}
+
+Celowo nie wspominamy tu o zależności ceny od pary gry i jej przeznaczenia. Chcemy dopuścić możliwość, że nawet pośród tych samych gier i przeznaczenia (np. do sprzedaży), można nadawać w celach marketingowych przeceny tylko kilku sztukom (powiedzmy tym, które wystawione są na półkach podczas, gdy takie same produky leżą z inną ceną w magazynie). Naturalnie, jeżeli produkt jest przeznaczony na turnieje, nie musi dostawać swojej ceny, ale nie są to jedyne przypadki pustego pola z `price_id`. Jeżeli pracownik przyjmie dostawę, a nie zdąży wprowadzić ceny, pole pozostaje z wartością `NULL`. Nie jest to groźne, gdyż w każdym momencie można cenę nadać według bieżącej polityki sklepu. Z drugiej strony wartość `T` przeznaczenia nie zawsze wiąże się z brakiem ceny, gdyż produkt mógł z kategorii wypożyczanego być tymczasowo przeniesiony do kategorii turniejowego, bez likwidacji przypisanej ceny.
+
+### Tabela `staff`
+
+W niej przechowujemy informacje o wszystkich pracownikach, którzy kiedykolwiek pracowali w firmie. Część atrybutów jest analogiczna do występujących w `customers`. Nie będziemy się nad tymi ponownie szczegółowo pochylać.
+
+| Atrybut | Opis |
+|-------------|--------|
+| `staff_id` | numer identyfikacyjny pracownika (PK) |
 | `first_name` | imię |
 | `last_name` | nazwisko |
 | `phone` | numer telefonu kontaktowego |
 | `email` | adres e-mail do kontaktu |
 | `city_id` | numer identyfikacyjny miasta zamieszkania (FK) |
-| `current_salary` | numer identyfikacyjny miasta zamieszkania (FK) |
-| `city_id` | numer identyfikacyjny miasta zamieszkania (FK) |
-| `city_id` | numer identyfikacyjny miasta zamieszkania (FK) |
-| `city_id` | numer identyfikacyjny miasta zamieszkania (FK) |
-| `city_id` | numer identyfikacyjny miasta zamieszkania (FK) |
+| `current_salary` | aktualna bazowa pensja miesięczna |
+| `is_manager` | informacja o tym, czy pracownik jest managerem |
+| `gender` | płeć pracownika (pole może mieć wartość `M`, `F` lub być puste) |
+| `from_date` | data rozpoczęcia pracy w sklepie |
+| `to_date` | data zwolnienia (jeśli osoba nadal pracuje, pole pozostaje puste) |
 | `updated_at` | moment ostatniej zmiany w krotce |
+
+Zależności funkcyjne to:
+
+- {`staff_id`} $\rightarrow$ {`first_name`, `last_name`, `phone`, `matches`, `email`, `city_id`, `current_salary`, `is_manager`, `gender`, `from_date`, `to_date`, `updated_at`}
+
+Znów teoretyczna (choć skrajnie mało prawdopodobna) możliwość istnienia kilku pracowników o tym samym nazwisku, pochodzeniu, zatrudnionych w tym samym czasie itd. decyduje o tym, że nie znajdą się inne zależności, które możemy wypisać.
+
+### Tabela `relationships`
+
+Ciekawą (i dość osobliwą) praktyką firmy jest wtykanie nosa w życie miłosne pracowników. Mają oni raportować wszystkich swoich partnerów z okresu pracy w firmie wraz z liczbą randek (według uznania pracownika - stopień zbliżenia jest bowiem subiektywny). Co do danych personalnych partnerów, wystarczy podać ich imię i płeć (ale nie trzeba). W końcu RODO i tak dalej... Cała sytuacja ma służyć wyłącznie analizie produktywności i nie ma związku z dewiacjami właściciela. Przynajmniej taka jest oficjalna wersja.
+
+| Atrybut | Opis |
+|-------------|--------|
+| `relationship_id` | numer identyfikacyjny relacji (PK) |
+| `staff_id` | numer identyfikacyjny pracownika (FK) |
+| `partner_id` | numer identyfikacyjny partnera (FK) |
+| `dates_number` | liczba randek w obrębie relacji |
+| `updated_at` | moment ostatniej zmiany w krotce |
+
+Zależności funkcyjne to:
+
+- {`relationship_id`} $\rightarrow$ {`staff_id`, `partner_id`, `dates_number`, `updated_at`}
+
+W związkiu z możliwymi odejściami i powrotami, dopuszczamy możliwość kilku relacji między danym pracownikiem a partnerem, z osobnym licznikiem spotkań. Przecież czasem trzeba sobie dać szanse na start od nowa, z czystą kartą... Ponadto, znając identyfikator partnera, nie możemy jednoznacznie ocenić, jakiego pracownika dotyczył związek miłosny. Teoretyczne romanse w pracy mogą skutkować odbijaniem sobie nawzajem partnerów.
+
+### Tabela `partners`
+
+Ta tabela jest "rozszerzeniem" tabeli `relationships`, zawierającym już konkretne dane na temat partnerów.
+
+| Atrybut | Opis |
+|-------------|--------|
+| `partner_id` | numer identyfikacyjny partnera (PK) |
+| `name` | imię bądź pseudonim danego partnera |
+| `gender` | płeć partnera (pole może mieć wartość `M`, `F` lub być puste) |
+| `updated_at` | moment ostatniej zmiany w krotce |
+
+Zależności funkcyjne to:
+
+- {`partner_id`} $\rightarrow$ {`name`, `gender`, `updated_at`}
+
+Widać wyraźnie, że nie da się budować innych zależności funkcyjnych z tak skąpego zestawu danych o partnerach. Samo imię też oczywiście nie wyznacza płci, gdyż Wrocław wcale nie jest mocno konserwatywnym miastem.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TBC
 
 ## Uzasadnienie normalności postaci bazy (EKNF)
 
@@ -105,11 +212,13 @@ Wiemy, że omawiane atrybuty rozpoczynające zależności są nadkluczami, ponie
 
 ## Schemat bazy danych
 
-Diagram ER omawianej bazy danych przedstawiamy na poniższej interaktywnej wizualizacji. Jeżeli używany przez Ciebie silnik MD nie generuje ilustracji z kodu `mermaid`, możesz zobaczyć także [zapis tej ilustracji](images/ERD.svg) (jest to plik _svg_; najlepiej otwierać go po pobraniu w przeglądarce). Dostępna jest też uproszczona wersja schematu (bez atrybutów i ich typów) w formacie _png_. Możesz go zobaczyć [tutaj](images/ERD_simplified.png).
+Diagram ER omawianej bazy danych przedstawiamy na poniższej interaktywnej wizualizacji.
+
+__UWAGA!__ Jeżeli używany przez Ciebie silnik MD nie generuje ilustracji z kodu `mermaid`, możesz zobaczyć także [zapis tej ilustracji](images/ERD.svg) (jest to plik _svg_; najlepiej otwierać go po pobraniu w przeglądarce). Dostępna jest też uproszczona wersja schematu (bez atrybutów i ich typów) w formacie _png_. Możesz go zobaczyć [tutaj](images/ERD_simplified.png).
 
 ```mermaid
 erDiagram
-    CITY ||--|{ CUSTOMERS : ""
+    CITY ||--o{ CUSTOMERS : ""
     CUSTOMERS ||--o{ PARTICIPATIONS : ""
     PARTICIPATIONS ||--o{ TOURNAMENTS : ""
     CUSTOMERS ||--o{ RENTAL : ""
@@ -119,13 +228,14 @@ erDiagram
     STAFF ||--o{ SALES : ""
     SALES ||--|| INVENTORY : ""
     SALES ||--|| PAYMENTS : ""
-    CITY ||--|{ STAFF : ""
+    CITY ||--o{ STAFF : ""
     STAFF ||--o{ RELATIONSHIPS : ""
     PARTNERS ||--|{ RELATIONSHIPS : ""
     PAYMENTS ||--|| INVENTORY : ""
     PAYMENTS ||--|| TOURNAMENTS : ""
     PAYMENTS ||--|| SALES : ""
-    PAYMENTS ||--|| RENTAL : ""
+    RENTAL ||--|| PAYMENTS : ""
+    RENTAL ||--o| PAYMENTS : ""
     PAYMENTS ||--|| PARTICIPATIONS : ""
     MAINTENANCE_EXPENSES ||--|| PAYMENTS : ""
     STAFF ||--o{ TOURNAMENTS : ""
@@ -178,16 +288,18 @@ erDiagram
         TIMESTAMP return_date
         INT staff_id FK
         INT payment_id FK
+        INT penalty_payment_id FK
         INT rate
         TIMESTAMP updated_at
     }
     INVENTORY {
         INT inventory_id PK
         INT game_id FK
-        BOOLEAN rentable
+        CHAR(1) destination
         INT price_id FK
         BOOLEAN price_id
         INT purchase_payment_id FK
+        TIMESTAMP delivery_date
         TIMESTAMP updated_at
     }
     STAFF {
@@ -220,6 +332,7 @@ erDiagram
     PAYMENTS {
         INT payment_id PK
         DECIMAL(7p2) amount
+        INT invoice_position
         TIMESTAMP payment_date
         TIMESTAMP updated_at
     }
@@ -260,7 +373,7 @@ erDiagram
     }
     GAME_PRICES {
         INT price_id PK
-        DECIMAL(5p2) reference_price
+        DECIMAL(5p2) current_price
         TIMESTAMP updated_at
     }
 
