@@ -16,6 +16,7 @@ Strona główna:
     + [Elementy](#elementy)
     + [Wyzwania](#wyzwania)
   * [Struktura projektu](#struktura-projektu)
+  * [Szczegóły dotyczące bazy](#szczegoly-dotyczace-bazy)
   * [Sposób użycia](#sposob-uzycia)
     + [1. Instalacja głównych narzędzi](#1-instalacja-glownych-narzedzi)
     + [2. Pobranie repozytorium](#2-pobranie-repozytorium)
@@ -85,6 +86,15 @@ __To co twórcy uważają, za najtrudniejsze w realizacji__, znajduje się na po
 
 __Lista plików wraz z opisem ich zawartości__ dostępna jest na podstronie o [plikach projektu i konfiguracji](doc/file-struct.md). Są tam też instrukcje na temat ewentualnej konfiguracji związanej z połączeniem, sposobem generowania, albo szablonem raportu.
 
+## Szczegóły dotyczące bazy
+<a id="szczegoly-dotyczace-bazy">
+  
+W osobnym dokumencie o [strukurze i mechanice bazy danych](doc/db-struct.md) przede wszystkim obejrzeć można __schemat bazy__, wraz z nazwami atrybutów, ich typami oraz oznaczeniami kluczy.
+  
+Dalej, opisane są tam metody konstrukcji tabel (razem z wyjaśnieniem rodzajów danych w poszczególnych kolumnach), założenia techniczne oraz __lista zależności funkcyjnych__. Wszystko w punktach - tabela po tabeli.
+  
+Na końcu znajdujemy też formalne __wyjaśnienie, że struktura spełnia standard EKNF__.
+  
 ## Sposób użycia
 <a id="sposob-uzycia">
   
