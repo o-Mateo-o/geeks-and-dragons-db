@@ -3,29 +3,23 @@
 Dokumnetujemy tu działanie bazy danych dla stacjonarnego sklepu Geeks & Dragons, funkcjonującego we Wrocławiu od dwóch lat[^1]. Zajmuje się on sprzedażą i wypożyczaniem gier planszowych (oraz podobnych) oraz organizacją turniejów w tych grach.
 
 ## Spis treści
-<a id="spis-tresci">
+
+<a id="spis-tresci"></a>
 
 - [Dokumentacja konstrukcji bazy danych](#dokumentacja-konstrukcji-bazy-danych)
-  * [Spis treści](#spis-tresci)
-  * [Schemat bazy danych](#schemat-bazy-danych)
-  * [Zawartość tabel oraz zależności funkcyjne](#zawartosc-tabel-oraz-zaleznosci-funkcyjne)
-    + [Tabela `city`](#city)
-    + [Tabela `customers`](#customers)
-    + [Tabela `participations`](#participations)
-    + [Tabela `tournaments`](#tournaments)
-    + [Tabela `rental`](#rental)
-    + [Tabela `inventory`](#inventory)
-    + [Tabela `staff`](#staff)
-    + [Tabela `relationships`](#relationships)
-    + [Tabela `partners`](#partners)
-    + [Tabela `payments`](#payments)
-    + [Tabela `maintenance_expenses`](#maintenance-expenses)
-    + [Tabela `sales`](#seles)
-    + [Tabela `games`](#games)
-    + [Tabela `game_categories`](#game-categories)
-    + [Tabela `game_types`](#game-types)
-    + [Tabela `game_prices`](#game-prices)
-  * [Uzasadnienie normalności postaci bazy (EKNF)](#uzasadnienie-normalnosci-postaci-bazy)
+  - [Spis treści](#spis-treści)
+  - [Schemat bazy danych](#schemat-bazy-danych)
+  - [Zawartość tabel oraz zależności funkcyjne](#zawartość-tabel-oraz-zależności-funkcyjne)
+    - [Tabela `city`](#tabela-city)
+    - [Tabela `customers`](#tabela-customers)
+    - [Tabela `participations`](#tabela-participations)
+    - [Tabela `tournaments`](#tabela-tournaments)
+    - [Tabela `rental`](#tabela-rental)
+    - [Tabela `inventory`](#tabela-inventory)
+    - [Tabela `staff`](#tabela-staff)
+    - [Tabela `relationships`](#tabela-relationships)
+    - [Tabela `partners`](#tabela-partners)
+  - [Uzasadnienie normalności postaci bazy (EKNF)](#uzasadnienie-normalności-postaci-bazy-eknf)
 
 ## Schemat bazy danych
 
@@ -49,7 +43,7 @@ erDiagram
     STAFF ||--o{ RELATIONSHIPS : ""
     PARTNERS ||--|{ RELATIONSHIPS : ""
     PAYMENTS ||--|| INVENTORY : ""
-    PAYMENTS ||--|| TOURNAMENTS : ""
+    TOURNAMENTS ||--o| PAYMENTS : ""
     PAYMENTS ||--|| SALES : ""
     RENTAL ||--|| PAYMENTS : ""
     RENTAL ||--o| PAYMENTS : ""
@@ -196,13 +190,15 @@ erDiagram
 ```
 
 ## Zawartość tabel oraz zależności funkcyjne
-<a id="zawartosc-tabel-oraz-zaleznosci-funkcyjne">
+
+<a id="zawartosc-tabel-oraz-zaleznosci-funkcyjne"></a>
 
 Następnie, po kolei opiszemy co znajduje się w poszczególnych tabelach, kreśląc generalną mechanikę, jaką przyjęliśmy. Dla każdej tabeli wypisujemy też wraz z komentarzem listę zależności funkcyjnych (a właściwie __nieredundantne pokrycie__). Pomijamy zatem zależności, które można wywnioskować trzema regułami Armstronga, a w szczególności oczywiście zależności trywialne.
 
 ### Tabela `city`
-<a id="city">
-    
+
+<a id="city"></a>
+
 Jest to spis wszystkich miejscowości (w naszym przypadku są to dla uproszczenia miasta Dolnego Śląska), które dotyczą bądź kiedyś dotyczyły obsługi oraz klientów.
 
 | Atrybut | Opis |
@@ -218,8 +214,9 @@ Zależności funkcyjne to:
 Nie może się tu wiele więcej zdarzyć. Możnaby też myśleć o sytuacji, gdzie klucz główny zależy od nazwy miasta. Zwróćmy jednak uwagę, że na ogół występują różne miejscowości o takich samych nazwach. Z tego powodu pomijamy tego typu zapis.
 
 ### Tabela `customers`
-<a id="customers">
-    
+
+<a id="customers"></a>
+
 Mamy tutaj zarejestrowanych klientów sklepu, czyli uczesników gier turniejowych oraz tych, którzy choć raz wypożyczali jakiś produkt. Zapisujemy ich podstawowe dane. W uproszczeniu nie zbieramy całego ich adresu zamieszkania, a jedynie miasto. Zakładamy także, że wszyscy są z Dolnego Śląska (jest to uzasadnione przybliżenie, gdyż skala działania nie jest taka, aby posiadać klientów z całego kraju, ale też nie są oni tylko z Wrocławia).
 
 | Atrybut | Opis |
@@ -239,8 +236,9 @@ Zależności funkcyjne to:
 Istnieje możliwość, że adresy e-mail (`email`) lub numery telefonów (`phone`) nie są unikalne dla każdego uczestnika, gdyż w teorii kilka osób może korzystać z jednej skrzynki bądź telefonu przy kontakcie - na przykład jako organizacja. Przy uczestnictwie w wydarzeniach (takich jak choćby turnieje) jest to spotykana praktyka. To, że dodatkowo imiona, nazwiska, czy miasta niczego nie określają jednoznacznie, jest chyba oczywiste. Jedynie dodany osobno klucz główny może rozpoczynać nietrywialne zależności funkcyjne.
 
 ### Tabela `participations`
-<a id="participations">
-    
+
+<a id="participations"></a>
+
 Jest to zbiór przypisań uczestników do turniejów. Każdy uczestnik może bowiem zapisać się wiele turniejów (maksymalnie jednokrotnie każdy). Co do ilości uczestników w turnieju, dozwolona jest zerowa, ale wtedy po prostu zawody mimo ogłoszenia się nie odbędą (bez konsekwencji w bazie). Maksymalnie jest zaś ona ograniczona przez ilość określonych w turnieju partii przemnożonych przez narzucony limit uczestników w konkretnej grze.
 
 | Atrybut | Opis |
@@ -264,8 +262,9 @@ Poza działaniem opisanym wyżej, zajęte miejsca nie identyfikują żadnych wie
 Para identyfikatora turnieju oraz klienta jest sama w sobie kluczem kandydującym, bo określa jednoznacznie zapis.
 
 ### Tabela `tournaments`
-<a id="tournaments">
-    
+
+<a id="tournaments"></a>
+
 Są to turnieje organizowane przez sklep. Jeden turniej dotyczy jednej konkretnej gry. Każdy składa się z konkretnej ilości meczy i ma jednego pracownika-opiekuna. Każdy rekord przechowuje dodatkowe dane na temat wydarzenia samego w sobie. Wydatki na organizację obejmują zakup nagród itp. (przy czym traktujemy wszystkie wydatki razem, jako jedna płatność). W jednym czasie zaś może odbywać się wyłącznie jednen turniej. Zakładamy, że lokal nie ma możliwości na więcej.
 
 | Atrybut | Opis |
@@ -289,8 +288,9 @@ Zależności funkcyjne to:
 Sama nazwa turnieju nie identyfikuje wydarzenia, gdyż potencjalnie cykliczność może narzucić tę samą nazwę. Pozostałe (poza numerem oraz datą) atrybuty, nawet wzięte razem, nie mogą z zupełną pewnością zidentyfikować wydarzenia.
 
 ### Tabela `rental`
-<a id="rental">
-    
+
+<a id="rental"></a>
+
 Ta tabela jest rejestrem wszystkich wypożyczeń w historii sklepu. Wypożyczana jest gra z magazynu (tylko z puli tych, które są na to przeznaczone) i wydawana klientowi na okres 5 dni za stałą ustaloną kwotę, obliczaną dla każdej gry. Dodatkowo, każdy dzień przekroczenia terminu skutkuje kumulowanym naliczeniem kary w wysokości 30% ceny jednorazowego wypożyczenia gry. Zakładamy, że opłata za wypożyczenie naliczana jest od razu, a kara przy zwrocie produktu. Jeśli klient jest terminowy, płatność kary pozostawiona jest z pustym identyfikatorem. Przypadek klienta, który nigdy nie oddaje gry nie wpływa na mechanikę bazy. Jego płatność kary może być tylko inna, niż przewidują podstawowe zasady, ale o tym zdecyduje sąd.
 
 | Atrybut | Opis |
@@ -315,8 +315,9 @@ Zależności funkcyjne to:
 Konkretny prodykukt w jednym momencie wzkazukje na wszystkie pola rekordu, bo jest unikalny. Para kliena i daty wypożyczenia, bez wskazania produktu, nie identyfikuje usługi. Klient może chcieć za jednym razem przecież kilka gier. Podobnie klient i produkt, gdyż każdy może wypożyczać produkt wiele razy. Płatność zaś identyfikuje konkretną pozycję. Przy okazji tabeli `payments` omówimy, iż faktycznie klient może w teorii robić większe zakupy na jeden rachunek. W takim przypadku poszczególne "płatności" są grupowane w cały "koszyk" już w tamtej tabeli. Reszta faktów jest dość oczywista, m.in. opcjonalny identyfikator płatności kary nie może niczego wskazywać.
 
 ### Tabela `inventory`
-<a id="inventory">
-    
+
+<a id="inventory"></a>
+
 Wszystkie posiadane kiedykolwiek przez sklep gry, bo Geeks & Dragons ma na stanie wyłącznie gry. Te, które są cały czas na magazynie (lub są wypożyczone i jeszcze nie oddane) mają status aktywnych (`active = TRUE`). Jeżeli są już zniszczone, zaginą itd., ich status jest negatywny. Pozostają wtedy zatem jedynie historycznym zapisem. Każda gra jest kiedyś zakupowana przez sklep jeżeli jest w obrocie, ma ustalaną cenę. Cena będzie oczywiście mniejsza dla wynajmu. Każdy produkt ma też osobne przeznaczenie - albo jest do sprzedaży (`S`), albo na wypożyczenie (`R`), albo do użytku turniejowego (`T`). Nigdy te przeznaczenia nie są mieszane w jednym momencie, gdyż nie można wypożyczać produktu, który ma być używany w turnieju, a z drugiej strony, używane gry nie będą sprzedawane. Mamy więc ekskluzywność kategorii.
 
 | Atrybut | Opis |
@@ -337,8 +338,9 @@ Zależności funkcyjne to:
 Celowo nie wspominamy tu o zależności ceny od pary gry i jej przeznaczenia. Chcemy dopuścić możliwość, że nawet pośród tych samych gier i przeznaczenia (np. do sprzedaży), można nadawać w celach marketingowych przeceny tylko kilku sztukom (powiedzmy tym, które wystawione są na półkach podczas, gdy takie same produky leżą z inną ceną w magazynie). Naturalnie, jeżeli produkt jest przeznaczony na turnieje, nie musi dostawać swojej ceny, ale nie są to jedyne przypadki pustego pola z `price_id`. Jeżeli pracownik przyjmie dostawę, a nie zdąży wprowadzić ceny, pole pozostaje z wartością `NULL`. Nie jest to groźne, gdyż w każdym momencie można cenę nadać według bieżącej polityki sklepu. Z drugiej strony wartość `T` przeznaczenia nie zawsze wiąże się z brakiem ceny, gdyż produkt mógł z kategorii wypożyczanego być tymczasowo przeniesiony do kategorii turniejowego, bez likwidacji przypisanej ceny.
 
 ### Tabela `staff`
-<a id="staff">
-    
+
+<a id="staff"></a>
+
 W niej przechowujemy informacje o wszystkich pracownikach, którzy kiedykolwiek pracowali w firmie. Część atrybutów jest analogiczna do występujących w `customers`. Nie będziemy się nad tymi ponownie szczegółowo pochylać.
 
 | Atrybut | Opis |
@@ -363,7 +365,8 @@ Zależności funkcyjne to:
 Znów teoretyczna (choć skrajnie mało prawdopodobna) możliwość istnienia kilku pracowników o tym samym nazwisku, pochodzeniu, zatrudnionych w tym samym czasie itd. decyduje o tym, że nie znajdą się inne zależności, które możemy wypisać.
 
 ### Tabela `relationships`
-<a id="relationships">
+
+<a id="relationships"></a>
 
 Ciekawą (i dość osobliwą) praktyką firmy jest wtykanie nosa w życie miłosne pracowników. Mają oni raportować wszystkich swoich partnerów z okresu pracy w firmie wraz z liczbą randek (według uznania pracownika - stopień zbliżenia jest bowiem subiektywny). Co do danych personalnych partnerów, wystarczy podać ich imię i płeć (ale nie trzeba). W końcu RODO i tak dalej... Cała sytuacja ma służyć wyłącznie analizie produktywności i nie ma związku z dewiacjami właściciela. Przynajmniej taka jest oficjalna wersja.
 
@@ -382,8 +385,9 @@ Zależności funkcyjne to:
 W związkiu z możliwymi odejściami i powrotami, dopuszczamy możliwość kilku relacji między danym pracownikiem a partnerem, z osobnym licznikiem spotkań. Przecież czasem trzeba sobie dać szanse na start od nowa, z czystą kartą... Ponadto, znając identyfikator partnera, nie możemy jednoznacznie ocenić, jakiego pracownika dotyczył związek miłosny. Teoretyczne romanse w pracy mogą skutkować odbijaniem sobie nawzajem partnerów.
 
 ### Tabela `partners`
-<a id="partners">
-    
+
+<a id="partners"></a>
+
 Ta tabela jest "rozszerzeniem" tabeli `relationships`, zawierającym już konkretne dane na temat partnerów.
 
 | Atrybut | Opis |
@@ -402,9 +406,10 @@ Widać wyraźnie, że nie da się budować innych zależności funkcyjnych z tak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TBC
 
 ## Uzasadnienie normalności postaci bazy (EKNF)
-<a id="uzasadnienie-normalnosci-postaci-bazy">
-    
-Do tego momentu właściwie już wykazaliśmy że baza jest w standardzie EKNF. Formalnie wyjaśmimy to jeszcze niżej. 
+
+<a id="uzasadnienie-normalnosci-postaci-bazy"></a>
+
+Do tego momentu właściwie już wykazaliśmy że baza jest w standardzie EKNF. Formalnie wyjaśmimy to jeszcze niżej.
 
 Wszystkie wartości w kolumnach są skalarne, a wiersze unikalne, dzięki dbającym o to, dodanym osobno (unikalnym) kluczom głównym (_1NF_).
 

@@ -1,5 +1,5 @@
 import logging
 
 
-def push() -> None:
-    logging.info("The database has been filled with random values.")
+def push(random_data: dict) -> None:
+    logging.info("New database tables has been filled with random values and new views have been added.")

@@ -2,7 +2,7 @@
 import argparse
 import os
 
-from src import analysis, browser, fillup, logs, report
+from src import analysis, drandom, fillup, logs, reader, report
 
 # Prepare the parser
 parser = argparse.ArgumentParser(
@@ -37,9 +37,10 @@ if __name__ == "__main__":
 
     # Perform all the possible steps
     if args.fill:
-        fillup.push()
+        data = drandom.generate_data()
+        fillup.push(data)
     if args.report:
         analysis.generate()
         report.generate()
     if args.open:
-        browser.open_report()
+        reader.open_report()

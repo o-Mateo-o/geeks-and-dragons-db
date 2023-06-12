@@ -2,42 +2,47 @@
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 # Geeks & Dragons database
-<a id="geeks-n-dragons-database">
+
+<a id="geeks-n-dragons-database"></a>
   
 ## Spis treści
-<a id="spis-tresci">
+
+<a id="spis-tresci"></a>
   
 Strona główna:
-- [Geeks & Dragons database](#geeks-n-dragons-database)
-  * [Spis treści](#spis-tresci)
-  * [Wstęp](#wstep)
-  * [Opis projektu](#opis-projektu)
-    + [Cel](#cel)
-    + [Elementy](#elementy)
-    + [Wyzwania](#wyzwania)
-  * [Struktura projektu](#struktura-projektu)
-  * [Szczegóły dotyczące bazy](#szczegoly-dotyczace-bazy)
-  * [Sposób użycia](#sposob-uzycia)
-    + [1. Instalacja głównych narzędzi](#1-instalacja-glownych-narzedzi)
-    + [2. Pobranie repozytorium](#2-pobranie-repozytorium)
-    + [3. Przygotowanie środowiska](#3-przygotowanie-srodowiska)
-    + [4. Uruchomienie głównej aplikacji](#4-uruchomienie-glownej-aplikacji)
-  * [Technologie](#technologie)
-    + [Podstawowe technologie](#podstawowe-technologie)
-    + [Generowanie i analiza danych](#generowanie-i-analiza-danych)
-    + [Generowanie raportów](#generowanie-raportow)
-    + [Dokumentacja](#dokumentacja)
-    + [Współpraca i przechowywanie kodu](#wspolpraca-i-przechowywanie-kodu)
-  * [Autorzy](#autorzy)
+
+- [Geeks \& Dragons database](#geeks--dragons-database)
+  - [Spis treści](#spis-treści)
+  - [Wstęp](#wstęp)
+  - [Opis projektu](#opis-projektu)
+    - [Cel](#cel)
+    - [Elementy](#elementy)
+    - [Wyzwania](#wyzwania)
+  - [Struktura projektu](#struktura-projektu)
+  - [Szczegóły dotyczące bazy](#szczegóły-dotyczące-bazy)
+  - [Sposób użycia](#sposób-użycia)
+    - [1. Instalacja głównych narzędzi](#1-instalacja-głównych-narzędzi)
+    - [2. Pobranie repozytorium](#2-pobranie-repozytorium)
+    - [3. Przygotowanie środowiska](#3-przygotowanie-środowiska)
+    - [4. Uruchomienie głównej aplikacji](#4-uruchomienie-głównej-aplikacji)
+  - [Technologie](#technologie)
+    - [Podstawowe technologie](#podstawowe-technologie)
+    - [Generowanie i analiza danych](#generowanie-i-analiza-danych)
+    - [Generowanie raportów](#generowanie-raportów)
+    - [Dokumentacja](#dokumentacja)
+    - [Współpraca i przechowywanie kodu](#współpraca-i-przechowywanie-kodu)
+  - [Autorzy](#autorzy)
 
 Połączone strony:
+
 - [Strukura i mechanika bazy danych](doc/db-struct.md),
 - [Pliki projektu i konfiguracja](doc/file-struct.md),
 - [Wrażenia z realizacji projektu](doc/impressions.md),
 - [Dokumentacja kodu źródłowego](doc/src/index.html).
 
 ## Wstęp
-<a id="wstep">
+
+<a id="wstep"></a>
   
 Projekt _Geeks & Dragons database_ dotyczy kompleksowego systemu obsługi danych dla sklepu z grami nieelektronicznymi.
 
@@ -87,7 +92,8 @@ __To co twórcy uważają, za najtrudniejsze w realizacji__, znajduje się na po
 __Lista plików wraz z opisem ich zawartości__ dostępna jest na podstronie o [plikach projektu i konfiguracji](doc/file-struct.md). Są tam też instrukcje na temat ewentualnej konfiguracji związanej z połączeniem, sposobem generowania, albo szablonem raportu.
 
 ## Szczegóły dotyczące bazy
-<a id="szczegoly-dotyczace-bazy">
+
+<a id="szczegoly-dotyczace-bazy"></a>
   
 W osobnym dokumencie o [strukurze i mechanice bazy danych](doc/db-struct.md) przede wszystkim obejrzeć można __schemat bazy__, wraz z nazwami atrybutów, ich typami oraz oznaczeniami kluczy.
   
@@ -96,12 +102,14 @@ Dalej, opisane są tam metody konstrukcji tabel (razem z wyjaśnieniem rodzajów
 Na końcu znajdujemy też formalne __wyjaśnienie, że struktura spełnia standard EKNF__.
   
 ## Sposób użycia
-<a id="sposob-uzycia">
+
+<a id="sposob-uzycia"></a>
   
 Poniżej przedstawiony jest w krokach __sposób użycia__ poszczególnych części aplikacji. Kroki (1-3) są przygotowawcze i dość oczywiste. Praca z właściwym skryptem i jego opcjami opisana jest w punkcie (4).
 
 ### 1. Instalacja głównych narzędzi
-<a id="1-instalacja-glownych-narzedzi">
+
+<a id="1-instalacja-glownych-narzedzi"></a>
   
 Aby używać skryptów projektu, należy przede wszystkim zainstalować na urządzeniu [Pythona 3.9](https://www.python.org/downloads/release/python-390/). Używany będzie także terminal - dla systemu Windows korzystać należy z [GitBash](https://git-scm.com/download/), instalowanego razem z systemem Git.
 
@@ -114,30 +122,32 @@ Instrukcje instalacji dostępne są na podanych stronach internetowych.
 
 Repozytorium można pobrać bezpośrednio przez wywołanie w termianlu Bash
 
-```
+```bash
 git clone https://github.com/o-Mateo-o/geeks-and-dragons-db.git
 cd geeks-and-dragons-db
 ```
 
 Jeżeli cały projekt jest już na urządzeniu możesz pominąć ten krok otworzyć w folderze projektu terminal Bash.
 
-
 ### 3. Przygotowanie środowiska
-<a id="3-przygotowanie-srodowiska">
+
+<a id="3-przygotowanie-srodowiska"></a>
+
 Aby przygotować się do użycia, należy uruchomić wirtualne środowisko ze wskazaną wersją Pythona oraz zainstalować zależności. W prosty sposób robimy to przygotowanym skryptem przygotowawczym:
 
-```
-source settup.sh
+```bash
+source setup.sh
 ```
 
-Jeżeli Python jest zainstalowany na niestandardowej ścieżce, można łatwo zmienić ścieżkę do niego w [skrypcie przygotowawczym](settup.sh). Nie ma też problemu z wywołaniem po kolei wskazanych w skrypcie komend osobno w terminalu.
+Jeżeli Python jest zainstalowany na niestandardowej ścieżce, można łatwo zmienić ścieżkę do niego w [skrypcie przygotowawczym](setup.sh). Nie ma też problemu z wywołaniem po kolei wskazanych w skrypcie komend osobno w terminalu.
 
 ### 4. Uruchomienie głównej aplikacji
-<a id="4-uruchomienie-glownej-aplikacji">
-  
-Główną aplikację, wypełniającą losowo bazę danych i otwierającą świeży raport, uruchamiamy przez 
 
-```
+<a id="4-uruchomienie-glownej-aplikacji"></a>
+  
+Główną aplikację, wypełniającą losowo bazę danych i otwierającą świeży raport, uruchamiamy przez
+
+```bash
 ./database-manager.py -fro
 ```
 
@@ -149,12 +159,12 @@ Można jednak chcieć wykonywać pojedyncze kroki, podając jako argumenty inne 
 
 - Dodatkowo, można otworzyć przygotowany raport automatycznie. Do tego korzystamy z flagi `-o`/`--open`.
 
-
 Kompleksowa pomoc dostępna jest także oczywiście po uruchomieniu.
 
-```
+```bash
 ./database-manager.py -h
 ```
+
 __UWAGA!__ Za pierwszym razem możemy zostać zapytani o hasło. Postępowanie w tym przypadku jest opisane w pomocy (`-h`) oraz bezpośrednio przy komunikcie.
 
 ## Technologie
@@ -176,7 +186,8 @@ Główne __technologie__ różnych kategorii, używane przy realizacji projektu,
 [![Matplotlib](https://img.shields.io/badge/Matplotlib-%23eeeeee.svg?style=for-the-badge&logo=matplotlib&logoColor=black)](https://matplotlib.org/)
 
 ### Generowanie raportów
-<a id="generowanie-raportow">
+
+<a id="generowanie-raportow"></a>
   
 [![Jinja](https://img.shields.io/badge/jinja-eeeeee.svg?style=for-the-badge&logo=jinja&logoColor=black)](https://jinja.palletsprojects.com/en/3.1.x/)
 [![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)](https://dev.w3.org/html5/spec-LC/)
@@ -189,15 +200,15 @@ Główne __technologie__ różnych kategorii, używane przy realizacji projektu,
 [![Pdoc](https://img.shields.io/badge/Pdoc-%23198030.svg?style=for-the-badge&logo=pdoc3&logoColor=black)](https://pypi.org/project/pdoc3/)
 
 ### Współpraca i przechowywanie kodu
-<a id="wspolpraca-i-przechowywanie-kodu">
+
+<a id="wspolpraca-i-przechowywanie-kodu"></a>
   
 [![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)](https://git-scm.com/)
 [![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/o-Mateo-o/geeks-and-dragons-db)
 
-
 ## Autorzy
 
-Projekt tworzyli członkowie grupy __*Jamniczki*__:
+Projekt tworzyli członkowie grupy ___Jamniczki___:
 
 - [Natalia Iwańska](https://github.com/natalia185),
 - [Klaudia Janicka](https://github.com/klaudynka245),
