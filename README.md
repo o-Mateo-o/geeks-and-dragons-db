@@ -1,4 +1,4 @@
-[![Status](https://img.shields.io/badge/status-beta-yellow)]()
+[![Status](https://img.shields.io/badge/status-alpha-orange)]()
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 # Geeks & Dragons database
