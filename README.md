@@ -3,7 +3,6 @@
 
 # Geeks & Dragons database
 <a id="geeks-n-dragons-database">
-
   
 ## Spis treści
 <a id="spis-tresci">
