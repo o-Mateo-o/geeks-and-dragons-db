@@ -213,7 +213,7 @@ Jest to spis wszystkich miejscowości (w naszym przypadku są to dla uproszczeni
 
 Zależności funkcyjne to:
 
-- {`city_id`} $\rightarrow$ {`city`, `updated_at`}
+- {`city_id`} &rarr; {`city`, `updated_at`}
 
 Nie może się tu wiele więcej zdarzyć. Możnaby też myśleć o sytuacji, gdzie klucz główny zależy od nazwy miasta. Zwróćmy jednak uwagę, że na ogół występują różne miejscowości o takich samych nazwach. Z tego powodu pomijamy tego typu zapis.
 
@@ -234,7 +234,7 @@ Mamy tutaj zarejestrowanych klientów sklepu, czyli uczesników gier turniejowyc
 
 Zależności funkcyjne to:
 
-- {`customer_id`} $\rightarrow$ {`first_name`, `last_name`, `phone`, `email`, `city_id`, `updated_at`}
+- {`customer_id`} &rarr; {`first_name`, `last_name`, `phone`, `email`, `city_id`, `updated_at`}
 
 Istnieje możliwość, że adresy e-mail (`email`) lub numery telefonów (`phone`) nie są unikalne dla każdego uczestnika, gdyż w teorii kilka osób może korzystać z jednej skrzynki bądź telefonu przy kontakcie - na przykład jako organizacja. Przy uczestnictwie w wydarzeniach (takich jak choćby turnieje) jest to spotykana praktyka. To, że dodatkowo imiona, nazwiska, czy miasta niczego nie określają jednoznacznie, jest chyba oczywiste. Jedynie dodany osobno klucz główny może rozpoczynać nietrywialne zależności funkcyjne.
 
@@ -255,9 +255,9 @@ Jest to zbiór przypisań uczestników do turniejów. Każdy uczestnik może bow
 
 Zależności funkcyjne to:
 
-- {`particip_id`} $\rightarrow$ {`tournament_id`, `customer_id`, `place`, `sign_up_date`, `fee_payment_id`, `updated_at`}
-- {`fee_payment_id`} $\rightarrow$ {`particip_id`, `tournament_id`, `customer_id`, `place`, `sign_up_date`, `updated_at`}
-- {`tournament_id`, `customer_id`} $\rightarrow$ {`particip_id`, `place`, `sign_up_date`, `fee_payment_id`, `updated_at`}
+- {`particip_id`} &rarr; {`tournament_id`, `customer_id`, `place`, `sign_up_date`, `fee_payment_id`, `updated_at`}
+- {`fee_payment_id`} &rarr; {`particip_id`, `tournament_id`, `customer_id`, `place`, `sign_up_date`, `updated_at`}
+- {`tournament_id`, `customer_id`} &rarr; {`particip_id`, `place`, `sign_up_date`, `fee_payment_id`, `updated_at`}
 
 Poza działaniem opisanym wyżej, zajęte miejsca nie identyfikują żadnych wierszy. Wiele uczestników może też się w jednym momencie zapisać. Płatności zawsze są zaś dokonywane osobno.
 
@@ -283,8 +283,8 @@ Są to turnieje organizowane przez sklep. Jeden turniej dotyczy jednej konkretne
 
 Zależności funkcyjne to:
 
-- {`tournament_id`} $\rightarrow$ {`name`, `game_id`, `start_time`, `matches`, `fee`, `sign_up_deadline`, `staff_id`, `expenses_payments_id`, `updated_at`}
-- {`start_time`} $\rightarrow$ {`tournament_id`, `name`,  `game_id`, `matches`, `fee`, `sign_up_deadline`, `staff_id`, `expenses_payments_id`, `updated_at`}
+- {`tournament_id`} &rarr; {`name`, `game_id`, `start_time`, `matches`, `fee`, `sign_up_deadline`, `staff_id`, `expenses_payments_id`, `updated_at`}
+- {`start_time`} &rarr; {`tournament_id`, `name`,  `game_id`, `matches`, `fee`, `sign_up_deadline`, `staff_id`, `expenses_payments_id`, `updated_at`}
 
 Sama nazwa turnieju nie identyfikuje wydarzenia, gdyż potencjalnie cykliczność może narzucić tę samą nazwę. Pozostałe (poza numerem oraz datą) atrybuty, nawet wzięte razem, nie mogą z zupełną pewnością zidentyfikować wydarzenia.
 
@@ -308,9 +308,9 @@ Ta tabela jest rejestrem wszystkich wypożyczeń w historii sklepu. Wypożyczana
 
 Zależności funkcyjne to:
 
-- {`rental_id`} $\rightarrow$ {`inventory_id`, `customer_id`, `rental_date`, `return_date`, `staff_id`, `payment_id`, `penalty_payment_id`, `rate`, `updated_at`}
-- {`inventory_id`, `rental_date`} $\rightarrow$ {`rental_id`, `customer_id`, `return_date`, `staff_id`, `payment_id`, `penalty_payment_id`, `rate`, `updated_at`}
-- {`payment_id`} $\rightarrow$ {`rental_id`, `inventory_id`, `customer_id`, `rental_date`, `return_date`, `staff_id`, `penalty_payment_id`, `rate`, `updated_at`}
+- {`rental_id`} &rarr; {`inventory_id`, `customer_id`, `rental_date`, `return_date`, `staff_id`, `payment_id`, `penalty_payment_id`, `rate`, `updated_at`}
+- {`inventory_id`, `rental_date`} &rarr; {`rental_id`, `customer_id`, `return_date`, `staff_id`, `payment_id`, `penalty_payment_id`, `rate`, `updated_at`}
+- {`payment_id`} &rarr; {`rental_id`, `inventory_id`, `customer_id`, `rental_date`, `return_date`, `staff_id`, `penalty_payment_id`, `rate`, `updated_at`}
 
 Konkretny prodykukt w jednym momencie wzkazukje na wszystkie pola rekordu, bo jest unikalny. Para kliena i daty wypożyczenia, bez wskazania produktu, nie identyfikuje usługi. Klient może chcieć za jednym razem przecież kilka gier. Podobnie klient i produkt, gdyż każdy może wypożyczać produkt wiele razy. Płatność zaś identyfikuje konkretną pozycję. Przy okazji tabeli `payments` omówimy, iż faktycznie klient może w teorii robić większe zakupy na jeden rachunek. W takim przypadku poszczególne "płatności" są grupowane w cały "koszyk" już w tamtej tabeli. Reszta faktów jest dość oczywista, m.in. opcjonalny identyfikator płatności kary nie może niczego wskazywać.
 
@@ -332,7 +332,7 @@ Wszystkie posiadane kiedykolwiek przez sklep gry, bo Geeks & Dragons ma na stani
 
 Zależności funkcyjne to:
 
-- {`inventory_id`} $\rightarrow$ {`game_id`, `destination`, `price_id`, `active`, `purchase_payment_id`, `delivery_date`, `updated_at`}
+- {`inventory_id`} &rarr; {`game_id`, `destination`, `price_id`, `active`, `purchase_payment_id`, `delivery_date`, `updated_at`}
 
 Celowo nie wspominamy tu o zależności ceny od pary gry i jej przeznaczenia. Chcemy dopuścić możliwość, że nawet pośród tych samych gier i przeznaczenia (np. do sprzedaży), można nadawać w celach marketingowych przeceny tylko kilku sztukom (powiedzmy tym, które wystawione są na półkach podczas, gdy takie same produky leżą z inną ceną w magazynie). Naturalnie, jeżeli produkt jest przeznaczony na turnieje, nie musi dostawać swojej ceny, ale nie są to jedyne przypadki pustego pola z `price_id`. Jeżeli pracownik przyjmie dostawę, a nie zdąży wprowadzić ceny, pole pozostaje z wartością `NULL`. Nie jest to groźne, gdyż w każdym momencie można cenę nadać według bieżącej polityki sklepu. Z drugiej strony wartość `T` przeznaczenia nie zawsze wiąże się z brakiem ceny, gdyż produkt mógł z kategorii wypożyczanego być tymczasowo przeniesiony do kategorii turniejowego, bez likwidacji przypisanej ceny.
 
@@ -358,7 +358,7 @@ W niej przechowujemy informacje o wszystkich pracownikach, którzy kiedykolwiek 
 
 Zależności funkcyjne to:
 
-- {`staff_id`} $\rightarrow$ {`first_name`, `last_name`, `phone`, `matches`, `email`, `city_id`, `current_salary`, `is_manager`, `gender`, `from_date`, `to_date`, `updated_at`}
+- {`staff_id`} &rarr; {`first_name`, `last_name`, `phone`, `matches`, `email`, `city_id`, `current_salary`, `is_manager`, `gender`, `from_date`, `to_date`, `updated_at`}
 
 Znów teoretyczna (choć skrajnie mało prawdopodobna) możliwość istnienia kilku pracowników o tym samym nazwisku, pochodzeniu, zatrudnionych w tym samym czasie itd. decyduje o tym, że nie znajdą się inne zależności, które możemy wypisać.
 
@@ -377,7 +377,7 @@ Ciekawą (i dość osobliwą) praktyką firmy jest wtykanie nosa w życie miłos
 
 Zależności funkcyjne to:
 
-- {`relationship_id`} $\rightarrow$ {`staff_id`, `partner_id`, `dates_number`, `updated_at`}
+- {`relationship_id`} &rarr; {`staff_id`, `partner_id`, `dates_number`, `updated_at`}
 
 W związkiu z możliwymi odejściami i powrotami, dopuszczamy możliwość kilku relacji między danym pracownikiem a partnerem, z osobnym licznikiem spotkań. Przecież czasem trzeba sobie dać szanse na start od nowa, z czystą kartą... Ponadto, znając identyfikator partnera, nie możemy jednoznacznie ocenić, jakiego pracownika dotyczył związek miłosny. Teoretyczne romanse w pracy mogą skutkować odbijaniem sobie nawzajem partnerów.
 
@@ -395,7 +395,7 @@ Ta tabela jest "rozszerzeniem" tabeli `relationships`, zawierającym już konkre
 
 Zależności funkcyjne to:
 
-- {`partner_id`} $\rightarrow$ {`name`, `gender`, `updated_at`}
+- {`partner_id`} &rarr; {`name`, `gender`, `updated_at`}
 
 Widać wyraźnie, że nie da się budować innych zależności funkcyjnych z tak skąpego zestawu danych o partnerach. Samo imię też oczywiście nie wyznacza płci, gdyż Wrocław wcale nie jest mocno konserwatywnym miastem.
 
