@@ -182,7 +182,7 @@ Główne __technologie__ różnych kategorii, używane przy realizacji projektu,
 [![MySQL](https://img.shields.io/badge/mysql%20connector-%23316192.svg?style=for-the-badge)](https://pypi.org/project/mysql-connector-python/)
 [![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 [![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white)](https://numpy.org/)
-[![SciPy](https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=%white)](https://scipy.org/)
+<!-- [![SciPy](https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=%white)](https://scipy.org/) -->
 [![Matplotlib](https://img.shields.io/badge/Matplotlib-%23eeeeee.svg?style=for-the-badge&logo=matplotlib&logoColor=black)](https://matplotlib.org/)
 
 ### Generowanie raportów
@@ -192,12 +192,12 @@ Główne __technologie__ różnych kategorii, używane przy realizacji projektu,
 [![Jinja](https://img.shields.io/badge/jinja-eeeeee.svg?style=for-the-badge&logo=jinja&logoColor=black)](https://jinja.palletsprojects.com/en/3.1.x/)
 [![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)](https://dev.w3.org/html5/spec-LC/)
 [![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)](https://www.w3.org/Style/CSS/Overview.en.html)
-[![PDFKit](https://img.shields.io/badge/PDFKit-d6b947.svg?style=for-the-badge)](https://pypi.org/project/pdfkit/)
+<!-- [![PDFKit](https://img.shields.io/badge/PDFKit-d6b947.svg?style=for-the-badge)](https://pypi.org/project/pdfkit/) -->
 
 ### Dokumentacja
 
 [![Markdown](https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor=white)](https://www.markdownguide.org/)
-[![Pdoc](https://img.shields.io/badge/Pdoc-%23198030.svg?style=for-the-badge&logo=pdoc3&logoColor=black)](https://pypi.org/project/pdoc3/)
+<!-- [![Pdoc](https://img.shields.io/badge/Pdoc-%23198030.svg?style=for-the-badge&logo=pdoc3&logoColor=black)](https://pypi.org/project/pdoc3/) -->
 
 ### Współpraca i przechowywanie kodu
 

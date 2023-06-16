@@ -3,9 +3,9 @@
     "version": "2.2.11",
     "width": 2000,
     "height": 2000,
-    "scrollTop": -562.7142857142871,
-    "scrollLeft": -411,
-    "zoomLevel": 0.3,
+    "scrollTop": -908.5714285714282,
+    "scrollLeft": -550.8638392857143,
+    "zoomLevel": 0.8,
     "show": {
       "tableComment": true,
       "columnComment": true,
@@ -826,7 +826,7 @@
             "id": "fca92161-532c-4143-acee-1669012e218a"
           },
           {
-            "name": "name",
+            "name": "game_category",
             "comment": "",
             "dataType": "VARCHAR(40)",
             "default": "",
@@ -841,7 +841,7 @@
               "pk": false,
               "fk": false,
               "pfk": false,
-              "widthName": 60,
+              "widthName": 91.60986328125,
               "widthComment": 60,
               "widthDataType": 87.71875,
               "widthDefault": 60
@@ -876,7 +876,7 @@
           "active": false,
           "left": 910.8769,
           "top": 585.388,
-          "zIndex": 13,
+          "zIndex": 54,
           "widthName": 101.72802734375,
           "widthComment": 60
         },
@@ -1561,7 +1561,7 @@
           "active": false,
           "left": 1059.2298,
           "top": 1157.5814,
-          "zIndex": 12,
+          "zIndex": 46,
           "widthName": 72.82080078125,
           "widthComment": 60
         },
@@ -1934,6 +1934,29 @@
             "id": "5f6248d0-73f3-4913-9534-bdeb25ce14e0"
           },
           {
+            "name": "return",
+            "comment": "",
+            "dataType": "BOOLEAN",
+            "default": "FALSE",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 64.8544921875,
+              "widthDefault": 60
+            },
+            "id": "0373f99b-cfd6-4c05-8cd3-74a361e2ccdb"
+          },
+          {
             "name": "updated_at",
             "comment": "",
             "dataType": "TIMESTAMP",
@@ -1961,7 +1984,7 @@
           "active": false,
           "left": 1170.5554,
           "top": 1486.5307,
-          "zIndex": 10,
+          "zIndex": 44,
           "widthName": 60,
           "widthComment": 60
         },
@@ -2320,9 +2343,9 @@
             "id": "1a1f9b20-d22a-4d2a-b8f2-2a11e9e2d431"
           },
           {
-            "name": "title",
+            "name": "title_id",
             "comment": "",
-            "dataType": "VARCHAR(50)",
+            "dataType": "INT",
             "default": "",
             "option": {
               "autoIncrement": false,
@@ -2333,37 +2356,14 @@
             "ui": {
               "active": false,
               "pk": false,
-              "fk": false,
+              "fk": true,
               "pfk": false,
               "widthName": 60,
               "widthComment": 60,
-              "widthDataType": 87.71875,
+              "widthDataType": 60,
               "widthDefault": 60
             },
-            "id": "1589cde7-3f68-4d7a-9c16-8aa9085e5015"
-          },
-          {
-            "name": "type",
-            "comment": "",
-            "dataType": "VARCHAR(50)",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 60,
-              "widthDataType": 87.71875,
-              "widthDefault": 60
-            },
-            "id": "626cab87-1745-4e85-a534-41eb145d9516"
+            "id": "55eda7aa-38bd-4c06-bd29-571a5aa9ada5"
           },
           {
             "name": "payment_id",
@@ -2437,9 +2437,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 1545.779,
-          "top": 1249.0473,
-          "zIndex": 9,
+          "left": 1555.4934,
+          "top": 1239.9046,
+          "zIndex": 237,
           "widthName": 139.31884765625,
           "widthComment": 60
         },
@@ -2497,7 +2497,7 @@
             "id": "084687c4-cf7d-4d5a-b32b-c61e5d90f303"
           },
           {
-            "name": "invoice",
+            "name": "invoice_id",
             "comment": "",
             "dataType": "INT",
             "default": "",
@@ -2510,37 +2510,14 @@
             "ui": {
               "active": false,
               "pk": false,
-              "fk": false,
+              "fk": true,
               "pfk": false,
               "widthName": 60,
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
-            "id": "81756331-285f-4ca8-986a-6994fdf8fff3"
-          },
-          {
-            "name": "payment_date",
-            "comment": "",
-            "dataType": "TIMESTAMP",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 84.392578125,
-              "widthComment": 60,
-              "widthDataType": 76.87060546875,
-              "widthDefault": 60
-            },
-            "id": "4089ea8d-26db-4d06-8cbd-bd02f8a6102d"
+            "id": "6f67d075-4c96-4dc1-a975-3ca3e2c1bf4e"
           },
           {
             "name": "updated_at",
@@ -2568,14 +2545,292 @@
         ],
         "ui": {
           "active": false,
-          "left": 1189.6546,
-          "top": 927.2205,
-          "zIndex": 15,
+          "left": 1147.3689,
+          "top": 949.5063,
+          "zIndex": 93,
           "widthName": 60,
           "widthComment": 60
         },
         "visible": true,
         "id": "80d1ad80-7533-4643-ae92-3b8d041c67f7"
+      },
+      {
+        "name": "invoices",
+        "comment": "",
+        "columns": [
+          {
+            "name": "invoice_id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "93777540-c7be-4dab-a554-0495b3529ce3"
+          },
+          {
+            "name": "date",
+            "comment": "",
+            "dataType": "TIMESTAMP",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 76.87060546875,
+              "widthDefault": 60
+            },
+            "id": "98022eb6-2498-4e97-8835-1b2bedd56323"
+          },
+          {
+            "name": "updated_at",
+            "comment": "",
+            "dataType": "TIMESTAMP",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 67.0634765625,
+              "widthComment": 60,
+              "widthDataType": 76.87060546875,
+              "widthDefault": 60
+            },
+            "id": "65bc6eb0-ee60-4eba-a54c-414dff9951db"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 1424.5782,
+          "top": 811.4287,
+          "zIndex": 94,
+          "widthName": 60,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "c34f16bd-63b5-4bde-8fc2-96f320599eef"
+      },
+      {
+        "name": "expense_titles",
+        "comment": "",
+        "columns": [
+          {
+            "name": "title_id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "bd679885-e9c8-4534-9e45-53fd07595112"
+          },
+          {
+            "name": "title",
+            "comment": "",
+            "dataType": "VARCHAR(200)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 94.94873046875,
+              "widthDefault": 60
+            },
+            "id": "e8be9447-85ae-4a2b-ab10-d0803fefb2db"
+          },
+          {
+            "name": "expenses_type_id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 106.7998046875,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "f0d86441-ecc4-4975-9329-8c6cba7cf931"
+          },
+          {
+            "name": "updated_at",
+            "comment": "",
+            "dataType": "TIMESTAMP",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 67.0634765625,
+              "widthComment": 60,
+              "widthDataType": 76.87060546875,
+              "widthDefault": 60
+            },
+            "id": "74afd075-abaf-4b02-8c2a-7f0b15b91811"
+          }
+        ],
+        "ui": {
+          "active": true,
+          "left": 975.1497,
+          "top": 1312.2855,
+          "zIndex": 241,
+          "widthName": 85.10986328125,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "5ce47a94-bca0-461d-87bd-1cc218a08baa"
+      },
+      {
+        "name": "expense_types",
+        "comment": "",
+        "columns": [
+          {
+            "name": "expenses_type_id",
+            "comment": "",
+            "dataType": "INT",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": true,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": true,
+              "fk": false,
+              "pfk": false,
+              "widthName": 106.7998046875,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "0a931eae-6459-47a7-ab14-cda9089e4a64"
+          },
+          {
+            "name": "expenses_type",
+            "comment": "",
+            "dataType": "VARCHAR(40)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 89.45166015625,
+              "widthComment": 60,
+              "widthDataType": 87.71875,
+              "widthDefault": 60
+            },
+            "id": "cc93c1b4-0009-4d26-b27b-b50b1c279532"
+          },
+          {
+            "name": "updated_at",
+            "comment": "",
+            "dataType": "TIMESTAMP",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 67.0634765625,
+              "widthComment": 60,
+              "widthDataType": 76.87060546875,
+              "widthDefault": 60
+            },
+            "id": "cd31bf80-4494-40f3-a68c-1bed6561f633"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 1550.7515,
+          "top": 1459.8578,
+          "zIndex": 240,
+          "widthName": 89.45166015625,
+          "widthComment": 60
+        },
+        "visible": true,
+        "id": "7cf18bad-8909-473b-8127-c1ebe5d71492"
       }
     ],
     "indexes": []
@@ -2994,7 +3249,7 @@
             "7d83c1b2-2fca-4385-adbb-ac837663cbad"
           ],
           "x": 1170.5554,
-          "y": 1582.5307,
+          "y": 1592.7807,
           "direction": "left"
         },
         "constraintName": "fk_staff_to_sales",
@@ -3036,8 +3291,8 @@
           "columnIds": [
             "4808e362-8ac5-4f17-8fdc-839369a04ca0"
           ],
-          "x": 1402.110410546875,
-          "y": 927.2205,
+          "x": 1454.6649205078124,
+          "y": 949.5063,
           "direction": "top"
         },
         "end": {
@@ -3062,8 +3317,8 @@
           "columnIds": [
             "4808e362-8ac5-4f17-8fdc-839369a04ca0"
           ],
-          "x": 1189.6546,
-          "y": 1077.283,
+          "x": 1147.3689,
+          "y": 1081.6313,
           "direction": "left"
         },
         "end": {
@@ -3088,8 +3343,8 @@
           "columnIds": [
             "4808e362-8ac5-4f17-8fdc-839369a04ca0"
           ],
-          "x": 1402.110410546875,
-          "y": 1098.7205,
+          "x": 1352.232913671875,
+          "y": 1100.5063,
           "direction": "bottom"
         },
         "end": {
@@ -3114,8 +3369,8 @@
           "columnIds": [
             "4808e362-8ac5-4f17-8fdc-839369a04ca0"
           ],
-          "x": 1189.6546,
-          "y": 991.533,
+          "x": 1147.3689,
+          "y": 1006.1313,
           "direction": "left"
         },
         "end": {
@@ -3140,8 +3395,8 @@
           "columnIds": [
             "4808e362-8ac5-4f17-8fdc-839369a04ca0"
           ],
-          "x": 1189.6546,
-          "y": 1034.408,
+          "x": 1147.3689,
+          "y": 1043.8813,
           "direction": "left"
         },
         "end": {
@@ -3166,8 +3421,8 @@
           "columnIds": [
             "4808e362-8ac5-4f17-8fdc-839369a04ca0"
           ],
-          "x": 1614.56622109375,
-          "y": 1012.9705,
+          "x": 1557.09692734375,
+          "y": 1025.0063,
           "direction": "right"
         },
         "end": {
@@ -3175,8 +3430,8 @@
           "columnIds": [
             "067dc41f-8804-4615-9697-0636f854c193"
           ],
-          "x": 1751.2428671875,
-          "y": 1249.0473,
+          "x": 1755.533194921875,
+          "y": 1239.9046,
           "direction": "top"
         },
         "constraintName": "fk_payments_to_maintenance_expenses",
@@ -3192,8 +3447,8 @@
           "columnIds": [
             "4808e362-8ac5-4f17-8fdc-839369a04ca0"
           ],
-          "x": 1189.6546,
-          "y": 948.658,
+          "x": 1147.3689,
+          "y": 968.3813,
           "direction": "left"
         },
         "end": {
@@ -3208,6 +3463,84 @@
         "constraintName": "fk_payments_to_rental",
         "visible": true,
         "id": "25216de3-66cc-421d-81c5-2647962118ab"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "c34f16bd-63b5-4bde-8fc2-96f320599eef",
+          "columnIds": [
+            "93777540-c7be-4dab-a554-0495b3529ce3"
+          ],
+          "x": 1424.5782,
+          "y": 876.6787,
+          "direction": "left"
+        },
+        "end": {
+          "tableId": "80d1ad80-7533-4643-ae92-3b8d041c67f7",
+          "columnIds": [
+            "6f67d075-4c96-4dc1-a975-3ca3e2c1bf4e"
+          ],
+          "x": 1249.8009068359374,
+          "y": 949.5063,
+          "direction": "top"
+        },
+        "constraintName": "fk_invoices_to_payments",
+        "visible": true,
+        "id": "ae03adc3-1e68-4416-be7a-3b5d95979fc7"
+      },
+      {
+        "identification": false,
+        "relationshipType": "OneN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "5ce47a94-bca0-461d-87bd-1cc218a08baa",
+          "columnIds": [
+            "bd679885-e9c8-4534-9e45-53fd07595112"
+          ],
+          "x": 1430.89823515625,
+          "y": 1350.0355,
+          "direction": "right"
+        },
+        "end": {
+          "tableId": "077451f6-81e7-4661-943d-8589cd885f6a",
+          "columnIds": [
+            "55eda7aa-38bd-4c06-bd29-571a5aa9ada5"
+          ],
+          "x": 1555.4934,
+          "y": 1325.6546,
+          "direction": "left"
+        },
+        "constraintName": "fk_expense_titles_to_maintenance_expenses",
+        "visible": true,
+        "id": "016ca863-74a3-457b-aab7-d3ddf9e5be5d"
+      },
+      {
+        "identification": false,
+        "relationshipType": "ZeroN",
+        "startRelationshipType": "Dash",
+        "start": {
+          "tableId": "7cf18bad-8909-473b-8127-c1ebe5d71492",
+          "columnIds": [
+            "0a931eae-6459-47a7-ab14-cda9089e4a64"
+          ],
+          "x": 1550.7515,
+          "y": 1525.1078,
+          "direction": "left"
+        },
+        "end": {
+          "tableId": "5ce47a94-bca0-461d-87bd-1cc218a08baa",
+          "columnIds": [
+            "f0d86441-ecc4-4975-9329-8c6cba7cf931"
+          ],
+          "x": 1430.89823515625,
+          "y": 1425.5355,
+          "direction": "right"
+        },
+        "constraintName": "fk_expense_types_to_expense_titles",
+        "visible": true,
+        "id": "eac1bcaf-f9d5-44ae-a6fe-9ec55ab5c1db"
       }
     ]
   }
