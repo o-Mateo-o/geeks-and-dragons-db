@@ -107,6 +107,8 @@ Na końcu znajdujemy też formalne __wyjaśnienie, że struktura spełnia standa
   
 Poniżej przedstawiony jest w krokach __sposób użycia__ poszczególnych części aplikacji. Kroki (1-3) są przygotowawcze i dość oczywiste. Praca z właściwym skryptem i jego opcjami opisana jest w punkcie (4).
 
+Można zmienić serwer, na którym działać ma projekt, jeżeli obecnie jest inny od domyślnego. Instrukcje na ten temat należy odszukać na [podstronie dotyczącej m.in. zaawansowanej konfiguracji](doc/file-struct.md) i w przedstawiony tam sposób zmodyfikować plik ustawień połączenia.
+
 ### 1. Instalacja głównych narzędzi
 
 <a id="1-instalacja-glownych-narzedzi"></a>
