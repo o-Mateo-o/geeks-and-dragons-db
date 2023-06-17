@@ -225,6 +225,8 @@ Następnie, po kolei opiszemy co znajduje się w poszczególnych tabelach, kreś
 
 ### Tabela `city`
 
+<a id="tabela-city"></a>
+
 Jest to spis wszystkich miejscowości (w naszym przypadku są to dla uproszczenia miasta Dolnego Śląska), które dotyczą bądź kiedyś dotyczyły obsługi oraz klientów.
 
 | Atrybut | Opis |
@@ -240,6 +242,8 @@ Zależności funkcyjne to:
 Nie może się tu wiele więcej zdarzyć. Możnaby też myśleć o sytuacji, gdzie klucz główny zależy od nazwy miasta. Zwróćmy jednak uwagę, że na ogół występują różne miejscowości o takich samych nazwach. Z tego powodu pomijamy tego typu zapis.
 
 ### Tabela `customers`
+
+<a id="tabela-customers"></a>
 
 Mamy tutaj zarejestrowanych klientów sklepu, czyli uczesników gier turniejowych oraz tych, którzy choć raz wypożyczali jakiś produkt. Zapisujemy ich podstawowe dane. W uproszczeniu nie zbieramy całego ich adresu zamieszkania, a jedynie miasto. Zakładamy także, że wszyscy są z Dolnego Śląska (jest to uzasadnione przybliżenie, gdyż skala działania nie jest taka, aby posiadać klientów z całego kraju, ale też nie są oni tylko z Wrocławia).
 
@@ -260,6 +264,8 @@ Zależności funkcyjne to:
 Istnieje możliwość, że adresy e-mail (`email`) lub numery telefonów (`phone`) nie są unikalne dla każdego uczestnika, gdyż w teorii kilka osób może korzystać z jednej skrzynki bądź telefonu przy kontakcie - na przykład jako organizacja. Przy uczestnictwie w wydarzeniach (takich jak choćby turnieje) jest to spotykana praktyka. To, że dodatkowo imiona, nazwiska, czy miasta niczego nie określają jednoznacznie, jest chyba oczywiste. Jedynie dodany osobno klucz główny może rozpoczynać nietrywialne zależności funkcyjne.
 
 ### Tabela `participations`
+
+<a id="tabela-participations"></a>
 
 Jest to zbiór przypisań uczestników do turniejów. Każdy uczestnik może bowiem zapisać się wiele turniejów (maksymalnie jednokrotnie każdy). Co do ilości uczestników w turnieju, dozwolona jest zerowa, ale wtedy po prostu zawody mimo ogłoszenia się nie odbędą (bez konsekwencji w bazie). Maksymalnie jest zaś ona ograniczona przez ilość określonych w turnieju partii przemnożonych przez narzucony limit uczestników w konkretnej grze.
 
@@ -285,7 +291,11 @@ Para identyfikatora turnieju oraz klienta jest sama w sobie kluczem kandydujący
 
 ### Tabela `tournaments`
 
+<a id="tabela-tournaments"></a>
+
 Są to turnieje organizowane przez sklep. Jeden turniej dotyczy jednej konkretnej gry. Każdy składa się z konkretnej ilości meczy i ma jednego pracownika-opiekuna. Każdy rekord przechowuje dodatkowe dane na temat wydarzenia samego w sobie. Wydatki na organizację obejmują zakup nagród itp. (przy czym traktujemy wszystkie wydatki razem, jako jedna płatność). W jednym czasie zaś może odbywać się wyłącznie jednen turniej. Zakładamy, że lokal nie ma możliwości na więcej.
+
+Jeżeli chodzi o schemat przeprowadzania turnieju, to dla wybranej gry rozgrywki planowane są na zasadzie drzewa. Jego wielkość zależy też od liczby zapisanych uczestników. Uczestnicy w miarę możliwości rozdzielani są tak, żeby wszystkie poziomy bazowe drzewa rozgrywek były związane z jakimś meczem (oczywiście nie zawsze z liczbą uczestników równą maksymalnej możliwej dla gry). W razie problemów z tą zasadą, któryś mecz może być opuszczony, zgodnie z regulaminem tego turnieju. Nie wpływa to jednak na zarejestrowaną dla turnieju ustaloną łączną liczbę partii.
 
 | Atrybut | Opis |
 |-------------|--------|
@@ -293,7 +303,7 @@ Są to turnieje organizowane przez sklep. Jeden turniej dotyczy jednej konkretne
 | `name` | nazwa turnieju |
 | `game_id` | numer identyfikacyjny gry używanej w turnieju (FK) |
 | `start_time` | dzień i godzina, w którym zaczyna się turniej |
-| `matches` | liczba partii w obrębie turnieju |
+| `matches` | ustalona liczba wszystkich partii w obrębie turnieju |
 | `fee` | ustalona wpisowa opłata za uczestnictwo |
 | `sign_up_deadline` | ostatni dzień, w którym otwarte są zapisy |
 | `staff_id` | numer identyfikacyjny pracownika odpowiedzialnego za turniej (FK) |
@@ -308,6 +318,8 @@ Zależności funkcyjne to:
 Sama nazwa turnieju nie identyfikuje wydarzenia, gdyż potencjalnie cykliczność może narzucić tę samą nazwę. Pozostałe (poza numerem oraz datą) atrybuty, nawet wzięte razem, nie mogą z zupełną pewnością zidentyfikować wydarzenia.
 
 ### Tabela `rental`
+
+<a id="tabela-rental"></a>
 
 Ta tabela jest rejestrem wszystkich wypożyczeń w historii sklepu. Wypożyczana jest gra z magazynu (tylko z puli tych, które są na to przeznaczone) i wydawana klientowi na okres 5 dni za stałą ustaloną kwotę, obliczaną dla każdej gry. Dodatkowo, każdy dzień przekroczenia terminu skutkuje kumulowanym naliczeniem kary w wysokości 30% ceny jednorazowego wypożyczenia gry. Zakładamy, że opłata za wypożyczenie naliczana jest od razu, a kara przy zwrocie produktu. Jeśli klient jest terminowy, płatność kary pozostawiona jest z pustym identyfikatorem. Przypadek klienta, który nigdy nie oddaje gry nie wpływa na mechanikę bazy. Jego płatność kary może być tylko inna, niż przewidują podstawowe zasady, ale o tym zdecyduje sąd.
 
@@ -334,6 +346,8 @@ Konkretny prodykukt w jednym momencie wzkazukje na wszystkie pola rekordu, bo je
 
 ### Tabela `inventory`
 
+<a id="tabela-inventory"></a>
+
 Wszystkie posiadane kiedykolwiek przez sklep gry, bo Geeks & Dragons ma na stanie wyłącznie gry. Te, które są cały czas na magazynie (lub są wypożyczone i jeszcze nie oddane) mają status aktywnych (`active = TRUE`). Jeżeli są już zniszczone, zaginą itd., ich status jest negatywny. Pozostają wtedy zatem jedynie historycznym zapisem. Każda gra jest kiedyś zakupowana przez sklep jeżeli jest w obrocie, ma ustalaną cenę. Cena będzie oczywiście mniejsza dla wynajmu. Każdy produkt ma też osobne przeznaczenie - albo jest do sprzedaży (`S`), albo na wypożyczenie (`R`), albo do użytku turniejowego (`T`). Nigdy te przeznaczenia nie są mieszane w jednym momencie, gdyż nie można wypożyczać produktu, który ma być używany w turnieju, a z drugiej strony, używane gry nie będą sprzedawane. Mamy więc ekskluzywność kategorii.
 
 | Atrybut | Opis |
@@ -354,6 +368,8 @@ Zależności funkcyjne to:
 Celowo nie wspominamy tu o zależności ceny od pary gry i jej przeznaczenia. Chcemy dopuścić możliwość, że nawet pośród tych samych gier i przeznaczenia (np. do sprzedaży), można nadawać w celach marketingowych przeceny tylko kilku sztukom (powiedzmy tym, które wystawione są na półkach podczas, gdy takie same produky leżą z inną ceną w magazynie). Naturalnie, jeżeli produkt jest przeznaczony na turnieje, nie musi dostawać swojej ceny, ale nie są to jedyne przypadki pustego pola z `price_id`. Jeżeli pracownik przyjmie dostawę, a nie zdąży wprowadzić ceny, pole pozostaje z wartością `NULL`. Nie jest to groźne, gdyż w każdym momencie można cenę nadać według bieżącej polityki sklepu. Z drugiej strony wartość `T` przeznaczenia nie zawsze wiąże się z brakiem ceny, gdyż produkt mógł z kategorii wypożyczanego być tymczasowo przeniesiony do kategorii turniejowego, bez likwidacji przypisanej ceny.
 
 ### Tabela `staff`
+
+<a id="tabela-staff"></a>
 
 W niej przechowujemy informacje o wszystkich pracownikach, którzy kiedykolwiek pracowali w firmie. Część atrybutów jest analogiczna do występujących w `customers`. Nie będziemy się nad tymi ponownie szczegółowo pochylać.
 
@@ -380,6 +396,8 @@ Znów teoretyczna (choć skrajnie mało prawdopodobna) możliwość istnienia ki
 
 ### Tabela `relationships`
 
+<a id="tabela-relationships"></a>
+
 Ciekawą (i dość osobliwą) praktyką firmy jest wtykanie nosa w życie miłosne pracowników. Mają oni raportować wszystkich swoich partnerów z okresu pracy w firmie wraz z liczbą randek (według uznania pracownika - stopień zbliżenia jest bowiem subiektywny). Co do danych personalnych partnerów, wystarczy podać ich imię i płeć (ale nie trzeba). W końcu RODO i tak dalej... Cała sytuacja ma służyć wyłącznie analizie produktywności i nie ma związku z dewiacjami właściciela. Przynajmniej taka jest oficjalna wersja.
 
 | Atrybut | Opis |
@@ -398,6 +416,8 @@ W związkiu z możliwymi odejściami i powrotami, dopuszczamy możliwość kilku
 
 ### Tabela `partners`
 
+<a id="tabela-partners"></a>
+
 Ta tabela jest "rozszerzeniem" tabeli `relationships`, zawierającym już konkretne dane na temat partnerów.
 
 | Atrybut | Opis |
@@ -414,6 +434,8 @@ Zależności funkcyjne to:
 Widać wyraźnie, że nie da się budować innych zależności funkcyjnych z tak skąpego zestawu danych o partnerach. Samo imię też oczywiście nie wyznacza płci, gdyż Wrocław wcale nie jest mocno konserwatywnym miastem.
 
 ### Tabela `payments`
+
+<a id="tabela-payments"></a>
 
 To rejestr wszystkich płatności związanych z działalnością sklepu. Jeżeli w bazie pojawia się jakikolwiek wydatek, swoim kluczem obcym odnosi się do rekordów tej tabeli. W zależności, czy pozycja w rejestrze dotyczy przychodu (np. ze sprzedaży), czy wydatku, kwoty mogą być dodatnie lub ujemne. Dodatkowo, uznajemy na ogół każdą wartość jako jedną konkretną pozycję, dotycząc jednego produktu, specyfiki itp. To, że kilka gier może być przykładowo kupione na jednen paragon notujemy numerem atrybutu `invoice`. Jest identyfikator paragonu czy faktury związanej z daną grupą płatności lub jedną płatnością. Każda płatność ma przypisaną jakąś "fakturę".
 
@@ -432,6 +454,8 @@ Wyraźnie widać, że kwota bądź numer "faktury" nie są wstanie wskazać konk
 
 ### Tabela `invoices`
 
+<a id="tabela-invoices"></a>
+
 Jest to rejestr grup płatności - faktur i paragonów związanych z dowolnymi płatnościami w firmie. Nie rozpisujemy tu większych szczegółów oprócz daty rozliczenia dla takiej grupy płatności.
 
 Warto zauważyć, że data jakiejś operacji finansowej nie jest tożsama z datą realizacji płatności! Po to właśnie mimo dat obecnych w innych tabelach, też tutaj jest osobna data. Miejmy na uwadze czas realizacji przelewów, blokady środków i inne podobne zdarzenia. Tak więc data płatności "faktury" będzie zazwyczaj taka sama jak daty operacji, ale tak nie musi być.
@@ -449,6 +473,8 @@ Zależności funkcyjne to:
 Przedstawione zależności funkcyjne są raczej oczywiste.
 
 ### Tabela `maintenance_expenses`
+
+<a id="tabela-maintenance_expenses"></a>
 
 Wszystkie historyczne wydatki związane z utrzymaniem sklepu, mediami, płacami dla pracowników (zantowane przy pracowanikach kwoty to tylko ich obecne stawki a nie cała historia) itp. Zauważmy, że nie obejmują one dostaw, gdyż te zanotowane są już przy produktach w magazynie.
 
@@ -471,6 +497,8 @@ Konieczna byłaby mechanika w systemie sklepu, która dla każdego tytułu spraw
 
 ### Tabela `expense_titles`
 
+<a id="tabela-expense_titles"></a>
+
 Są to unikalne tytuły wydatków wraz z przypisanymi kategoriami.
 
 | Atrybut | Opis |
@@ -489,6 +517,8 @@ Tytuły zą z założenia unikalne.
 
 ### Tabela `expense_types`
 
+<a id="tabela-expense_types"></a>
+
 Zawarte są w niej typy (czyli kategorie) wydatków.
 
 | Atrybut | Opis |
@@ -505,6 +535,8 @@ Zależności funkcyjne to:
 Typy wydatków utrzymaniowych są też z założenia unikalne.
 
 ### Tabela `sales`
+
+<a id="tabela-sales"></a>
 
 Jest to zestawienie wszystkich operacji zakupowych dokonanych przez klientów - zakupów oraz ewentualnych zwrotów produktów. Te drugie są oznaczane jako zwyczajne rekordy, ale z flagą `return`. Jeżeli dochodzi do zwrotu, rekord z produktem identyfikowany jest po płatności i nowo wprowadzany rekord - już oflagowany, z nowym kluczem głównym - dotyczy oddanych klientowi środków na tym danym produkcie. Ma też oczywiście nową datę, a proces może być przeprowadzany z innym pracownikiem.
 
@@ -527,6 +559,8 @@ Identyfikator płatności czy zakupu jednoznacznie wyznacza operację. W związk
 
 ### Tabela `games`
 
+<a id="tabela-games"></a>
+
 Jest to zestawienie gier zarejestrowanych przez sklep wraz ze szczegółami na temat ich rodzaju. Nie są to pozycje w magazynie, a zwyczajnie unikalne propozycje dostępne na rynku.
 
 | Atrybut | Opis |
@@ -548,6 +582,8 @@ Tytuł gry jest także unikalnym identyfikatorem. Uznajemy, że sklep nie posiad
 
 ### Tabela `game_categories`
 
+<a id="tabela-game_categories"></a>
+
 Są to kategorie tematyczne, opisujące różne gry.
 
 | Atrybut | Opis |
@@ -565,6 +601,8 @@ Mamy tutaj prostą relację jednoznaczności numeru kategorii i jej nazwy. Nie p
 
 ### Tabela `game_types`
 
+<a id="tabela-game_types"></a>
+
 Są to typy gier nieelektronicznych, jakimi określane są poszczególne pozycje na liście gier.
 
 | Atrybut | Opis |
@@ -581,6 +619,8 @@ Zależności funkcyjne to:
 Znów, mówimy o prostej dwustronnej zależności typu i jego numeru. Wyjaśnienie takiej logiki jest analogiczne do przypadku kategorii.
 
 ### Tabela `game_prices`
+
+<a id="tabela-game_prices"></a>
 
 Relacje tu zebrane to ceny za konkretne produkty w sklepie. Mogą być różne nawet dla jednego typu produktu, w zależności od jego stanu czy innych szczegółów polityki sklepu. Jeżeli produkty są przeznaczone do wypożyczenia, cena dotyczy wypożyczenia. Mechanizmy sklepu musiałyby przewidywać po prostu jednoczesną zmianę identyfikatora ceny przy zmianie przeznaczenia produktu.
 
@@ -611,5 +651,7 @@ Widzimy też, że nie ma częściowych zależności funkcyjnych atrybutów nieg�
 Wreszcie, wszystkie przedstawione przypadki zależności funkcyjnych (zarówno te wypisane, jak i przez nie implikowane) rozpoczynają się od nadklucza (daje nam to _3NF_ i _EKNF_).
 
 Wiemy, że omawiane atrybuty rozpoczynające zależności są nadkluczami, ponieważ - jak widać - identyfikują one pełne krotki. Wypisane punkty obejmują szczególne przypadki, bo tylko klucze kandydujące, ale konstruując wg. zasad wnioskowania pozostałe zależności, mamy też takie, które rozpoczynają się od niekandydujących nadkluczy.
+
+Nadmieńmy także, że zawarte w każdej tabeli kolumny `updated_at` mogą być zasadniczo dowoną datą - nawet związaną z poprawką wcześniejszego błędu. Nie informują o niczym oprócz poglądowego teminu zmian, dlatego nie rozpoczynają zależności funkcyjnych.
 
 [^1]: Razem z wieloma innymi - założenie podjęte w ramach szczegółowej decyzji, o rodzaju działalności przedsiębiorstwa, będącego obiektem rozważań.
