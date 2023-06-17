@@ -6,11 +6,25 @@ Można na razie robić kody w jakimś Jupyter Notebooku. Później się je przek
 
 ## Pierwsza faza - przygotowanie
 
-Wczytanie wszystkich tabel przygotowanych z csvek jako `prompt_games`, `prompt_last_names_male` itp.
+- Wczytanie wszystkich tabel przygotowanych z csvek jako `prompt_games`, `prompt_last_names_male` itp.
 
-Ustalam gdzieś datę otwarcia sklepu na 2 lata wstecz.
+- Ustalam gdzieś datę otwarcia sklepu na 2 lata wstecz.
 
-Konstruuję tabelę `prompt_dates`, gdzie mamy daty, dni tygodnia do dat, ale wyrzucamy wszystkie święta i niedziele. Z niej będziemy wymyślać daty, a dni nierobocze nie będą potrzebne.
+- Konstruuję tabelę `prompt_dates`, gdzie mamy daty, dni tygodnia do dat, ale wyrzucamy wszystkie święta i niedziele. Z niej będziemy wymyślać daty, a dni nierobocze nie będą potrzebne.
+
+- Modelujemy od razu ruch - na razie tylko dla dni. To ułatwi dalsze poczynania, bo tylko się dostawi temat z godzinami:
+  - ustalamy A = początkową l. klientów bez dodania zmian natężenia i B = średni dzienny wzrost
+  - zapisujemy jako np kolumnę `volume_base` w `prompt_dates` najpierw wartości floor(A + numer dnia * B) (spróbujmy z A = 6 i B = 0.01 - **będzie można tym manipulować gdyby sklep bankrutował**)
+  - dodajemy przykładowo dniami tygodnia +2 w pon, +1 we wt, +0 w śr, +4 w czw, +5 w pt, +5 w sob.
+  - do kolumny `volume_sales` dajemy max(0, `volume_base` + round(Normal(0, 1.5)))
+  - do kolumny `volume_rental` dajemy max(0,  round(40% * `volume_base` + Normal(0, 1.5))) - osobno losujemy ten szum, żeby to nie było zależne
+  - można próbowac manipilować tymi A, B czy dziennymi dodatkami, aby wychodziło ok. 1500 w sumie (nie wiem czy na rok czy w ogóle - tu pytanie do Natalii)
+
+- Jeszcze robimy tabelę procentową z numerami godzin od 8-19 (bo sklep czynny 8-20 i godz. nr 19 trwa od 19 do 20) oraz jakąś liczbą natężenia (np. nazywamy `prompt_hours`)
+  - można to wpisać ręcznie w CSV wczreśniej nawet, ale ogónie może przypominać taki przebieg, że rano mało, najwięcej osób koło 17 i samym wieczorem znowu mniej
+  - przerabiamy tę tabelę tak, że dzielimy liczby przez ich sumę, otrzymując wagi godzinowe sumujące się do 1
+
+- Jeżeli nie ma nigdzie popularności gier, to randomowo ułożyć gry z `prompt_games` ale przełożyć jamniczki na górę, a następnie w stylu gęstości rozkładu exp nadać im wagi. zrobić tak, żeby sumowały sie do 1.
 
 ## Druga faza - tabele pomocnicze
 
@@ -18,7 +32,7 @@ Konstruuję tabelę `prompt_dates`, gdzie mamy daty, dni tygodnia do dat, ale wy
 
 Biorę liczbę pracowników 6 i tworzę takiej długości DataFrame (będzie jedna podmianka).
 
-Pięciu pierwszym nadaję daty rozpoczęcia pracy z otwarciem sklepu. Losuję moment zwolnienia piątego typa z rozkładu podobnego do normalnego po indeksach z dat `prompt_dates`. Nadaję mu taką datę zwolnienia i następny dzień jako zatrudnienie pracoenika nr 6. Wszyscy oprócz zwolnionego NaN w dacie końca pracy.
+Pięciu pierwszym nadaję daty rozpoczęcia pracy z otwarciem sklepu, godziną 9:00. Losuję moment zwolnienia piątego typa z rozkładu podobnego do normalnego po indeksach z dat `prompt_dates`. Nadaję mu taką datę zwolnienia i następny dzień jako zatrudnienie pracoenika nr 6. Wszyscy oprócz zwolnionego NaN w dacie końca pracy.
 
 - wybieram płeć z równym prawdopodobieństwem
 - dla konmkretnej płci losuję imię i nazwisko z rozkładami z kolumy na `prompt_first_names_male`, `prompt_last_names_male` podzielopnej przez sumę wszystkiech w kolumnie (jako wagi) itp.
@@ -29,7 +43,20 @@ Pięciu pierwszym nadaję daty rozpoczęcia pracy z otwarciem sklepu. Losuję mo
 - nadaję updated_at jako większą z daty zatrudnienia i zwolnienia (tylkjo tak żeby nulle nie przeszkadzały)
 - temu z największą płacą nadaję stanowisko managerskie
 - nadaje im id po kolei
-  
+
+### Godziny pracy (nie używana w bazie ale pomocna)
+
+Można stworzyć tabelę week_day-hour-worker.
+
+- każdy rekord ma dzień od poniedziałku do soboty i "numer" godziny - od 8 do 19 (bo sklep jest otwarty 8-20, pon-sb. jest do 19 bo godz. nr 19 trwa 19-20)
+- bierzemy więc wszystkie kombinacje
+- dajemy przy kazdym np listy z pracownikami, co ręcznie można zadać, jak poniżej.
+
+Dla prostoty robimy to z góry tak, że
+
+- pierwszych dwóch pracuje pon-czw 8-15 i sob nd 8-14 (etat się zgadza)
+- reszta od pon do czw 14-20 i w piątek i sobotę 12-20.
+
 ### Związki
 
 Biorę `N` relacji = ceil(liczba pracowników * 1.5)
@@ -37,7 +64,7 @@ Biorę `N` relacji = ceil(liczba pracowników * 1.5)
 - Lecę w pętli po `i` in range(`N`):
   - losuję pracownika z wagą będącą jego zarobkami i przepisuję jego id oraz `i` jako staff_id i partner_id oraz jeszcze płeć pracownika na razie
   - liczba randek: losuję liczbę z rozkładu normalnego o średniej 5 i odchyleniu 2 zaokrągloną
-  - biorę losową równomiernie datę od rozpoczęcia pracy pracownika do momentu bierzącego i zapisuję ją do updated_at
+  - biorę losową równomiernie datę od rozpoczęcia pracy pracownika do momentu bierzącego i zapisuję ją do updated_at (godzina niech będzie 8:00)
 
 - nadaję im id po kolei numerki
 
@@ -56,24 +83,28 @@ Biorę `N` relacji = ceil(liczba pracowników * 1.5)
 
 Konstruuję to tak, że na razie będzie tu więcej rzeczy niż trzeba. Wykonuję kilka kroków, uzupełniając po kolei wydatki w pomocniczej tabeli. Wpisujemy datę, tytuł, kwotę, typ.
 
+Do updated_at zapisuję oprócz daty godzinę jakąś z przedziału 8-20 ale dowolną.
+
 #### Czynsz
 
-- daję 5 dzień każdego miesiąca funkcjonowania sklepu z `prompt_dates` jako dzień zapłaty za czynsz. Zawsze niech będzie to 3250.
+- daję 5 dzień każdego miesiąca funkcjonowania sklepu z `prompt_dates` jako dzień zapłaty za czynsz. Zawsze niech będzie to [1000 albo 3250 - w dokumencie mamy napisane 1000 ale nwm czy to jest realna kwota za lokal. nawet za mieszkanie płaci się więcej].
 - piszę tytuł 'czynsz [nazwa miesiąca]'
 - dodaję kolumnę z typem "czynsz"
 
 #### Energia elekryczna
 
-- znów z piątym dniem miesiąca podobnie. teraz daję tytuł 'energia elektryczna [nazwa miesiąca]' i wartość z rozkładu max( N(130, 4), 100). To "max" to takie zabezpieczenie żeby nie było...
+jakoś rozdysponowałem kwotę 500, którą napisał Adam:
+
+- znów z piątym dniem miesiąca podobnie. teraz daję tytuł 'energia elektryczna [nazwa miesiąca]' i wartość z rozkładu max( N(150, 4), 100). To "max" to takie zabezpieczenie żeby nie było...
 - typ daję jako "media"
 
 #### Woda
 
-- analogicznie. typ: media; rozkład N(30, 2), zabezpieczenie że większe od 15, tytuł woda i nazwa miesiąca
+- analogicznie. typ: media; rozkład N(50, 2), zabezpieczenie że większe od 15, tytuł woda i nazwa miesiąca
 
 #### Ogrzewanie
 
-- TYLKO OD LISTOPADA DO MARCA!!!! daję typ media, tytuł z ogrzewanie i nazwa miesiąca a wartość np. N(80, 4) ale no żeby nie było ujemne itp
+- TYLKO OD LISTOPADA DO MARCA!!!! daję typ media, tytuł z ogrzewanie i nazwa miesiąca a wartość np. N(100, 4) ale no żeby nie było ujemne itp
   
 #### Płace
 
@@ -86,15 +117,136 @@ Konstruuję to tak, że na razie będzie tu więcej rzeczy niż trzeba. Wykonuj�
 
 ### Tytuły wydatków
 
-Tak to jest dziwne, ale EKNF czasem przesadza.
+Tak to jest dziwne, ale EKNF czasem przesadza...
 
-- biorę wszystkie unikalne tytuły i kategorie z 
+- biorę wszystkie tytuły z kosztów utrzymania
+- przepisuję je razem z kategorią i updated_at do tej tabeli
+- robię drop_duplicates (po samym tytule oczywiście) - tak na wszelki wypadek, zostawiając ostatni wiersz
+- indeksuję
 
+### Typy wydatków
 
+- powtarzam proces z tytułów konstruujac tabelę wydatków. też indeksuję
 
+### Wydatki i tytuły jeszcze raz
 
-%%%%%% tu dodaję kolejne rzeczy
+- Mając indeksy w tabeli typów wydatków, zamieniam w tabeli te tytuły wydatków na indeksy z tamtej tabeli. może byc pd.merge(..., how="left) - czyli taki left joinik
+- podobny manewr robię w wydatkach w ogóle, tym razem dopisując indeksy bazujac na tytułach
 
-## Trzecia faza - czyszczenie tabeli pomocniczych, indeksowanie
+### Turnieje
 
-## Czwarta faza - ostateczne tabele z tabel pomocniczych
+- biorę liczbę turniejów w ogóle (np tak po 10 na rok) i rozdzielam równomiernie w sensie terminów
+- zapisuję ich daty startu dając jakiś szum np. Normal(0, 2 dni tabeli `prompt_dates`) ograniczony datami dzialaności sklepu. godninę startu dajemy jako 15:00 zawsze
+- daję im nazwy wg pliku
+- daję wg typu itp grę, która jest w turnieju (to musi mieć sens) - patrzę też oczywiście tylko na konkursowe z tabeli
+- dodaję datę zapisów 1/2 tygodnie wcześniej
+- daję opłatę zawsze 50 zł.
+- obliczam rundy, tworząc też kolumnę referencyjną przy zapisach uczestników:
+  - biorę z CSV S = liczbę maksymalnie grających w grę
+  - robię liczbę chętncyh C = round(losowo z rozkładu uniform(5,8) (z przecinkami) * S)
+  - biorę taką najmniejszą liczbę B, że 2^B >= C
+- dodaję ilość jako liczbę rund obliczoną rund (2^B + 2^(B-1) + ... + 2 + 1) - bo to jest takie drzewo rozgrywek
+- jakies (zwykle podobne) koszty koło
+- updated at zawsze data i godzina turnieju
+
+### Udziały
+
+- biorę dany turniej i jego liczbę C. losuję tyle uczestników z pośród indeksów uczestników.
+- dodaję za każdym razem datę zapisu w jakimś rozkładzie oczekiwania, oczywiście sprzed daty "deadline zapisów" (czyli np deadline-Poisson(1)) i losowa godzina z czasu działalności sklepu
+- w każdej z takich grup daję im miejsca jakieś, które zajęli. raczej zupełnie równomiernie i losowo.
+- dodaję płatności - przepisuję fee z turnieju
+- updaded_at jest datą+godziną zapisu i też służy potem przy ogarnięciu płatności
+
+- jak to wszystko przeprowadzę, to sortuję po datach i po kolei datami nadaję indeksy
+
+### Magazyn
+
+losujemy w kilku krokach wszystkie pozycje. będziemy zapisywac tytuły gier a dopiero później przenosic je do innej tabeli. Dodajemy też ceny zakupu z hurtowni które poźniej przeniesiemy do payments.
+
+#### Sprzedażowe
+
+- losuję N - liczbę gier sprzedażowych w ogóle. dobym pomysłem będzie wzięcie `prompt_dates` i zsumowanie wszystkich volume_sales * (1.6 + rozkład exp z jakąś lambdą)
+- mając wagi gier (która najlepiej się sprzedaje) grupami (może być w pętli) jechać tak:
+  - konstruować waga*N wierszy danych tytułów (aby proporcaj popularności była spełniona)
+  - podzielić na podgrupy tak, żeby było M = (5 * lata_funkconowania_sklepu) i biorąc daty jako M + Normal(0, 5 dni) ale ograniczać z dołu i góry rpzez daty funkcjonowania skepeu na wszelki wypadek
+  - w każdej podgrupie daję wspólny indeks fakruty. może byc `i` po którym iterujemy, ale żeby było unikalne dla partii zamówionych gier i danego tyułu
+  - nadaję każdej grze cenę, równą cenie z tabeli z CSV
+  - nadaje updated_at oraz datę przyjścia zamówienia taką samą - jako datę wylosowaną w drugim pod-kroku
+  - nadaję wszystkim pozycjom w podgrupie takie same ceny zakupu z hurtowni (80% ceny draft - można tę liczbę zmodyfikować)
+- wszystkim dajemy active=TRUE na razie
+- ndaję przeznaczenie S
+
+tu można jeszcze zakombinować coś jak pozwoli czas
+
+#### Rentalowe
+
+- losuję N - liczbę gier rentalowych. biorę tak około 70 chyba max (Nie jestem pewien, ale tych gier na pewno nie będzie za dużo. nie jestem pewien jak o tym myśleliście)
+- losuję te N gier analogicznym schewmatem jak sprzedażowe
+- ...ale daty przyjscia do magazynu daję na rozpoczęcie działalności sklepu, że niby te do wypożyczenia były od początku i nie zdązyły się zepsuć bo to tylko 2 lata. niech to bedzie w uproszczeniu na osobną fakture niż spraedażowe
+- ...jednak, jak już będą wypełnione gry z hurtowni, to przekształcam normalną cenę żeby było to 10% tej wartości (jeżeli okaze się za mało, można zwiększyć troche)
+- wszystkim dajemy active=TRUE na razie. 2 losowe można trzasnąć z FALSE, że niby się coś popsuły
+- ndaję przeznaczenie R
+
+#### Turniejowe
+
+- grupuję tabelę turniejów po grach i biorę maksymalną liczbę B w grupach, bo jest to liczba partii na najniższym poziomie
+- schematem podobnym do powyższych losuję te gry, ale po prostu biorę tylko te gry, które kiedyś były w turniejach już i biorę każdego liczbę nie inną niż B (mogłoby być lepiej ale to na pewno zabezpiecza logikę)
+- ceny zostawiam NaN
+- nadaję przeznaczenie T
+- daty przyjscia do magazynu daję na rozpoczęcie działalności sklepu, że niby były od początku i nie zdązyły się zepsuć bo to tylko 2 lata. niech to bedzie w uproszczeniu na osobną fakture niż spraedażowe
+
+Łączę to wszysttko razem w jedną tabelę.
+
+### Sprzedaże
+
+% TBA
+
+### Rentale
+
+% TBA
+
+### Gry
+
+- wszustkie użyte w inventory gry przekładam sobie do tabeli z grami
+- nadaję updated_at takie, jak pierwsze kupno gry w magazynie (to można sb pogrupować i wziąć min)
+- w sumie kopiuje informacje z `prompt_games`, żeby tam
+
+### Kateorie gier i typy gier
+
+- unikalne kategorie i typy, obecne w tabeli z grami, przezucam do tych tabel, nadaję indeksy (sortując pierwej wg dat wystąpienia)
+- dodaję potem te indeksy w grach jako klucze obce
+
+### Klienci - część B
+
+- patrzę na udziały w zawodach oraz rentale. "klientów", którzy nic nie zrobili usuwam po prostu z tabeli
+- biorę wszystkie udziały i rentale, grupując po kliencie. w tabeli klientów przepisuję te daty jako min z obu jako updated_at (to jest "data rejestracji")
+- sortuję po tych datach rejestracji i dodaję im wtedy kluczę. w tabelach dot. udziałów w turniejach i rentalach przypisuję klucze obce wg nowego schematu - czyli tłumacząc stare id klientów na nowe, już ostateczne.
+
+Do tego oczywiście:
+
+- losuję dane osobowe customerów podobnym schematem jak u pracowników, tylko oczywiście jest mniej dancyh potrzebnych
+
+### Miasta
+
+- patrze na wszystkie miasta, które mieli klienci i pracownicy, a następnie zapisuję do miast, przepisując updated_at od klienta za każdym razem jak się dodaje wiersz tu
+- sortuje po updated_at i robię drop_duplicates tak, że zostaną tylko te pierwsze wpisy. następne się "ignoruje"
+- indeksuję sobie, czyli dodaje klucz główny i nazwy miast tłmaczę w tabelach pracowników i klientów na te numeryczne klucze obce
+
+### Payments i invoices
+
+- (`payments`) zbierazm z wszystkich tabel płatności oraz numetry faktur i zapisuję je do płatności na razie razem z datami, co są zawsze podane
+- chodzi o tabele sprzedaży, rentali, wydatków utrzymaniowych, turniejów, udziałów turniejowych i magazynu
+- wprowadzam robocze "id faktury": robię tak, że łącze prefiks (np. symbol nazwy tabeli) i numer faktury tam nadany. jest to konieczne bo numery faktur są unikalne w tabelach ale nie pomiędzy nimi
+- grupuję po roboczym id wszysstkie faktury i zapisuje unikaty wraz z tymi datami, które mają do tabeli `invoices`
+- mogę przesunąć timestamp tych płatności ewentualnie o tak max godzinę z jakiegoś rozkładu Exp, bo czasem wchodzą później
+- updated_at niech zostaje takie jak powyższa wartość
+- sortuję te faktury w tabeli `invoices` po ich czasach i nadaję im nowe id jako kolejne numerki
+- tłumaczę robocze id w `payments` na nowe id, dodając updated_at takie jak w `invoices`
+
+## Trzecia faza - ostateczne tabele z tabel pomocniczych
+
+- w turniejach przerabiam analogicznym jak użwyany niejednokrotnie schematem ttuły gier na indeksy gier z tabeli games
+- ...
+- wyrzucam wszystkie niepotrzebne kolumny
+- sprawdzam czy wszystko co trzeba jest i czy jest doprze poindeksowane
+- jako rezultat jest lista zmiennych z gotowymi tabelami, które mają nazwy kolumn takie jak zaprojektowanej bazie danych
