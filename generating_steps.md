@@ -4,6 +4,8 @@ Skonsolidowane instrukcje, które wszyscy robiliśmy. Warto przeczytać dodatkow
 
 Można na razie robić kody w jakimś Jupyter Notebooku. Później się je przeklei.
 
+**Używamy przemyślanych nazw zmiennych, żeby się potem nie pogubić.**
+
 ## Pierwsza faza - przygotowanie
 
 - Wczytanie wszystkich tabel przygotowanych z csvek jako `prompt_games`, `prompt_last_names_male` itp.
@@ -36,8 +38,8 @@ Pięciu pierwszym nadaję daty rozpoczęcia pracy z otwarciem sklepu, godziną 9
 
 - wybieram płeć z równym prawdopodobieństwem
 - dla konmkretnej płci losuję imię i nazwisko z rozkładami z kolumy na `prompt_first_names_male`, `prompt_last_names_male` podzielopnej przez sumę wszystkiech w kolumnie (jako wagi) itp.
-- dać każdemu losowo ciąg 9 znaków jako nr tel, ale nie jest on dowolny! Słyszałem, że problemem w ocenie może być to jak się zaczynają (tu mamy od jakich liczb rozpoczynają się numery telefonów w Polsce: https://pl.wikipedia.org/wiki/Numery_telefoniczne_w_Polsce)
-- nadać mail z połączenia imienia i nazwiska 'first_name.last_name@poczta.pl'. Skrzynkę pocztową losować z CSVki możliwych stron (jeszcze jej nie ma).
+- dać każdemu losowo ciąg 9 znaków jako nr tel, ale nie jest on dowolny! Słyszałem, że problemem w ocenie może być to jak się zaczynają (tu mamy od jakich liczb rozpoczynają się numery telefonów w Polsce: https://pl.wikipedia.org/wiki/Numery_telefoniczne_w_Polsce) NUMERY NIE MOGĄ SIE POWTARZAĆ TEŻ!!!!
+- nadać mail z połączenia imienia i nazwiska 'first_name.last_name@poczta.pl'. Skrzynkę pocztową losować z CSVki możliwych stron (jeszcze jej nie ma). EMAILE TAK SAMO NIE MOGĄ SIE POWTARZAĆ (jakby tak było to należy dodać jakiś numerek albo co)!!!!
 - losuję - podobnie jak imię - miasto. zapisuę w kolumnie CITY ich miasto słownie (tak, na razie pewnie łatwiej będzie umieścić to tutaj i takich zabiegów jest więcej. czysszczenie w fazie III)
 - losujemy płacę dla każdego (poprzedczka 3490 + Exp z jakąś lambdą -- żeby były różne ale wszystkie większe od zadanego minimum)
 - nadaję updated_at jako większą z daty zatrudnienia i zwolnienia (tylkjo tak żeby nulle nie przeszkadzały)
@@ -135,11 +137,13 @@ Tak to jest dziwne, ale EKNF czasem przesadza...
 
 ### Turnieje
 
+Należy zadbać o to by NA PEWNO przynajmniej 5 turniejów było w ostatnim roku. Nadajmy takie ograniczeniee przy generówaniiu gdzieś dat.
+
 - biorę liczbę turniejów w ogóle (np tak po 10 na rok) i rozdzielam równomiernie w sensie terminów
 - zapisuję ich daty startu dając jakiś szum np. Normal(0, 2 dni tabeli `prompt_dates`) ograniczony datami dzialaności sklepu. godninę startu dajemy jako 15:00 zawsze
 - daję im nazwy wg pliku
 - daję wg typu itp grę, która jest w turnieju (to musi mieć sens) - patrzę też oczywiście tylko na konkursowe z tabeli
-- dodaję datę zapisów 1/2 tygodnie wcześniej
+- dodaję deldline zapisów np. 3 dni - tydzień wcześniej
 - daję opłatę zawsze 50 zł.
 - obliczam rundy, tworząc też kolumnę referencyjną przy zapisach uczestników:
   - biorę z CSV S = liczbę maksymalnie grających w grę
@@ -147,7 +151,10 @@ Tak to jest dziwne, ale EKNF czasem przesadza...
   - biorę taką najmniejszą liczbę B, że 2^B >= C
 - dodaję ilość jako liczbę rund obliczoną rund (2^B + 2^(B-1) + ... + 2 + 1) - bo to jest takie drzewo rozgrywek
 - jakies (zwykle podobne) koszty koło
+- losuję jakiś nieduży (ok do 200zł może) koszt organizacji turnieju z sensownaego rozkładu, dodaję do niego jakiś numer faktury
+- losuję z pracowników od razu indeks pracownika ale patrząc na tabelę kiedy kto pracuje (ona jest stworzona i dość prosta w obsłudze. pracownik musi być bowiem w pracy podczas turnieju)
 - updated at zawsze data i godzina turnieju
+
 
 ### Udziały
 
@@ -197,13 +204,53 @@ tu można jeszcze zakombinować coś jak pozwoli czas
 
 Łączę to wszysttko razem w jedną tabelę.
 
+### Ceny gier
+
+- grupuję magazyn po tupli kolumn (tytuł, przeznaczenie) i patrzę jakie są ceny (nie "draft" tylko te już koncowe), patrzę też na ostatnie updated_at grupy
+- przekładam te ceny do tabeli z cenami gier i przepisuję z danej "grupy" updated_at
+- indeksuję a indeksy daję jako klucze obce do cen na magazynie
+
 ### Sprzedaże
 
-% TBA
+pRzygotowuję "magazyn sprzedażowy", czyli mający same przeznaczenia "S"
+
+- biorę kolumnę `volumne_sales` z `prompt_games` czyli już ustalone losowe liczby kupujących klientów na każdy dzień
+- idę w pętli for po dniach z jakimś `j`:
+  - obsługuję w ten sposób osobno kazy dzien funkcjonowania sklepu
+  - konstruuję pętlę for po jakimś `i` in range(liczba_klientów w volume_sales tego dnia), gdzie robię taki manewr:
+    - losuję klientowi przedział godzinowy zakupów z wagami z tej tabeli gdzie one zostały stworzone
+    - losuję z rozkładu równomiernego minuty i sekundy od 0 do 1 h
+    - mam w ten sposób całą datę&godzinę zakupu
+    - losuję liczbę `P` gier zamierzonych do kupna przez klienta na raz. najczęściej 1 (np 70% szans) 2 (25 %) 3 (5 %)
+    - z gier (gier a nie magazynu!) losuję wg prawdopodobieństwa opisanego w tejże tabeli z grami `P` gier
+    - filtruję magazyn sprzedażowy, który sobie w tym kroku przygotowaliśmy po polu ACTIVE=TRUE (bo chcę gry dostępne)
+    - obcinam po dacie dostawy gry tak, żeby nie było sytuacji że kupuję profdukt, którego jeszcze nie było wtedy w sklepie i sprawdzam czy są właśnie
+      - jeżeli dana gra jest na magazynie to zmieniam jej status active na FALSE i dodaję do nasztych `sales`
+      - jeżeli nie ma takiej gry, to po prostu pomijam temat i uznajemy że klient chciał ale nie było to trudno
+    - w tabeli magazynu cały czas jest jako robocza kolumna końcowa cena - przepisuję ją tu jako wartość płatności roboczo
+    - losuję pracownika tak jak to jest zrobiono przy turniejach (czyli losując równomiernie z uwzględnieniem godzin pracy i dnia tygodnia, a te przecież znamy)
+    - nadaję indeks faktury równy tupli (i, j)
+    - nadaję updated_at takie jak data własnie jest.
+
+Przez powatarzaenie w pętlach mam wszystkie zakupy. Jakby coś nie wychodzilo to można modyfikować m.in. A i B przy wypełnianiu magazynu.
 
 ### Rentale
 
-% TBA
+Stosuję podobny proces do tego z tabeli sprzedażowwymi ale z drobnymi różnicami:
+
+- używam `volume_rental`, czyli inne liczby klientów w ogóle; oraz używam przeznaczenia "R"
+- muszę równomiernie dolosować jakieś id klienta
+- mechanizm pożyczneia-zwrotu:
+  - za każdym razem jak ktoś wypożycza grę, to daję active=FALSE
+  - losuję natomiast jeszce czas przetrzymania gry, czyli dodatnią liczbę o rozkładzie  gamma z parametrami: skali=3, kształtu=2 (nie koniecznie całe!!! mają cyć z godzinami itp)
+  - datę pożyczenia już mam bo wylosowana oczywiście, ale dodając czas przetrzymania do niej, konstruuję datę oddania. jeżeli jest ona większa niż "dzisiejsza" data, no to zostawiam NULL
+  - jeżeli data oddania nie jest null, dodaję karę w wysoikości
+  - kara ze względu na logikę rozumowania (opis w rental dokumentu db_struct.md) musi być jednak naliczana inaczej niż ustalono -- jako powiedzmy 30% ceny wypożyczenia za każdy rpzekroczony dzień. taką sumę wpisac należy w karę
+  - jeżeli data oddania nie jest null, AGAIN, ZMIENIAMI ACTIVE=TRUE (bo jest gra znów w sklepie i można brac ją)
+  - updated at to data zwrotu, a jeśli null to data rentalu
+- losuję zawsze jeszcze przez jakieś zaokrąglenie i obcięcie rozkładu pewnego oceny gier od 1 do 10 czy coś takiego (np. scipy.stats.skewnorm)
+
+Jest dopisane jeszcze założenie że klient nie może mieć 3 gier w tym samym czasie. Jeżeli uda sie to łatwo zaimplementować to można.
 
 ### Gry
 
@@ -221,6 +268,7 @@ tu można jeszcze zakombinować coś jak pozwoli czas
 - patrzę na udziały w zawodach oraz rentale. "klientów", którzy nic nie zrobili usuwam po prostu z tabeli
 - biorę wszystkie udziały i rentale, grupując po kliencie. w tabeli klientów przepisuję te daty jako min z obu jako updated_at (to jest "data rejestracji")
 - sortuję po tych datach rejestracji i dodaję im wtedy kluczę. w tabelach dot. udziałów w turniejach i rentalach przypisuję klucze obce wg nowego schematu - czyli tłumacząc stare id klientów na nowe, już ostateczne.
+- numery tel i emaile nie mogą się powtarzać ani tu między sobą, ani z tabelą `staff`. należy to sprawdzać i ewentualnie losować ponownie
 
 Do tego oczywiście:
 
@@ -245,8 +293,8 @@ Do tego oczywiście:
 
 ## Trzecia faza - ostateczne tabele z tabel pomocniczych
 
-- w turniejach przerabiam analogicznym jak użwyany niejednokrotnie schematem ttuły gier na indeksy gier z tabeli games
-- ...
+- w turniejach przerabiam analogicznym jak użwyany niejednokrotnie schematem tyuły gier na indeksy gier z tabeli games
+- sumujemy payments i sprawdzamy czy jesteśmy na plusie. jak nie no to trzeba znacznie parametry zwiększyć, żeby było bezpiecznie
 - wyrzucam wszystkie niepotrzebne kolumny
 - sprawdzam czy wszystko co trzeba jest i czy jest doprze poindeksowane
 - jako rezultat jest lista zmiennych z gotowymi tabelami, które mają nazwy kolumn takie jak zaprojektowanej bazie danych
