@@ -3,9 +3,9 @@
     "version": "2.2.11",
     "width": 2000,
     "height": 2000,
-    "scrollTop": -746,
-    "scrollLeft": -441,
-    "zoomLevel": 0.6,
+    "scrollTop": -947.066666666663,
+    "scrollLeft": -179.7333333333344,
+    "zoomLevel": 1,
     "show": {
       "tableComment": true,
       "columnComment": true,
@@ -329,7 +329,7 @@
           "active": false,
           "left": 581.4623,
           "top": 1660.0344,
-          "zIndex": 18,
+          "zIndex": 8,
           "widthName": 60,
           "widthComment": 60
         },
@@ -591,7 +591,7 @@
           "active": false,
           "left": 1317.0943,
           "top": 228.6665,
-          "zIndex": 8,
+          "zIndex": 3,
           "widthName": 60,
           "widthComment": 60
         },
@@ -768,7 +768,7 @@
           "active": false,
           "left": 417.9849,
           "top": 1156.5582,
-          "zIndex": 26,
+          "zIndex": 19,
           "widthName": 60,
           "widthComment": 60
         },
@@ -853,7 +853,7 @@
           "active": false,
           "left": 901.9882,
           "top": 572.6896,
-          "zIndex": 13,
+          "zIndex": 7,
           "widthName": 61.97900390625,
           "widthComment": 60
         },
@@ -1030,7 +1030,7 @@
           "active": false,
           "left": 60,
           "top": 409.733,
-          "zIndex": 2,
+          "zIndex": 14,
           "widthName": 61.9599609375,
           "widthComment": 60
         },
@@ -1207,7 +1207,7 @@
           "active": false,
           "left": 56.6667,
           "top": 853.8813,
-          "zIndex": 11,
+          "zIndex": 5,
           "widthName": 78.59716796875,
           "widthComment": 60
         },
@@ -1428,9 +1428,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 53.1403,
-          "top": 1387.3891,
-          "zIndex": 15,
+          "left": 47.1403,
+          "top": 1425.3891,
+          "zIndex": 13,
           "widthName": 74.26171875,
           "widthComment": 60
         },
@@ -1515,7 +1515,7 @@
           "active": false,
           "left": 1013.0076,
           "top": 1174.5972,
-          "zIndex": 21,
+          "zIndex": 18,
           "widthName": 72.82080078125,
           "widthComment": 60
         },
@@ -1738,7 +1738,7 @@
           "active": false,
           "left": 577.5884,
           "top": 724.0525,
-          "zIndex": 24,
+          "zIndex": 10,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1892,7 +1892,7 @@
           "active": false,
           "left": 1141.9837,
           "top": 1479.3882,
-          "zIndex": 20,
+          "zIndex": 9,
           "widthName": 60,
           "widthComment": 60
         },
@@ -1977,7 +1977,7 @@
           "active": false,
           "left": 768.3673,
           "top": 83.3331,
-          "zIndex": 9,
+          "zIndex": 4,
           "widthName": 76.42626953125,
           "widthComment": 60
         },
@@ -2106,9 +2106,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 1107.0559,
-          "top": 1766.3171,
-          "zIndex": 19,
+          "left": 1111.0559,
+          "top": 1764.3171,
+          "zIndex": 16,
           "widthName": 74.9853515625,
           "widthComment": 60
         },
@@ -2216,7 +2216,7 @@
           "active": false,
           "left": 1591.2177734375,
           "top": 1716.4966,
-          "zIndex": 12,
+          "zIndex": 6,
           "widthName": 60,
           "widthComment": 60
         },
@@ -2370,7 +2370,7 @@
           "active": false,
           "left": 1558.3148,
           "top": 1284.5831,
-          "zIndex": 6,
+          "zIndex": 2,
           "widthName": 139.31884765625,
           "widthComment": 60
         },
@@ -2478,7 +2478,7 @@
           "active": false,
           "left": 1175.3688,
           "top": 936.3633,
-          "zIndex": 25,
+          "zIndex": 11,
           "widthName": 60,
           "widthComment": 60
         },
@@ -2606,18 +2606,18 @@
           "columnIds": [
             "1095e4d0-3573-45b5-9497-10ab11463012"
           ],
-          "x": 629.2187867187499,
-          "y": 1369.0582,
-          "direction": "bottom"
+          "x": 417.9849,
+          "y": 1262.8082,
+          "direction": "left"
         },
         "end": {
           "tableId": "be2de2e4-2446-4a0d-aeb2-03e2b843f3eb",
           "columnIds": [
             "3947f1c1-8f2b-488f-8ca4-10f7943e9420"
           ],
-          "x": 535.8600265625,
-          "y": 1429.6391,
-          "direction": "right"
+          "x": 167.820231640625,
+          "y": 1425.3891,
+          "direction": "top"
         },
         "constraintName": "fk_game_to_competitions",
         "visible": true,
@@ -2632,8 +2632,8 @@
           "columnIds": [
             "84cb4dab-13d4-4931-aa8f-f2f39a6da3a0"
           ],
-          "x": 294.50016328125,
-          "y": 1387.3891,
+          "x": 409.180094921875,
+          "y": 1425.3891,
           "direction": "top"
         },
         "end": {
@@ -2823,8 +2823,8 @@
           "columnIds": [
             "f8e5b603-64cd-47b4-b0a3-ceb268afc9fd"
           ],
-          "x": 1107.0559,
-          "y": 1852.0671,
+          "x": 1111.0559,
+          "y": 1850.0671,
           "direction": "left"
         },
         "constraintName": "fk_staff_to_dates",
@@ -2849,8 +2849,8 @@
           "columnIds": [
             "9310f37b-87f1-4f93-9ee5-4f71a7510d64"
           ],
-          "x": 1523.7600015625,
-          "y": 1852.0671,
+          "x": 1527.7600015625,
+          "y": 1850.0671,
           "direction": "right"
         },
         "constraintName": "fk_partners_to_dates",
@@ -2927,8 +2927,8 @@
           "columnIds": [
             "63214b84-3e9e-4971-99cf-2572137a7854"
           ],
-          "x": 535.8600265625,
-          "y": 1514.1391,
+          "x": 529.8600265625,
+          "y": 1488.7641,
           "direction": "right"
         },
         "constraintName": "fk_staff_to_tournaments",
@@ -2979,8 +2979,8 @@
           "columnIds": [
             "99b89315-8501-4511-afc9-5ad2aec7535c"
           ],
-          "x": 535.8600265625,
-          "y": 1598.6391,
+          "x": 529.8600265625,
+          "y": 1615.5141,
           "direction": "right"
         },
         "constraintName": "fk_payments_to_tournaments",
