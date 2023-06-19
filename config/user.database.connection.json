@@ -1,0 +1,7 @@
+{
+  "host": "giniewicz.it",
+  "port": 3306,
+  "database": "jamniczki",
+  "username": "team17",
+  "password": "jamnik@policyjny"
+}

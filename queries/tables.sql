@@ -1,3 +1,4 @@
+SET FOREIGN_KEY_CHECKS=0;
 CREATE OR REPLACE TABLE city (
     city_id INT NOT NULL AUTO_INCREMENT,
     city VARCHAR(40) NOT NULL,
@@ -82,7 +83,8 @@ CREATE OR REPLACE TABLE participations (
     sign_up_date TIMESTAMP NOT NULL,
     fee_payment_id INT NOT NULL UNIQUE,
     updated_at TIMESTAMP NOT NULL,
-    PRIMARY KEY (particip_id) CONSTRAINT UC_participation UNIQUE (tournament_id, customer_id)
+    PRIMARY KEY (particip_id),
+    CONSTRAINT UC_participation UNIQUE (tournament_id, customer_id)
   );
 CREATE OR REPLACE TABLE partners (
     partner_id INT NOT NULL AUTO_INCREMENT,
@@ -132,7 +134,7 @@ CREATE OR REPLACE TABLE sales (
     staff_id INT NOT NULL,
     payment_id INT NOT NULL UNIQUE,
     date TIMESTAMP NOT NULL,
-    return BOOLEAN NOT NULL DEFAULT FALSE,
+    return_oper BOOLEAN NOT NULL DEFAULT FALSE,
     updated_at TIMESTAMP NOT NULL,
     PRIMARY KEY (sale_id)
   );
@@ -218,3 +220,4 @@ ALTER TABLE maintenance_expenses
 ADD CONSTRAINT FK_expense_titles_TO_maintenance_expenses FOREIGN KEY (title_id) REFERENCES expense_titles (title_id);
 ALTER TABLE expense_titles
 ADD CONSTRAINT FK_expense_types_TO_expense_titles FOREIGN KEY (expenses_type_id) REFERENCES expense_types (expenses_type_id);
+SET FOREIGN_KEY_CHECKS=1;

@@ -187,7 +187,7 @@ erDiagram
         INT inventory_id FK
         INT staff_id FK
         INT payment_id FK
-        BOOLEAN return
+        BOOLEAN return_oper
         TIMESTAMP date
         TIMESTAMP updated_at
     }
@@ -538,7 +538,7 @@ Typy wydatków utrzymaniowych są też z założenia unikalne.
 
 <a id="tabela-sales"></a>
 
-Jest to zestawienie wszystkich operacji zakupowych dokonanych przez klientów - zakupów oraz ewentualnych zwrotów produktów. Te drugie są oznaczane jako zwyczajne rekordy, ale z flagą `return`. Jeżeli dochodzi do zwrotu, rekord z produktem identyfikowany jest po płatności i nowo wprowadzany rekord - już oflagowany, z nowym kluczem głównym - dotyczy oddanych klientowi środków na tym danym produkcie. Ma też oczywiście nową datę, a proces może być przeprowadzany z innym pracownikiem.
+Jest to zestawienie wszystkich operacji zakupowych dokonanych przez klientów - zakupów oraz ewentualnych zwrotów produktów. Te drugie są oznaczane jako zwyczajne rekordy, ale z flagą `return_oper`. Jeżeli dochodzi do zwrotu, rekord z produktem identyfikowany jest po płatności i nowo wprowadzany rekord - już oflagowany, z nowym kluczem głównym - dotyczy oddanych klientowi środków na tym danym produkcie. Ma też oczywiście nową datę, a proces może być przeprowadzany z innym pracownikiem.
 
 | Atrybut | Opis |
 |-------------|--------|
@@ -547,13 +547,13 @@ Jest to zestawienie wszystkich operacji zakupowych dokonanych przez klientów - 
 | `staff_id` | numer identyfilkacyjny pracownika obsługującego sprzedaż (FK) |
 | `payment_id` | numer identyfikacyjny płatności (FK) |
 | `date` | data i godzina związana z zakupem |
-| `return` | flaga oznaczająca, że dana operacja jest zwrotem produktu |
+| `return_oper` | flaga oznaczająca, że dana operacja jest zwrotem produktu |
 | `updated_at` | moment ostatniej zmiany w krotce |
 
 Zależności funkcyjne to:
 
-- {`sale_id`} &rarr; {`inventory_id`, `staff_id`, `payment_id`, `date`, `updated_at`}
-- {`payment_id`} &rarr; {`sale_id`, `inventory_id`, `staff_id`, `date`, `updated_at`}
+- {`sale_id`} &rarr; {`inventory_id`, `staff_id`, `payment_id`, `date`, `return_oper`, `updated_at`}
+- {`payment_id`} &rarr; {`sale_id`, `inventory_id`, `staff_id`, `date`, `return_oper`, `updated_at`}
 
 Identyfikator płatności czy zakupu jednoznacznie wyznacza operację. W związku z tym, iż może dojść do zwrotów (legalnych w świetle prawa), produkt nie rozpoczyna żadnej zależności funkcyjnej. O dacie czy pracowniku chyba nie trzeba wspominać.
 
