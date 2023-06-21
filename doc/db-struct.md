@@ -1,6 +1,6 @@
 # Dokumentacja konstrukcji bazy danych
 
-Dokumnetujemy tu działanie bazy danych dla stacjonarnego sklepu Geeks & Dragons, funkcjonującego we Wrocławiu od dwóch lat[^1]. Zajmuje się on sprzedażą i wypożyczaniem gier planszowych (oraz podobnych) oraz organizacją turniejów w tych grach.
+Dokumentujemy tu działanie bazy danych dla stacjonarnego sklepu Geeks & Dragons, funkcjonującego we Wrocławiu od dwóch lat[^1]. Zajmuje się on sprzedażą i wypożyczaniem gier planszowych (oraz podobnych) oraz organizacją turniejów w tych grach.
 
 ## Spis treści
 
@@ -239,7 +239,7 @@ Zależności funkcyjne to:
 
 - {`city_id`} &rarr; {`city`, `updated_at`}
 
-Nie może się tu wiele więcej zdarzyć. Możnaby też myśleć o sytuacji, gdzie klucz główny zależy od nazwy miasta. Zwróćmy jednak uwagę, że na ogół występują różne miejscowości o takich samych nazwach. Z tego powodu pomijamy tego typu zapis.
+Nie może się tu wiele więcej zdarzyć. Można by też myśleć o sytuacji, gdzie klucz główny zależy od nazwy miasta. Zwróćmy jednak uwagę, że na ogół występują różne miejscowości o takich samych nazwach. Z tego powodu pomijamy tego typu zapis.
 
 ### Tabela `customers`
 
@@ -450,7 +450,7 @@ Zależności funkcyjne to:
 
 - {`payment_id`} &rarr; {`amount`, `invoice_id`, `updated_at`}
 
-Wyraźnie widać, że kwota bądź numer "faktury" nie są wstanie wskazać konkretnej płatności nawet razem.
+Wyraźnie widać, że kwota bądź numer "faktury" nie są w stanie wskazać konkretnej płatności nawet razem.
 
 ### Tabela `invoices`
 
@@ -491,7 +491,7 @@ Zależności funkcyjne to:
 - {`spend_id`} &rarr; {`title_id`, `payment_id`, `date`, `updated_at`}
 - {`payment_id`} &rarr; {`spend_id`, `title_id`, `date`, `updated_at`}
 
-Aby zapobiec istnieniu w tabeli tytułów implikująceych konkretny typ wydatku, a mogących się powtarzać, mamy tu tylko referencje do tytułów. Niestety tytuł nie jest nadkluczem i dodatkowa struktura jest wymagana w żądanej postaci normalnej.
+Aby zapobiec istnieniu w tabeli tytułów implikujących konkretny typ wydatku, a mogących się powtarzać, mamy tu tylko referencje do tytułów. Niestety tytuł nie jest nadkluczem i dodatkowa struktura jest wymagana w żądanej postaci normalnej.
 
 Konieczna byłaby mechanika w systemie sklepu, która dla każdego tytułu sprawdza czy ten już istniał. Brzmi to na niezbyt sensowną logikę, ale pewne wymagania należy formalnie spełnić.
 
