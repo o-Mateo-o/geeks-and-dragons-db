@@ -4,7 +4,7 @@ from colorlog import ColoredFormatter
 
 def setup() -> None:
     """Set up the logger."""
-    LOG_LEVEL = logging.DEBUG
+    LOG_LEVEL = logging.INFO
     LOGFORMAT = "  %(log_color)s%(levelname)s: %(message)s%(reset)s"
 
     logging.root.setLevel(LOG_LEVEL)
