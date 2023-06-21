@@ -92,20 +92,20 @@ class DBArchitect(DBEngineer):
 
     @modify_safely
     def clear(self, q_type: str) -> None:
-        if q_type not in {"tables", "views"}:
-            raise ValueError(f"Unknown object type '{q_type}'")
-
+        elem_types = {"tables": "TABLE", "views": "VIEW"}
+        if q_type not in elem_types.keys():
+            raise ValueError(f"Unknown object type '{q_type}'")   
         db_name = self.db_connector.db_name
-
+        
         with self.cursor(commit=True) as crsr:
             crsr.execute(
                 f"""SELECT table_name
                             FROM information_schema.{q_type}
                             WHERE table_schema = '{db_name}';"""
             )  # NOTE that only two q_types accepted
-            tables = [row[0] for row in crsr.fetchall()]
-            for table in tables:
-                crsr.execute(f"DROP TABLE IF EXISTS {table}")
+            elems = [row[0] for row in crsr.fetchall()]
+            for elem in elems:
+                crsr.execute(f"DROP {elem_types[q_type]} IF EXISTS {elem}")
 
     @modify_safely
     def create(self, q_type: str) -> None:
@@ -126,6 +126,8 @@ class DBFiller(DBEngineer):
     def __init__(self, db_connector: DBConnector, random_data: dict) -> None:
         super().__init__(db_connector)
 
+    # def insert_row()
+    # commit!
     def run(self):
         pass
 
@@ -136,3 +138,4 @@ def push(random_data: dict, conn: MySQLConnection) -> None:
     logging.info(
         "New database tables has been filled with random values and new views have been added."
     )
+
