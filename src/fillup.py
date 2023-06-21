@@ -4,9 +4,11 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Generator
 
+import pandas as pd
 from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from mysql.connector.errors import ProgrammingError
+from tqdm import tqdm
 
 from src.connection import DBConnector, SQLError
 
@@ -22,7 +24,7 @@ class DBEngineer(ABC):
         db_connector: Custom data base connector.
     """
 
-    def __init__(self, db_connector: DBConnector, *args, **kwargs) -> None:
+    def __init__(self, db_connector: DBConnector) -> None:
         self.db_connector = db_connector
 
     @contextmanager
@@ -94,9 +96,9 @@ class DBArchitect(DBEngineer):
     def clear(self, q_type: str) -> None:
         elem_types = {"tables": "TABLE", "views": "VIEW"}
         if q_type not in elem_types.keys():
-            raise ValueError(f"Unknown object type '{q_type}'")   
+            raise ValueError(f"Unknown object type '{q_type}'")
         db_name = self.db_connector.db_name
-        
+
         with self.cursor(commit=True) as crsr:
             crsr.execute(
                 f"""SELECT table_name
@@ -123,19 +125,25 @@ class DBArchitect(DBEngineer):
 
 
 class DBFiller(DBEngineer):
-    def __init__(self, db_connector: DBConnector, random_data: dict) -> None:
-        super().__init__(db_connector)
+    def fill_table(self, table: str, df: pd.DataFrame) -> None:
+        # ! TODO: test the errors if the col number does not match
+        with self.cursor(commit=True) as crsr:
+            for row in df.values.tolist():
+                crsr.execute(f"INSERT INTO {table} VALUES {tuple(row)}")
 
-    # def insert_row()
-    # commit!
-    def run(self):
-        pass
+    def fill_all_tables(self, random_data: dict) -> None:
+        # ! TODO: check if tqdm required. otherwise delete and uninstall
+        bar_format = "Filled tables: {bar:20} {n_fmt}/{total_fmt}"
+        for table, df in tqdm(random_data.items(), bar_format=bar_format):
+            self.fill_table(table, df)
+
+    def run(self, random_data: dict):
+        self.fill_all_tables(random_data)
 
 
 def push(random_data: dict, conn: MySQLConnection) -> None:
     DBArchitect(conn).run()
-    DBFiller(conn, random_data).run()
+    DBFiller(conn).run(random_data)
     logging.info(
         "New database tables has been filled with random values and new views have been added."
     )
-

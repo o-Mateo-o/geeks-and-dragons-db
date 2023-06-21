@@ -15,8 +15,8 @@ class DBConnector:
             self.connection_settings = json.load(f)
         try:
             self.conn = connect(**self.connection_settings)
-        except ProgrammingError:
-            raise SQLError("DB Architect could not estabilish a connection.")
+        except ProgrammingError as err:
+            raise SQLError(f"DB Architect could not estabilish a connection:\n {err}.")
 
     @property
     def db_name(self):
