@@ -22,7 +22,7 @@ class DBEngineer(ABC):
         db_connector: Custom data base connector.
     """
 
-    def __init__(self, db_connector: DBConnector) -> None:
+    def __init__(self, db_connector: DBConnector, *args, **kwargs) -> None:
         self.db_connector = db_connector
 
     @contextmanager
@@ -123,13 +123,16 @@ class DBArchitect(DBEngineer):
 
 
 class DBFiller(DBEngineer):
+    def __init__(self, db_connector: DBConnector, random_data: dict) -> None:
+        super().__init__(db_connector)
+
     def run(self):
         pass
 
 
 def push(random_data: dict, conn: MySQLConnection) -> None:
     DBArchitect(conn).run()
-    DBFiller(conn).run()
+    DBFiller(conn, random_data).run()
     logging.info(
         "New database tables has been filled with random values and new views have been added."
     )
