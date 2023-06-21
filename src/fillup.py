@@ -8,15 +8,34 @@ from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from mysql.connector.errors import ProgrammingError
 
-from src.connection import DBConnector
+from src.connection import DBConnector, SQLError
 
 
 class DBEngineer(ABC):
+
+    """Abstract worker, exectuting operations on databases.
+
+    Attributes:
+        db_connector: Custom data base connector.
+
+    Args:
+        db_connector: Custom data base connector.
+    """
+
     def __init__(self, db_connector: DBConnector) -> None:
         self.db_connector = db_connector
 
     @contextmanager
     def cursor(self, commit: bool = False) -> Generator[MySQLCursor, Any, None]:
+        """Context to safely use the cursor, and close it after completing the operations.
+        It can additionally do the commit action.
+
+        Args:
+            commit (bool, optional): If the commit action is expected. Defaults to False.
+
+        Yields:
+            Generator[MySQLCursor, Any, None]: A cursor.
+        """
         crsr = self.db_connector.conn.cursor()
         try:
             yield crsr
@@ -27,10 +46,22 @@ class DBEngineer(ABC):
 
     @abstractmethod
     def run(self) -> None:
+        """Do all the core operations."""
         NotImplemented
 
 
 def modify_safely(fun: callable) -> callable:
+    """Decorate the db-related function to disable the unnecessary checks
+    during the time of function call. Catch also the incoming db-related errors
+    and handle them by passing them properly formatted.
+
+    Args:
+        fun (callable): Some db-related function.
+
+    Returns:
+        callable: A decorated function.
+    """
+
     def wrapper(*args):
         self: DBEngineer = args[0]
         with self.cursor() as crsr:
@@ -38,8 +69,7 @@ def modify_safely(fun: callable) -> callable:
             try:
                 result = fun(*args)
             except ProgrammingError as err:
-                # logging.error("asdasdasdasdasd.")
-                raise Exception(f"Error in execution: {err}")
+                raise SQLError(f"Error in execution: {err}")
             else:
                 crsr.execute("SET FOREIGN_KEY_CHECKS=1;")
                 return result
@@ -72,7 +102,7 @@ class DBArchitect(DBEngineer):
                 f"""SELECT table_name
                             FROM information_schema.{q_type}
                             WHERE table_schema = '{db_name}';"""
-            )
+            )  # NOTE that only two q_types accepted
             tables = [row[0] for row in crsr.fetchall()]
             for table in tables:
                 crsr.execute(f"DROP TABLE IF EXISTS {table}")

@@ -3,6 +3,7 @@ import argparse
 import os
 
 from src import connection, drandom, fillup, logs, reader, report
+import logging
 
 # Prepare the parser
 parser = argparse.ArgumentParser(
@@ -28,14 +29,7 @@ parser.add_argument(
     help="if added, the report will be opened in the browser",
 )
 
-
-if __name__ == "__main__":
-    # Do the logging, path and args setup
-    os.chdir(".")
-    args = parser.parse_args()
-    logs.setup()
-
-    # Perform all the possible steps
+def run(args):
     db_connector = connection.DBConnector()
     if args.fill:
         data = drandom.generate_data()
@@ -44,3 +38,15 @@ if __name__ == "__main__":
         report.generate(db_connector)
     if args.open:
         reader.open_report()
+
+if __name__ == "__main__":
+    # Do the logging, path and args setup
+    os.chdir(".")
+    args = parser.parse_args()
+    logs.setup()
+
+    # Perform all the possible steps
+    try:
+        run(args)
+    except connection.SQLError as err:
+        logging.error(err)

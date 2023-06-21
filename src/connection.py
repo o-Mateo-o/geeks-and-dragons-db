@@ -4,7 +4,11 @@ import logging
 from mysql.connector.errors import ProgrammingError
 from mysql.connector import connect
 
-class DBConnector():
+class SQLError(Exception):
+    """An error related to connection, statement execution etc."""
+    ...
+
+class DBConnector:
     def __init__(self) -> None:
         self.conn = None
         with open(Path("config/user.database.connection.json"), "r") as f:
@@ -12,16 +16,17 @@ class DBConnector():
         try:
             self.conn = connect(**self.connection_settings)
         except ProgrammingError:
-            # logging.error("Cannot connect.")
-            raise Exception("DB Architect could not estabilish a connection.")
-    
+            raise SQLError("DB Architect could not estabilish a connection.")
+
     @property
     def db_name(self):
         if self.conn:
             return self.connection_settings["database"]
         else:
             return None
-    
+
     def __del__(self) -> None:
         if self.conn:
             self.conn.close()
+
+
