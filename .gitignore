@@ -166,5 +166,5 @@ notebooks/draft/
 reports/report*
 
 # Importanlty, add the following. It contains the password
-user.database.connection.json
 *.tmp
+config/user.database.connection.json
