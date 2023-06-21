@@ -51,6 +51,8 @@ ORDER BY SUM(p.amount) DESC
 LIMIT 5;
 --DODATKOWE
 --1
+-- jest mało kategorii więc pytanie ostatecznie moze być bardziej
+-- szczegolowe niż "top 5". zrobmy po prostu analizę popularności kateg.
 SELECT gm.game_category,
     COUNT(r.rental_id) + COUNT(s.sale_id) popularity
 FROM game_categories gm
@@ -60,8 +62,7 @@ FROM game_categories gm
     LEFT JOIN sales s USING(inventory_id)
 WHERE s.return_oper IS FALSE
 GROUP BY gm.game_category
-ORDER BY COUNT(r.rental_id) + COUNT(s.sale_id) DESC
-LIMIT 5;
+ORDER BY COUNT(r.rental_id) + COUNT(s.sale_id) DESC;
 --2
 SELECT YEAR(s.date) year,
     MONTH(s.date) month,
