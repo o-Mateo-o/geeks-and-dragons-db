@@ -1,8 +1,11 @@
 import logging
-from pathlib import Path
-import jinja2
-import shutil
 import os
+import shutil
+from pathlib import Path
+
+import jinja2
+
+from src.connection import DBConnector
 
 
 class ReportCreator:
@@ -64,5 +67,5 @@ class ReportCreator:
             )
 
 
-def generate() -> None:
+def generate(db_connector: DBConnector) -> None:
     return ReportCreator().generate()
