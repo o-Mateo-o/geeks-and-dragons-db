@@ -2,7 +2,7 @@
 import argparse
 import os
 
-from src import drandom, fillup, logs, reader, report, connection
+from src import connection, drandom, fillup, logs, reader, report
 
 # Prepare the parser
 parser = argparse.ArgumentParser(
