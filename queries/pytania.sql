@@ -73,7 +73,9 @@ FROM payments p
 GROUP BY YEAR(s.date),
     MONTH(s.date)
 ORDER BY SUM(p.amount) ASC;
---3
+--3 
+--- UWAGA, LEPIEJ ZMIENIĆ NA ANALIZĘ NP SPRZEDAŻY A NIE TURNIEJÓW
+--- dni truniejowe losujemy jednostajnie i to niezbyt ciekawe
 SELECT FORMAT(CAST(t.start_time AS DATE), 'ddd') name_of_day,
     COUNT(FORMAT(CAST(t.start_time AS DATE), 'ddd')) amount
 FROM tournaments t
