@@ -2,7 +2,7 @@
 import argparse
 import os
 
-from src import analysis, drandom, fillup, logs, reader, report
+from src import drandom, fillup, logs, reader, report, connection
 
 # Prepare the parser
 parser = argparse.ArgumentParser(
@@ -36,11 +36,11 @@ if __name__ == "__main__":
     logs.setup()
 
     # Perform all the possible steps
+    db_connector = connection.DBConnector()
     if args.fill:
         data = drandom.generate_data()
-        fillup.push(data)
+        fillup.push(data, db_connector)
     if args.report:
-        analysis.generate()
-        report.generate()
+        report.generate(db_connector)
     if args.open:
         reader.open_report()

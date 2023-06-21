@@ -4,6 +4,8 @@ import jinja2
 import shutil
 import os
 
+from src.connection import DBConnector
+
 
 class ReportCreator:
     def __init__(self) -> None:
@@ -64,5 +66,5 @@ class ReportCreator:
             )
 
 
-def generate() -> None:
+def generate(db_connector: DBConnector) -> None:
     return ReportCreator().generate()
