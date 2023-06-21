@@ -1,2 +1,2 @@
 from .connection import SQLError
-from .run import CError, NoActionsError, run, setup, validate_user
+from .run import CError, NoActionsError, run, setup

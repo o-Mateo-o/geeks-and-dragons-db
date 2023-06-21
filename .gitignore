@@ -167,4 +167,3 @@ reports/report*
 
 # Importanlty, add the following. It contains the password
 *.tmp
-config/user.database.connection.json

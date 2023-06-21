@@ -9,10 +9,11 @@ class SQLError(Exception):
     ...
 
 class DBConnector:
-    def __init__(self) -> None:
+    def __init__(self, password: str) -> None:
         self.conn = None
-        with open(Path("config/user.database.connection.json"), "r") as f:
+        with open(Path("config/database.connection.json"), "r") as f:
             self.connection_settings = json.load(f)
+            self.connection_settings["password"] = password
         try:
             self.conn = connect(**self.connection_settings)
         except ProgrammingError as err:

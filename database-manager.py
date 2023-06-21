@@ -35,7 +35,6 @@ if __name__ == "__main__":
     os.chdir(".")
     args = parser.parse_args()
     dbm.setup()
-    dbm.validate_user()
     try:
         dbm.run(f=args.fill, r=args.report, o=args.open)
     except (dbm.SQLError, dbm.NoActionsError, dbm.CError) as err:
