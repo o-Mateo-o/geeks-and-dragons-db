@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 import argparse
-import logging
-import os
 
-import src as dbm
+from src import DBManagerApp
 
 # Prepare the parser
 parser = argparse.ArgumentParser(
@@ -33,12 +31,5 @@ parser.add_argument(
 
 
 if __name__ == "__main__":
-    os.chdir(".")
     args = parser.parse_args()
-    dbm.setup()
-    try:
-        dbm.run(f=args.fill, r=args.report, o=args.open)
-    except (dbm.SQLError, dbm.NoActionsError, dbm.CError) as err:
-        logging.error(err)
-    except dbm.ReportOpenError as err:
-        logging.warning(err)
+    DBManagerApp().run(f=args.fill, r=args.report, o=args.open)
