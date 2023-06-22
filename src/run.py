@@ -29,11 +29,19 @@ def setup() -> None:
     log.addHandler(stream)
     print("Database Manager has been launched.")
 
-
-def run(f: bool, r: bool, o: bool) -> None:
+def _establish_connection() -> connection.DBConnector:
     password = getpass("Enter the connection password:")
     db_connector = connection.DBConnector(password)
     print(":)")
+    return db_connector
+
+def run(f: bool, r: bool, o: bool) -> None:
+    # connection
+    if any([f, r]):
+        db_connector = _establish_connection()
+    if not any([f, r, o]):
+        raise NoActionsError("No actions selected")
+    # actions
     if f:
         data = drandom.generate_data()
         fillup.push(data, db_connector)
@@ -41,6 +49,4 @@ def run(f: bool, r: bool, o: bool) -> None:
         report.generate(db_connector)
     if o:
         reader.open_report()
-    if not any([f, r, o]):
-        raise NoActionsError("No actions selected")
     print("All the steps have been completed successfully.")

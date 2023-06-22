@@ -2,6 +2,7 @@
 import argparse
 import logging
 import os
+
 import src as dbm
 
 # Prepare the parser
@@ -27,7 +28,7 @@ parser.add_argument(
     "-o",
     "--open",
     action="store_true",
-    help="if added, the report will be opened in the browser",
+    help="if added, the report will be opened in a default browser",
 )
 
 
@@ -39,3 +40,5 @@ if __name__ == "__main__":
         dbm.run(f=args.fill, r=args.report, o=args.open)
     except (dbm.SQLError, dbm.NoActionsError, dbm.CError) as err:
         logging.error(err)
+    except dbm.ReportOpenError as err:
+        logging.warning(err)
