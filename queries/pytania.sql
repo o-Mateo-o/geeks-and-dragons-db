@@ -69,28 +69,29 @@ FROM game_categories gm
 WHERE s.return_oper IS FALSE
 GROUP BY gm.game_category
 ORDER BY COUNT(r.rental_id) + COUNT(s.sale_id) DESC;
+
 --2
-(SELECT YEAR(s.date) year,
-    MONTH(s.date) month,
+(SELECT YEAR(i.date) year,
+    MONTH(i.date) month,
     SUM(p.amount) amount
-FROM payments p
-    LEFT JOIN sales s USING(payment_id)
-WHERE s.return_oper IS FALSE
-GROUP BY YEAR(s.date),
-    MONTH(s.date)
+FROM invoices i
+    LEFT JOIN payments p USING(invoice_id)
+WHERE p.amount > 0 
+GROUP BY YEAR(i.date),
+    MONTH(i.date)
 ORDER BY SUM(p.amount) DESC
 LIMIT 1)
 
 UNION ALL
 
-(SELECT YEAR(s.date) year,
-    MONTH(s.date) month,
+(SELECT YEAR(i.date) year,
+    MONTH(i.date) month,
     SUM(p.amount) amount
-FROM payments p
-    LEFT JOIN sales s USING(payment_id)
-WHERE s.return_oper IS FALSE
-GROUP BY YEAR(s.date),
-    MONTH(s.date)
+FROM invoices i
+    LEFT JOIN payments p USING(invoice_id)
+WHERE p.amount > 0 
+GROUP BY YEAR(i.date),
+    MONTH(i.date)
 ORDER BY SUM(p.amount) ASC
 LIMIT 1);
 
