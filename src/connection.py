@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-import logging
 from mysql.connector.errors import ProgrammingError
 from mysql.connector import connect
 
