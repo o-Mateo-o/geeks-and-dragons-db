@@ -1,5 +1,4 @@
-[![Status](https://img.shields.io/badge/status-alpha-orange)]()
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Status](https://img.shields.io/badge/status-alpha-orange)]() [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 # Geeks & Dragons database
 
@@ -35,9 +34,9 @@ Strona główna:
 
 Połączone strony:
 
-- [Strukura i mechanika bazy danych](doc/db-struct.md),
-- [Pliki projektu i konfiguracja](doc/file-struct.md),
 - [Wrażenia z realizacji projektu](doc/impressions.md),
+- [Pliki projektu i konfiguracja](doc/file-struct.md),
+- [Strukura i mechanika bazy danych](doc/db-struct.md),
 - [Dokumentacja kodu źródłowego](doc/src/index.html).
 
 ## Wstęp
@@ -46,7 +45,7 @@ Połączone strony:
   
 Projekt _Geeks & Dragons database_ dotyczy kompleksowego systemu obsługi danych dla sklepu z grami nieelektronicznymi.
 
-[Tę stronę](README.md) traktować można jako główną __dokumentację__ projektu. Ze względu na obszerność niektórych wątków, pewne kwestie - m.in. strukturalne - będą opisane szczegółowo na podstronach, do których odnośniki znajdują się w odpowiednich miejscach na tej stronie.
+[Tę stronę](README.md) traktować można jako główną __dokumentację__ projektu. Ze względu na obszerność niektórych wątków, pewne kwestie - m. in. strukturalne - będą opisane szczegółowo na podstronach, do których odnośniki znajdują się w odpowiednich miejscach na tej stronie.
 
 ## Opis projektu
 
@@ -117,8 +116,7 @@ Aby używać skryptów projektu, należy przede wszystkim zainstalować na urzą
 
 Instrukcje instalacji dostępne są na podanych stronach internetowych.
 
-[![PythonVersion](https://img.shields.io/badge/Python-3.9-blue)](https://www.python.org/downloads/release/python-390/)
-[![GitBash](https://img.shields.io/badge/Git%20Bash-gray)](https://git-scm.com/download/win)
+[![PythonVersion](https://img.shields.io/badge/Python-3.9-blue)](https://www.python.org/downloads/release/python-390/) [![GitBash](https://img.shields.io/badge/Git%20Bash-gray)](https://git-scm.com/download/win)
 
 ### 2. Pobranie repozytorium
 
@@ -129,19 +127,19 @@ git clone https://github.com/o-Mateo-o/geeks-and-dragons-db.git
 cd geeks-and-dragons-db
 ```
 
-Jeżeli cały projekt jest już na urządzeniu możesz pominąć ten krok otworzyć w folderze projektu terminal Bash.
+Jeżeli cały projekt jest już na urządzeniu, możesz pominąć ten krok i otworzyć w folderze projektu terminal Bash.
 
 ### 3. Przygotowanie środowiska
 
 <a id="3-przygotowanie-srodowiska"></a>
 
-Aby przygotować się do użycia, należy uruchomić wirtualne środowisko ze wskazaną wersją Pythona oraz zainstalować zależności. W prosty sposób robimy to przygotowanym skryptem przygotowawczym:
+Aby przygotować się do użycia, należy uruchomić wirtualne środowisko ze wskazaną wersją Pythona oraz zainstalować zależności. W prosty sposób robimy to specjalnym skryptem przygotowawczym:
 
 ```bash
 source setup.sh
 ```
 
-Jeżeli Python jest zainstalowany na niestandardowej ścieżce, można łatwo zmienić ścieżkę do niego w [skrypcie przygotowawczym](setup.sh). Nie ma też problemu z wywołaniem po kolei wskazanych w skrypcie komend osobno w terminalu.
+Jeżeli Python jest zainstalowany na niestandardowej ścieżce, można łatwo zmienić ścieżkę do niego w [skrypcie przygotowawczym](setup.sh). Nie ma też problemu z wywołaniem po kolei wskazanych w skrypcie komend osobno w terminalu, bądź z zainstalowaniem zależności w jakikolwiek inny sposób.
 
 ### 4. Uruchomienie głównej aplikacji
 
@@ -159,7 +157,7 @@ Można jednak chcieć wykonywać pojedyncze kroki, podając jako argumenty inne 
 
 - Jeżeli chcemy tylko dokonać analiz i wygenerować raport, służy do tego flaga `-r`/`--report`.
 
-- Dodatkowo, można otworzyć przygotowany raport automatycznie. Do tego korzystamy z flagi `-o`/`--open`.
+- Dodatkowo, można po prostu automatycznie otworzyć przygotowany raport. Do tego korzystamy z flagi `-o`/`--open`.
 
 Kompleksowa pomoc dostępna jest także oczywiście po uruchomieniu.
 
@@ -167,7 +165,7 @@ Kompleksowa pomoc dostępna jest także oczywiście po uruchomieniu.
 ./database-manager.py -h
 ```
 
-__UWAGA!__ Za pierwszym razem możemy zostać zapytani o hasło. Postępowanie w tym przypadku jest opisane w pomocy (`-h`) oraz bezpośrednio przy komunikcie.
+__UWAGA!__ Jeżeli wybierzemy opcje wymagające pracy z bazą danych, zostaniemy zapytani o hasło. Należy je wtedy podać. Ewentualne wskazówki na ten temat są opisane w pomocy (`-h`).
 
 ## Technologie
 
@@ -175,38 +173,28 @@ Główne __technologie__ różnych kategorii, używane przy realizacji projektu,
 
 ### Podstawowe technologie
 
-[![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
-[![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)](https://mariadb.org/)
-[![Shell Script](https://img.shields.io/badge/shell_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
+[![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/) [![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)](https://mariadb.org/) [![Shell Script](https://img.shields.io/badge/shell_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
 
 ### Generowanie i analiza danych
 
-[![MySQL](https://img.shields.io/badge/mysql%20connector-%23316192.svg?style=for-the-badge)](https://pypi.org/project/mysql-connector-python/)
-[![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
-[![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white)](https://numpy.org/)
-<!-- [![SciPy](https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=%white)](https://scipy.org/) -->
-[![Matplotlib](https://img.shields.io/badge/Matplotlib-%23eeeeee.svg?style=for-the-badge&logo=matplotlib&logoColor=black)](https://matplotlib.org/)
+[![MySQL](https://img.shields.io/badge/mysql%20connector-%23316192.svg?style=for-the-badge)](https://pypi.org/project/mysql-connector-python/) [![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white)](https://pandas.pydata.org/) [![NumPy](https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white)](https://numpy.org/) [![SciPy](https://img.shields.io/badge/SciPy-%230C55A5.svg?style=for-the-badge&logo=scipy&logoColor=%white)](https://scipy.org/) [![Matplotlib](https://img.shields.io/badge/Matplotlib-%23eeeeee.svg?style=for-the-badge&logo=matplotlib&logoColor=black)](https://matplotlib.org/)
 
 ### Generowanie raportów
 
 <a id="generowanie-raportow"></a>
   
-[![Jinja](https://img.shields.io/badge/jinja-eeeeee.svg?style=for-the-badge&logo=jinja&logoColor=black)](https://jinja.palletsprojects.com/en/3.1.x/)
-[![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)](https://dev.w3.org/html5/spec-LC/)
-[![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)](https://www.w3.org/Style/CSS/Overview.en.html)
+[![Jinja](https://img.shields.io/badge/jinja-eeeeee.svg?style=for-the-badge&logo=jinja&logoColor=black)](https://jinja.palletsprojects.com/en/3.1.x/) [![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)](https://dev.w3.org/html5/spec-LC/) [![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)](https://www.w3.org/Style/CSS/Overview.en.html)
 <!-- [![PDFKit](https://img.shields.io/badge/PDFKit-d6b947.svg?style=for-the-badge)](https://pypi.org/project/pdfkit/) -->
 
 ### Dokumentacja
 
-[![Markdown](https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor=white)](https://www.markdownguide.org/)
-<!-- [![Pdoc](https://img.shields.io/badge/Pdoc-%23198030.svg?style=for-the-badge&logo=pdoc3&logoColor=black)](https://pypi.org/project/pdoc3/) -->
+[![Markdown](https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor=white)](https://www.markdownguide.org/) [![Pdoc](https://img.shields.io/badge/Pdoc-%23198030.svg?style=for-the-badge&logo=pdoc3&logoColor=black)](https://pypi.org/project/pdoc3/)
 
 ### Współpraca i przechowywanie kodu
 
 <a id="wspolpraca-i-przechowywanie-kodu"></a>
   
-[![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)](https://git-scm.com/)
-[![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/o-Mateo-o/geeks-and-dragons-db)
+[![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)](https://git-scm.com/) [![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/o-Mateo-o/geeks-and-dragons-db)
 
 ## Autorzy
 

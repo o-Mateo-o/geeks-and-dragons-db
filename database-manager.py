@@ -6,7 +6,9 @@ from src import DBManagerApp
 # Prepare the parser
 parser = argparse.ArgumentParser(
     prog="Geeks & Dragons - Database Manager",
-    description="To use the specific features of the app, add the flags.",
+    description="To use the specific features of the app, add the flags.\
+        When asked about the password, type the one received from the authors\
+        or use your own database, having altered the configuration files.",
     epilog="Note that the tool deletes all the views and tables before\
         filling the database again.",
 )
