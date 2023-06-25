@@ -31,6 +31,8 @@ Dokumentujemy tu działanie bazy danych dla stacjonarnego sklepu Geeks & Dragons
     - [Tabela `game_prices`](#tabela-game_prices)
   - [Uzasadnienie normalności postaci bazy (EKNF)](#uzasadnienie-normalności-postaci-bazy-eknf)
 
+Powrót do strony głównej: [README.md](../README.md).
+
 ## Schemat bazy danych
 
 Zaczniemy od schematu bazy danych, aby od początku mieć pojęcie, o jakiej strukturze relacyjnej mówimy. Diagram ER omawianej bazy danych przedstawiamy na poniższej interaktywnej wizualizacji.

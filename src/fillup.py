@@ -1,3 +1,5 @@
+"""Features related to the database creation and inserting the entire data set."""
+
 import logging
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
@@ -5,7 +7,6 @@ from pathlib import Path
 from typing import Any, Generator
 
 import pandas as pd
-from mysql.connector import MySQLConnection
 from mysql.connector.cursor import MySQLCursor
 from mysql.connector.errors import ProgrammingError
 from tqdm import tqdm
@@ -80,8 +81,28 @@ def modify_safely(fun: callable) -> callable:
 
 
 class DBArchitect(DBEngineer):
+    """A structure creator. Handles both tables and views cases.
+
+    Attributes:
+        db_connector: Custom data base connector.
+
+    Args:
+        db_connector: Custom data base connector.
+    """
+
     @staticmethod
     def read_queries(q_type: str) -> str:
+        """Get all the sql statements of a given type from the external file.
+
+        Args:
+            q_type (str): Type of an object group to be created.
+
+        Raises:
+            ValueError: If the type is other than tables or views.
+
+        Returns:
+            str: A list of statements.
+        """
         if q_type == "tables":
             file_path = Path("queries/tables.sql")
         elif q_type == "views":
@@ -94,6 +115,11 @@ class DBArchitect(DBEngineer):
 
     @modify_safely
     def clear(self, q_type: str) -> None:
+        """Clear the database by dropping objects of specified type.
+
+        Args:
+            q_type (str): Type of an object group to be deleted (tables, views).
+        """
         elem_types = {"tables": "TABLE", "views": "VIEW"}
         if q_type not in elem_types.keys():
             raise ValueError(f"Unknown object type '{q_type}'")
@@ -111,37 +137,86 @@ class DBArchitect(DBEngineer):
 
     @modify_safely
     def create(self, q_type: str) -> None:
+        """Create all the the tables/views in the database.
+
+        Args:
+            q_type (str): Type of an object group to be created (tables, views).
+        """
         with self.cursor(commit=True) as crsr:
             for query in self.read_queries(q_type):
                 crsr.execute(query)
 
     def build(self, q_type: str) -> None:
+        """Build a database sector by dropping a group of objects and
+        creating the new ones.
+
+        Args:
+            q_type (str): Type of an object group to be built (tables, views).
+        """
         self.clear(q_type)
         self.create(q_type)
 
     def run(self) -> None:
+        """Prepare a database by building the tables and the views."""
         self.build("tables")
         self.build("views")
 
 
 class DBFiller(DBEngineer):
+    """Database filler. Inserts all the records into the prepared database.
+
+    Attributes:
+        db_connector: Custom data base connector.
+
+    Args:
+        db_connector: Custom data base connector.
+    """
+
     def fill_table(self, table: str, df: pd.DataFrame) -> None:
+        """Fill one database table with the data provided.
+
+        Args:
+            table (str): A table name.
+            df (pd.DataFrame): Data frame representation of the table.
+                It has to keep the column order given by the database.
+        """
         # ! TODO: test the errors if the col number does not match
         with self.cursor(commit=True) as crsr:
             for row in df.values.tolist():
                 crsr.execute(f"INSERT INTO {table} VALUES {tuple(row)}")
 
     def fill_all_tables(self, random_data: dict) -> None:
+        """Fill all the database tables with the data provided.
+        Use the `fill_table` method multiple times and display the progress
+        as a bar in the terminal.
+
+        Args:
+            random_data (dict): Dictionary of table names and the
+                generated data frames.
+        """
         # ! TODO: check if tqdm required. otherwise delete and uninstall
         bar_format = "Filled tables: {bar:20} {n_fmt}/{total_fmt}"
         for table, df in tqdm(random_data.items(), bar_format=bar_format):
             self.fill_table(table, df)
 
     def run(self, random_data: dict):
+        """Fill all the tables in the database. Use the `fill_all_tables` method.
+
+        Args:
+            random_data (dict): Dictionary of table names and the
+                generated data frames.
+        """
         self.fill_all_tables(random_data)
 
 
-def push(random_data: dict, conn: MySQLConnection) -> None:
+def push(random_data: dict, conn: DBConnector) -> None:
+    """Recreate and fill the database. Log the success info.
+
+    Args:
+        random_data (dict): Dictionary of table names and the
+                generated data frames.
+        conn (DBConnector): A database connector object.
+    """
     DBArchitect(conn).run()
     DBFiller(conn).run(random_data)
     logging.info(
