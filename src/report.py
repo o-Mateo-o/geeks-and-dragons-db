@@ -1,6 +1,7 @@
+"""Features regarding the final data collection and preparing the report."""
+
+
 import logging
-import os
-import shutil
 from pathlib import Path
 
 import jinja2
@@ -8,21 +9,34 @@ import jinja2
 from src.connection import DBConnector
 
 
-class ReportCreator:
-    def __init__(self) -> None:
-        self.asset_paths = [
-            Path("assets", "static", "style.css"),
-            Path("assets", "static", "images", "top-image.jpg"),
-        ]
-        self.report_result = ""
-        self.export_path = ""
+class AssetsMissingError(Exception):
+    """Error while creating a report."""
 
-    def _add_asset(self, *path_elems) -> Path:
-        # ! USE THAT
-        path = Path(*path_elems)
-        self.asset_paths.append(path)
-        self.asset_paths = list(set(self.asset_paths))
-        return path
+
+...
+
+
+class AssetGenerator:
+    """A worker that pulls the relevant data from the server, prints the images
+    and prepares the other results for the report.
+
+    Attributes:
+        db_connector: A custom data base connector.
+
+    Args:
+        db_connector (DBConnector): A custom data base connector.
+    """
+
+    def __init__(self, db_connector: DBConnector) -> None:
+        self.db_connector = db_connector
+
+    def run(self) -> None:
+        """Prepare all the images, tables and numbers and save them as a dynamic content."""
+        NotImplemented
+
+
+class ReportCreator:
+    """Template filler which builds the whole report from the assets."""
 
     def _fill_template(self, template_str: str) -> str:
         """Fill the template using Jinja templates.
@@ -35,15 +49,8 @@ class ReportCreator:
         """
         environment = jinja2.Environment()
         template = environment.from_string(template_str)
-        context = {"name": "Siema"}
+        context = {"name": "Siema"} # ! TODO: this is ofc temporary
         return template.render(context)
-
-    def _export_assets(self) -> None:
-        for path in self.asset_paths:
-            shutil.copy(path, self.export_path)
-        index_path = self.export_path.joinpath("index.html")
-        with index_path.open("w", encoding="utf-8") as f:
-            f.write(self.report_result)
 
     def generate(self) -> str:
         """Read the template report file, fill the placeholders and save the results
@@ -53,19 +60,22 @@ class ReportCreator:
             template = Path("assets", "static", "report_template.html").read_text(
                 encoding="utf-8"
             )
-            self.report_result = self._fill_template(template)
-
-            self.export_path = Path("reports", "report1")
-            if not os.path.isdir(self.export_path):
-                os.mkdir(self.export_path)
-            self._export_assets()
-            logging.info("New report has been generated.")
-
         except FileNotFoundError:
-            logging.error(
+            AssetsMissingError(
                 "Some assets were missing. The report could not be generated."
             )
+        self.report_result = self._fill_template(template)
+        temp_export_path = Path("assets/temp_report.html")
+        # TODO ...
 
 
 def generate(db_connector: DBConnector) -> None:
-    return ReportCreator().generate()
+    """Prepare data and the assets for the report and generate it.
+    Log the success info.
+
+    Args:
+        db_connector (DBConnector): A database connector object.
+    """
+    AssetGenerator(db_connector).run()
+    ReportCreator().generate()
+    logging.info("New report has been generated.")

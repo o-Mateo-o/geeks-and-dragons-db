@@ -15,14 +15,13 @@ from src.connection import DBConnector, SQLError
 
 
 class DBEngineer(ABC):
-
     """Abstract worker, exectuting operations on databases.
 
     Attributes:
-        db_connector: Custom data base connector.
+        db_connector: A custom data base connector.
 
     Args:
-        db_connector: Custom data base connector.
+        db_connector (DBConnector): A custom data base connector.
     """
 
     def __init__(self, db_connector: DBConnector) -> None:
@@ -84,10 +83,10 @@ class DBArchitect(DBEngineer):
     """A structure creator. Handles both tables and views cases.
 
     Attributes:
-        db_connector: Custom data base connector.
+        db_connector: A custom data base connector.
 
     Args:
-        db_connector: Custom data base connector.
+        db_connector (DBConnector): A custom data base connector.
     """
 
     @staticmethod
@@ -166,10 +165,10 @@ class DBFiller(DBEngineer):
     """Database filler. Inserts all the records into the prepared database.
 
     Attributes:
-        db_connector: Custom data base connector.
+        db_connector: A custom data base connector.
 
     Args:
-        db_connector: Custom data base connector.
+        db_connector (DBConnector): A custom data base connector.
     """
 
     def fill_table(self, table: str, df: pd.DataFrame) -> None:
@@ -191,7 +190,7 @@ class DBFiller(DBEngineer):
         as a bar in the terminal.
 
         Args:
-            random_data (dict): Dictionary of table names and the
+            random_data (dict): A dictionary of table names and the
                 generated data frames.
         """
         # ! TODO: check if tqdm required. otherwise delete and uninstall
@@ -203,22 +202,22 @@ class DBFiller(DBEngineer):
         """Fill all the tables in the database. Use the `fill_all_tables` method.
 
         Args:
-            random_data (dict): Dictionary of table names and the
+            random_data (dict): A dictionary of table names and the
                 generated data frames.
         """
         self.fill_all_tables(random_data)
 
 
-def push(random_data: dict, conn: DBConnector) -> None:
+def push(random_data: dict, db_connector: DBConnector) -> None:
     """Recreate and fill the database. Log the success info.
 
     Args:
-        random_data (dict): Dictionary of table names and the
+        random_data (dict): A dictionary of table names and the
                 generated data frames.
-        conn (DBConnector): A database connector object.
+        db_connector (DBConnector): A database connector object.
     """
-    DBArchitect(conn).run()
-    DBFiller(conn).run(random_data)
+    DBArchitect(db_connector).run()
+    DBFiller(db_connector).run(random_data)
     logging.info(
         "New database tables has been filled with random values and new views have been added."
     )

@@ -1,17 +1,34 @@
+"""Random data generation pipeline and export."""
+
 import logging
 import numpy as np
 import pandas as pd
 
 
 class RandomGenerator:
+    """Random data generator.
+    
+    Attributes: Multiple helper, working and final data frames.
+
+    Args:
+        seed (int): Optional random seed. Defaults to None.
+    """
+    
     def __init__(self, seed: int = None) -> None:
         if seed is not None:
             np.random.seed(seed)
 
     def prepare_data(self):
+        # TODO: Document the pipeline
         pass
 
-    def fetch(self):
+    def fetch(self) -> dict:
+        """Gather all the final data frames and assign them to the string table names.
+
+        Returns:
+            dict: A dictionary of table names and the
+                generated data frames.
+        """
         self.prepare_data()
         return {
             "city": self.city,
@@ -37,6 +54,11 @@ class RandomGenerator:
 
 
 def generate_data() -> dict:
+    """Generate the random data set. Log the success info.
+
+    Returns:
+        dict: Dictionary of table names and the generated data frames. 
+    """
     data = {}
     # data = RandomGenerator().fetch() # ! this is the correct line
     logging.info("Random values have been generated.")
