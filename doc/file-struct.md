@@ -40,7 +40,7 @@ Poniższe drzewo projektu zawiera opisy zawartości folderów oraz poszczególny
 ┃ ┣ 📄db-struct.md              - dokumentacja mechaniki struktury bazy danych
 ┃ ┣ 📄file-struct.md            - dokumentacja struktury projektu i konfiguracji
 ┃ ┣ 📄impressions.md            - wrażenia po realizacji projektu
-┣ 📂queries                     - komendy SQL używane przy projektowaniu bazy
+┣ 📂sql                         - komendy SQL używane przy projektowaniu bazy
 ┃ ┣ 📜tables.sql                - komendy tworzące tabele
 ┃ ┣ 📜views.sql                 - komendy tworzące widoki
 ┣ 📂reports                     - wygenerowane raporty
