@@ -91,7 +91,7 @@ class DBArchitect(DBEngineer):
     """
 
     @staticmethod
-    def read_queries(q_type: str) -> str:
+    def read_statements(q_type: str) -> str:
         """Get all the sql statements of a given type from the external file.
 
         Args:
@@ -104,9 +104,9 @@ class DBArchitect(DBEngineer):
             str: A list of statements.
         """
         if q_type == "tables":
-            file_path = Path("queries/tables.sql")
+            file_path = Path("sql/tables.sql")
         elif q_type == "views":
-            file_path = Path("queries/views.sql")
+            file_path = Path("sql/views.sql")
         else:
             raise ValueError(f"Unknown object type '{q_type}'")
         with open(file_path, "r") as f:
@@ -143,7 +143,7 @@ class DBArchitect(DBEngineer):
             q_type (str): Type of an object group to be created (tables, views).
         """
         with self.cursor(commit=True) as crsr:
-            for query in self.read_queries(q_type):
+            for query in self.read_statements(q_type):
                 crsr.execute(query)
 
     def build(self, q_type: str) -> None:
