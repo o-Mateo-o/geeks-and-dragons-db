@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 import argparse
+from os import chdir
+from pathlib import Path
 
 from src import DBManagerApp
 
@@ -33,5 +35,6 @@ parser.add_argument(
 
 
 if __name__ == "__main__":
+    chdir(Path("."))
     args = parser.parse_args()
     DBManagerApp().run(f=args.fill, r=args.report, o=args.open)

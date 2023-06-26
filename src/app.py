@@ -2,8 +2,6 @@
 
 import logging
 from getpass import getpass
-from os import chdir
-from pathlib import Path
 
 from colorlog import ColoredFormatter
 
@@ -76,8 +74,12 @@ class DBManagerApp:
             reader.open_report()
 
     def run(self, f: bool, r: bool, o: bool):
-        """Set up the app (current working directory and the logger), launch it with the
-        given options and handle the errors by logging them the right way (and stopping the execution).
+        """Set up the app (the logger), launch it with the given options
+        and handle the errors by logging them the right way (and stopping the execution).
+
+        .. note::
+            The module have to be provided a list of folders such as `sql`, `reports`,
+            `assets`, `config` to work properly. Otherwise unexpected errors can occur.
 
         Args:
             f (bool): New database fill-up flag.
@@ -85,7 +87,6 @@ class DBManagerApp:
             o (bool): Open report flag.
 
         """
-        chdir(Path(".").parent)
         self._log_setup()
         try:
             self._run(f, r, o)
@@ -93,4 +94,8 @@ class DBManagerApp:
             logging.error(err)
         except reader.ReportOpenError as err:
             logging.warning(err)
+        except FileNotFoundError as err:
+            logging.fatal(
+                f"Some important files are missing: The structure is explained in `doc`.\n{err}"
+            )
         print("All the steps have been completed successfully.")
