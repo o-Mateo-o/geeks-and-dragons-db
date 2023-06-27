@@ -1,55 +1,13 @@
 """Features related to the database creation and inserting the entire data set."""
 
 import logging
-from abc import ABC, abstractmethod
-from contextlib import contextmanager
 from pathlib import Path
-from typing import Any, Generator
 
 import pandas as pd
-from mysql.connector.cursor import MySQLCursor
 from mysql.connector.errors import ProgrammingError
 from tqdm import tqdm
 
-from src.connection import DBConnector, SQLError
-
-
-class DBEngineer(ABC):
-    """Abstract worker, exectuting operations on databases.
-
-    Attributes:
-        db_connector: A custom data base connector.
-
-    Args:
-        db_connector (DBConnector): A custom data base connector.
-    """
-
-    def __init__(self, db_connector: DBConnector) -> None:
-        self.db_connector = db_connector
-
-    @contextmanager
-    def cursor(self, commit: bool = False) -> Generator[MySQLCursor, Any, None]:
-        """Context to safely use the cursor, and close it after completing the operations.
-        It can additionally do the commit action.
-
-        Args:
-            commit (bool, optional): If the commit action is expected. Defaults to False.
-
-        Yields:
-            Generator[MySQLCursor, Any, None]: A cursor.
-        """
-        crsr = self.db_connector.conn.cursor()
-        try:
-            yield crsr
-        finally:
-            crsr.close()
-            if commit:
-                self.db_connector.conn.commit()
-
-    @abstractmethod
-    def run(self) -> None:
-        """Do all the core operations."""
-        NotImplemented
+from src.connection import DBConnector, DBEngineer, SQLError
 
 
 def modify_safely(fun: callable) -> callable:

@@ -97,7 +97,7 @@ GROUP BY g.title
 ORDER BY SUM(p.amount) DESC
 LIMIT 5;
 -- q 4.1
-CREATE VIEW top_game_categories AS
+CREATE VIEW game_category_ranking AS
 SELECT gm.game_category,
     COUNT(DISTINCT r.rental_id) + COUNT(DISTINCT s.sale_id) popularity
 FROM game_categories gm
@@ -109,7 +109,7 @@ WHERE s.return_oper IS FALSE
 GROUP BY gm.game_category
 ORDER BY COUNT(DISTINCT r.rental_id) + COUNT(DISTINCT s.sale_id) DESC;
 -- q 4.2
-CREATE VIEW bw_profit_months_yearly AS (
+CREATE VIEW bw_profit_months AS (
     SELECT (
             SELECT "maximal"
         ) record_type,
