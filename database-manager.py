@@ -35,6 +35,6 @@ parser.add_argument(
 
 
 if __name__ == "__main__":
-    chdir(Path("."))
+    chdir(Path(__file__).parent.absolute())
     args = parser.parse_args()
     DBManagerApp().run(f=args.fill, r=args.report, o=args.open)
