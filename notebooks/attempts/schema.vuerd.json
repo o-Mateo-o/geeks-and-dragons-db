@@ -3,8 +3,8 @@
     "version": "2.2.11",
     "width": 2000,
     "height": 2000,
-    "scrollTop": -983.9142857142863,
-    "scrollLeft": -150.39999999999986,
+    "scrollTop": -926,
+    "scrollLeft": -448,
     "zoomLevel": 1,
     "show": {
       "tableComment": true,
@@ -1267,7 +1267,7 @@
           {
             "name": "name",
             "comment": "",
-            "dataType": "VARCHAR(60)",
+            "dataType": "VARCHAR(80)",
             "default": "",
             "option": {
               "autoIncrement": false,
@@ -1382,7 +1382,7 @@
           {
             "name": "sign_up_deadline",
             "comment": "",
-            "dataType": "DATE",
+            "dataType": "TIMESTAMP",
             "default": "",
             "option": {
               "autoIncrement": false,
@@ -1397,7 +1397,7 @@
               "pfk": false,
               "widthName": 103.92431640625,
               "widthComment": 60,
-              "widthDataType": 60,
+              "widthDataType": 76.87060546875,
               "widthDefault": 60
             },
             "id": "a997f0f3-02b8-45b4-8d37-be59da56c434"
@@ -1476,7 +1476,7 @@
           "active": false,
           "left": 59.1046,
           "top": 1399.782,
-          "zIndex": 15,
+          "zIndex": 34,
           "widthName": 74.26171875,
           "widthComment": 60
         },
@@ -2322,7 +2322,7 @@
           {
             "name": "title",
             "comment": "",
-            "dataType": "VARCHAR(50)",
+            "dataType": "VARCHAR(80)",
             "default": "",
             "option": {
               "autoIncrement": false,
@@ -2391,7 +2391,7 @@
           {
             "name": "date",
             "comment": "",
-            "dataType": "TIMESTAMP",
+            "dataType": "DATE",
             "default": "",
             "option": {
               "autoIncrement": false,
@@ -2406,7 +2406,7 @@
               "pfk": false,
               "widthName": 60,
               "widthComment": 60,
-              "widthDataType": 76.87060546875,
+              "widthDataType": 60,
               "widthDefault": 60
             },
             "id": "e1626961-6892-425c-b056-4c0dfa3692b0"
@@ -2439,7 +2439,7 @@
           "active": false,
           "left": 1545.779,
           "top": 1249.0473,
-          "zIndex": 9,
+          "zIndex": 41,
           "widthName": 139.31884765625,
           "widthComment": 60
         },
