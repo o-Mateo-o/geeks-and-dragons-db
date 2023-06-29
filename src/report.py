@@ -25,6 +25,7 @@ class AssetsMissingError(Exception):
 ...
 
 
+
 class AssetGenerator(DBEngineer):
     """A worker that pulls the relevant data from the server, prints the images
     and prepares the other results for the report.
@@ -46,16 +47,22 @@ class AssetGenerator(DBEngineer):
             "top_rented_games": pd.DataFrame(),
             "game_category_ranking": pd.DataFrame(),
             "bw_revenue_months": pd.DataFrame(),
-            "weekly_trafic": pd.DataFrame(),
+            "weekly_traffic": pd.DataFrame(),
             "sales_n_dates": pd.DataFrame(),
         }
 
     def _fetch_one(self, cursor: MySQLCursor, view_name: str) -> pd.DataFrame:
         # TODO:DOC
         try:
-            cursor.execute(f"SELECT * FROM {view_name}")
+            cursor.execute(f"SELECT * FROM {view_name};")
             result = cursor.fetchall()
-            return pd.DataFrame(result)
+            if result:
+                return pd.DataFrame(result)
+            else:
+                # in case the table is empty
+                cursor.execute(f"SHOW COLUMNS FROM {view_name};")
+                result = cursor.fetchall()
+                return pd.DataFrame({col: [] for col, *info in result})
         except ProgrammingError:
             raise SQLError(f"Could not fetch the '{view_name}' data.")
 
@@ -74,7 +81,7 @@ class AssetGenerator(DBEngineer):
 
     def export_dict(self, name: str, dictionary: str) -> None:
         with open(Path(f"assets/generated/{name}.json"), "w") as f:
-            self.connection_settings = json.load(dictionary)
+            json.dump(dictionary, f)
 
     def export_piechart(
         self, name: str, df: pd.DataFrame, val: str, labels: str
@@ -125,7 +132,7 @@ class AssetGenerator(DBEngineer):
         ax.spines["left"].set_visible(False)
         ax.get_yaxis().set_ticks([])
         # text
-        ax.set_xticks(x, df["labels"], fontweight=600, rotation=20)
+        ax.set_xticks(x, df[labels], fontweight=600, rotation=20)
         for container in ax.containers:
             ax.bar_label(container, fontweight=600, padding=5)
         # export
@@ -138,8 +145,8 @@ class AssetGenerator(DBEngineer):
         x = np.arange(df.shape[0])
         palete = sns.cubehelix_palette(rot=0.2, light=0.8, n_colors=3)
         # scater and the line
-        ax.scatter(x, df["a"], zorder=100, color=palete[2], marker="D")
-        ax.plot(x, df["a"], ls="--", zorder=50, color=palete[1])
+        ax.scatter(x, df[val], zorder=100, color=palete[2], marker="D")
+        ax.plot(x, df[val], ls="--", zorder=50, color=palete[1])
         # no colors
         fig.patch.set_facecolor((0, 0, 0, 0))
         ax.set_facecolor((0, 0, 0, 0))
@@ -150,16 +157,21 @@ class AssetGenerator(DBEngineer):
         ax.spines["left"].set_visible(False)
         # text & grid
         ax.grid(axis="y")
-        ax.set_xticks(x, df["b"], fontweight=600)
+        ax.set_xticks(x, df[labels], fontweight=600)
         # export
         plt.savefig(Path(f"assets/generated/{name}.svg"), transparent=True)
 
     def analyze(self) -> None:
         # employees
-        all_best_employees = self.data["best_employees"]
-        all_best_employees["Date"] = all_best_employees[["a", "a1"]].apply(
+        all_best_employees = self.data["best_employees"].copy()
+        fdates = all_best_employees[["month", "year"]].apply(
             lambda args: f"{calendar.month_name[args[0]]} {args[1]}", axis=1
         )
+        if fdates.empty:
+            all_best_employees["Date"] = []
+        else:
+            all_best_employees["Date"] = fdates
+        
         all_best_employees.rename(
             columns={"employee": "Employee", "number_of_sales": "Sales Number"},
             inplace=True,
@@ -168,9 +180,15 @@ class AssetGenerator(DBEngineer):
             name="table_best_employees",
             df=all_best_employees[["Date", "Employee", "Sales Number"]],
         )
+        best_empl = "NONE"
+        try:
+            best_empl = all_best_employees.iloc[0]["Employee"]
+        except IndexError:
+            logging.warning("REPORT: Best employee not found.")
+
         self.export_dict(
             name="recent_best_employee",
-            dictionary={"name": all_best_employees.iloc[0]["Employee"]},
+            dictionary={"name": best_empl},
         )
         # .........
 
@@ -201,22 +219,28 @@ class AssetGenerator(DBEngineer):
         best_revenue = self.data["bw_revenue_months"].loc[
             self.data["bw_revenue_months"]["record_type"] == "maximal"
         ]
+
+        reven_data = {"MAXIMAL_MONTH": "NONE", "MINIMAL_MONTH": "NONE"}
+        try:
+            reven_data = {
+                "worst.date": f'{calendar.month_name[worst_revenue["month"].values[0]]} {worst_revenue["year"].values[0]}',
+                "worst.amount": worst_revenue["amount"].values[0],
+                "best.date": f'{calendar.month_name[best_revenue["month"].values[0]]} ,{best_revenue["year"].values[0]}',
+                "best.amount": best_revenue["amount"].values[0],
+            }
+        except IndexError:
+            logging.warning("REPORT: Revenue data not valid.")
         self.export_dict(
             name="revenue_data",
-            dictionary={
-                "worst.date": f'{calendar.month_name[worst_revenue["month"].value[0]]} {worst_revenue["year"].value[0]}',
-                "worst.amount": worst_revenue["amount"].value[0],
-                "best.date": f'{calendar.month_name[best_revenue["month"].value[0]]} ,{best_revenue["year"].value[0]}',
-                "best.amount": best_revenue["amount"].value[0],
-            },
+            dictionary=reven_data,
         )
         # weekly traffic
-        self.data["bw_revenue_months"]["name_of_day"] = self.data["bw_revenue_months"][
+        self.data["weekly_traffic"]["name_of_day"] = self.data["weekly_traffic"][
             "name_of_day"
         ].apply(lambda name: name.capitalize())
         self.export_trendchart(
             name="weekly_traffic",
-            df=self.data["bw_revenue_months"],
+            df=self.data["weekly_traffic"],
             val="number_of_sales",
             labels="name_of_day",
         )
@@ -235,12 +259,15 @@ class AssetGenerator(DBEngineer):
             val=["Dates", "Sales"],
             labels="Employee",
         )
+        corr = self.data["sales_n_dates"]["Dates"].corr(
+                    self.data["sales_n_dates"]["Sales"], method="pearson"
+                )
+        if np.isnan(corr):
+            corr = "NONE" 
         self.export_dict(
             name="correlation",
             dictionary={
-                "pearson": self.data["sales_n_dates"]["Dates"].corr(
-                    self.data["sales_n_dates"]["Sales"], method="pearson"
-                )
+                "pearson": corr
             },
         )
 

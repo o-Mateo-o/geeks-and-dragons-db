@@ -141,7 +141,7 @@ UNION ALL
     LIMIT 1
 );
 -- q 4.3
-CREATE VIEW weekly_trafic AS
+CREATE VIEW weekly_traffic AS
 SELECT DAYNAME(s.date) name_of_day,
     COUNT(s.sale_id) number_of_sales
 FROM sales s
