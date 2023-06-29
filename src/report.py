@@ -366,7 +366,7 @@ class AssetGenerator(DBEngineer):
 
 class ReportCreator:
     """Template filler which builds the whole report from the assets.
-    
+
     Attributes:
         context: A dicttionary of jinja replaced values.
     """
@@ -436,22 +436,48 @@ class ReportCreator:
                 "The main template is missing. The report could not be generated."
             )
         self.report_result = self._fill_template(template)
-        Path("assets/generated/_temp_report.html").write_text(self.report_result, encoding="utf-8")
+        Path("assets/generated/_temp_report.html").write_text(
+            self.report_result, encoding="utf-8"
+        )
+
 
 class ToPDFConverter:
-    # TODO:DOC
+    """HTML to PDF report converter.
+    Reads the configuration when created.
+
+    Attributes:
+        config: Wkhtmltopdf configuration.
+    """
+
     def __init__(self) -> None:
         with open(Path("config/pdf.gener.json"), "r") as f:
             pdf_config = json.load(f)
         self.config = pdfkit.configuration(wkhtmltopdf=pdf_config["wkhtmltopdf.path"])
 
-    def convert(self) ->None:
-        str_html_path = str(Path("assets/generated/_temp_report.html"))
-        try: 
-            pdfkit.from_file(str_html_path, output_path='sample.pdf', configuration=self.config)
+    def convert(self) -> None:
+        """Convert the temporary HTML to PDF and delete the prior.
+
+        Raises:
+            FileNotFoundError: If there is no temporary report file.
+            AssetsMissingError: If some of the images are missing.
+        """
+        str_temp_html_path = str(Path("assets/generated/_temp_report.html"))
+        try:
+            pdfkit.from_file(
+                str_temp_html_path, output_path="sample.pdf", configuration=self.config
+            )
+        except FileNotFoundError:
+            raise FileNotFoundError("The temporary report file is missing.")
         except OSError:
-            raise AssetsMissingError("Some images are missing. The PDF report could not be generated.")
-    
+            raise AssetsMissingError(
+                "Some images are missing. The PDF report could not be generated."
+            )
+        try:
+            os.remove(str_temp_html_path)
+        except FileNotFoundError:
+            logging.warning(
+                "Temporary HTML report was not removed, because it was not found."
+            )
 
 
 def generate(db_connector: DBConnector) -> None:
@@ -463,5 +489,5 @@ def generate(db_connector: DBConnector) -> None:
     """
     AssetGenerator(db_connector).run()
     ReportCreator().generate()
-    ToPDFConverter().convert()
+    # ToPDFConverter().convert() # ! TEMP
     logging.info("New report has been generated.")

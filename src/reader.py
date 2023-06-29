@@ -57,7 +57,7 @@ class ReportOpener:
         try:
             self._open_any()
         except FileNotFoundError:
-            raise ReportOpenError("Cannot open the report. The file was not found.")
+            raise FileNotFoundError("Cannot open the report. The file was not found.")
 
 
 def open_report() -> None:
