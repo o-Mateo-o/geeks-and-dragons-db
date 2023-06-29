@@ -5,6 +5,7 @@ import subprocess
 from os import startfile
 from pathlib import Path
 from sys import platform
+import json
 
 
 class ReportOpenError(Exception):
@@ -26,11 +27,21 @@ class ReportOpener:
     def fresh_report_path(self) -> Path:
         """Get the path to the newest report.
 
+        Raises:
+            ReportOpenError: If the temp settings file was deleted manually.
+
         Returns:
             Path: A path to the newest report.
         """
-        # TODO: Evalate the newest path analyzing the dates
-        return Path("reports/report.pdf")
+        try:
+            with open(Path("reports/recent.json"), "r") as f:
+                new_path = json.load(f)["report"]
+        except FileNotFoundError:
+            raise ReportOpenError(
+                "Cannot evaluate which report is the newest one."
+                + "The memory was cleared. Please, try to generate it again (-r)."
+            )
+        return Path(new_path)
 
     def _open_any(self) -> None:
         """Open the report using the different techniques, depending on the platform.

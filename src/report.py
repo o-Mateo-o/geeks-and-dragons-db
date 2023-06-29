@@ -456,15 +456,18 @@ class ToPDFConverter:
 
     def convert(self) -> None:
         """Convert the temporary HTML to PDF and delete the prior.
+        Save the newest path in an optional config file.
 
         Raises:
             FileNotFoundError: If there is no temporary report file.
             AssetsMissingError: If some of the images are missing.
         """
         str_temp_html_path = str(Path("assets/generated/_temp_report.html"))
+        str_out_path = str(Path(f"reports/report{datetime.today().strftime('%y%m%d%H%m')}.pdf"))
+        # convert
         try:
             pdfkit.from_file(
-                str_temp_html_path, output_path="sample.pdf", configuration=self.config
+                str_temp_html_path, output_path=str_out_path, configuration=self.config
             )
         except FileNotFoundError:
             raise FileNotFoundError("The temporary report file is missing.")
@@ -472,12 +475,16 @@ class ToPDFConverter:
             raise AssetsMissingError(
                 "Some images are missing. The PDF report could not be generated."
             )
+        # remove temp data
         try:
             os.remove(str_temp_html_path)
         except FileNotFoundError:
             logging.warning(
                 "Temporary HTML report was not removed, because it was not found."
             )
+        # new path in config
+        with open(Path("reports/recent.json"), "w") as f:
+            json.dump({"report": str_out_path}, f)
 
 
 def generate(db_connector: DBConnector) -> None:
@@ -489,5 +496,5 @@ def generate(db_connector: DBConnector) -> None:
     """
     AssetGenerator(db_connector).run()
     ReportCreator().generate()
-    # ToPDFConverter().convert() # ! TEMP
+    ToPDFConverter().convert()
     logging.info("New report has been generated.")

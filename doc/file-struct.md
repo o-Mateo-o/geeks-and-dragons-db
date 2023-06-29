@@ -47,6 +47,7 @@ Poniższe drzewo projektu zawiera opisy zawartości folderów oraz poszczególny
 ┃ ┣ 📜tables.sql                - komendy tworzące tabele
 ┃ ┣ 📜views.sql                 - komendy tworzące widoki
 ┣ 📂reports                     - wygenerowane raporty
+┃ ┣ ⚙️recent.json               - dane na temat raportów przechowywane u użytkownika 
 ┃ ┣ ...
 ┣ 📂src                         - kod źródłowy aplikacji zarządzającej bazą danych
 ┃ ┣ 📜__init__.py
