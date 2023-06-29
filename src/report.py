@@ -6,6 +6,7 @@ import glob
 import json
 import logging
 import os
+from datetime import datetime
 from pathlib import Path
 from typing import Union
 
@@ -95,12 +96,11 @@ class AssetGenerator(DBEngineer):
         """
         table_id = name.replace("_", "-")
         html_table = df.to_html(table_id=table_id, index=False)
-        if not df.empty:
-            with open(Path(f"assets/generated/{name}.html"), "w") as f:
-                f.write(html_table.replace("\n", ""))
-        else:
+        with open(Path(f"assets/generated/{name}.html"), "w") as f:
+            f.write(html_table.replace("\n", ""))
+        if df.empty:
             logging.warning(
-                f"REPORT: '{name}' table was not created because of the lacking."
+                f"REPORT: '{name}' table was not created because of the lacking data."
             )
 
     def export_dict(self, name: str, dictionary: str) -> None:
@@ -110,7 +110,7 @@ class AssetGenerator(DBEngineer):
             name (str): Name of the file.
             dictionary (str): JSON dictionary of content parameters.
         """
-        with open(Path(f"assets/generated/{name}.json"), "w") as f:
+        with open(Path(f"assets/generated/{name.replace('_', '.')}.json"), "w") as f:
             json.dump(dictionary, f)
 
     def export_piechart(
@@ -301,8 +301,12 @@ class AssetGenerator(DBEngineer):
         best_revenue = self.data["bw_revenue_months"].loc[
             self.data["bw_revenue_months"]["record_type"] == "maximal"
         ]
-
-        reven_data = {"MAXIMAL_MONTH": "NONE", "MINIMAL_MONTH": "NONE"}
+        reven_data = {
+            "worst.date": "NONE",
+            "worst.amount": "NONE",
+            "best.date": "NONE",
+            "best.amount": "NONE",
+        }
         try:
             reven_data = {
                 "worst.date": f'{calendar.month_name[worst_revenue["month"].values[0]]} {worst_revenue["year"].values[0]}',
@@ -362,6 +366,46 @@ class AssetGenerator(DBEngineer):
 class ReportCreator:
     """Template filler which builds the whole report from the assets."""
 
+    def __init__(self) -> None:
+        self.context = {
+            "today": f"{datetime.today().strftime('%d.%m.%Y')} r.",
+            "table_best_employees": "",
+            "recent_best_employee_name": None,
+            "revenue_data_worst_amount": None,
+            "revenue_data_worst_date": None,
+            "revenue_data_best_amount": None,
+            "revenue_data_best_date": None,
+            "correlation_pearson": None,
+        }
+        try:
+            with open(Path("assets/generated/recent.best.employee.json")) as f:
+                recent_best_employee = json.load(f)
+                self.context["recent_best_employee_name"] = recent_best_employee["name"]
+            with open(Path("assets/generated/revenue.data.json")) as f:
+                recent_best_employee = json.load(f)
+                self.context["revenue_data_worst_amount"] = recent_best_employee[
+                    "worst.amount"
+                ]
+                self.context["revenue_data_worst_date"] = recent_best_employee[
+                    "worst.date"
+                ]
+                self.context["revenue_data_best_amount"] = recent_best_employee[
+                    "best.amount"
+                ]
+                self.context["revenue_data_best_date"] = recent_best_employee[
+                    "best.date"
+                ]
+            with open(Path("assets/generated/correlation.json")) as f:
+                recent_best_employee = json.load(f)
+                self.context["correlation_pearson"] = recent_best_employee["pearson"]
+            self.context["recent_best_employee_name"] = Path(
+                "assets/generated/table_best_employees.html"
+            ).read_text(encoding="utf-8")
+        except FileNotFoundError:
+            raise AssetsMissingError(
+                "Some assets were missing. The report could not be generated."
+            )
+
     def _fill_template(self, template_str: str) -> str:
         """Fill the template using Jinja templates.
 
@@ -373,24 +417,21 @@ class ReportCreator:
         """
         environment = jinja2.Environment()
         template = environment.from_string(template_str)
-        context = {"name": "Siema"}  # ! TODO: this is ofc temporary
-        return template.render(context)
+        return template.render(self.context)
 
-    def generate(self) -> str:
+    def generate(self) -> None:
         """Read the template report file, fill the placeholders and save the results
         in the new report file.
         """
         try:
-            template = Path("assets", "static", "report_template.html").read_text(
-                encoding="utf-8"
-            )
+            template = Path("assets/static/template.html").read_text(encoding="utf-8")
+        # ! table can be empty
         except FileNotFoundError:
             AssetsMissingError(
-                "Some assets were missing. The report could not be generated."
+                "The main template is missing. The report could not be generated."
             )
         self.report_result = self._fill_template(template)
-        temp_export_path = Path("assets/temp_report.html")
-        # TODO ...
+        Path("assets/temp_report.html").write_text(self.report_result, encoding="utf-8")
 
 
 def generate(db_connector: DBConnector) -> None:
@@ -401,5 +442,5 @@ def generate(db_connector: DBConnector) -> None:
         db_connector (DBConnector): A database connector object.
     """
     AssetGenerator(db_connector).run()
-    # ReportCreator().generate()
+    ReportCreator().generate()
     logging.info("New report has been generated.")

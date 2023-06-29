@@ -7,10 +7,10 @@
     <title>Document</title>
 </head>
 
-<body style="background-color: aquamarine;">
+<body>
     <div class="header">
         <h1>Geeks & Dragons</h1>
-        <p>Raport na dzień {{ data }} dla sklepu z grami nieelektronicznymi Geeks & Dragons.</p>
+        <p>Raport na dzień {{ today }} dla sklepu z grami nieelektronicznymi Geeks & Dragons.</p>
     </div>
     <div class="content">
         <div class="section" id="sec-pre">
@@ -56,7 +56,10 @@
         </div>
         <div class="section" id="sec-5">
             <h2>Wartości ekstremalne przychodów</h2>
-            <p>asdasd</p>
+            <p>Najmniejsze miesięczne przychody wyniosły <b>{{revenue_data_worst_amount}}</b>
+                ({{revenue_data_worst_date}})</p>
+            <p>Największe miesięczne przychody wyniosły <b>{{revenue_data_best_amount}}</b> ({{revenue_data_best_date}})
+            </p>
         </div>
         <div class="section" id="sec-6">
             <h2>Średni tygodniowy ruch w sklepie</h2>
@@ -71,8 +74,15 @@
             <p>asdasd</p>
             <div class="image-area">
                 <p>Podpis</p>
-                <img src="../generated/plot_sales_n_dates.svg" alt="Wykres porównujący liczby randek i sprzedaży u pracowników.">
+                <img src="../generated/plot_sales_n_dates.svg"
+                    alt="Wykres porównujący liczby randek i sprzedaży u pracowników.">
             </div>
+
+            <p>Korelacja to {{ correlation_pearson }}</p>
+        </div>
+        <div class="section" id="sec-end">
+            <h2>Podsumowanie</h2>
+            <p>asdasd</p>
         </div>
 
     </div>
