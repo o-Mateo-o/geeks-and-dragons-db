@@ -13,6 +13,7 @@ from typing import Union
 import jinja2
 import numpy as np
 import pandas as pd
+import pdfkit
 import seaborn as sns
 from matplotlib import pyplot as plt
 from mysql.connector import ProgrammingError
@@ -364,7 +365,11 @@ class AssetGenerator(DBEngineer):
 
 
 class ReportCreator:
-    """Template filler which builds the whole report from the assets."""
+    """Template filler which builds the whole report from the assets.
+    
+    Attributes:
+        context: A dicttionary of jinja replaced values.
+    """
 
     def __init__(self) -> None:
         self.context = {
@@ -431,7 +436,22 @@ class ReportCreator:
                 "The main template is missing. The report could not be generated."
             )
         self.report_result = self._fill_template(template)
-        Path("assets/temp_report.html").write_text(self.report_result, encoding="utf-8")
+        Path("assets/generated/_temp_report.html").write_text(self.report_result, encoding="utf-8")
+
+class ToPDFConverter:
+    # TODO:DOC
+    def __init__(self) -> None:
+        with open(Path("config/pdf.gener.json"), "r") as f:
+            pdf_config = json.load(f)
+        self.config = pdfkit.configuration(wkhtmltopdf=pdf_config["wkhtmltopdf.path"])
+
+    def convert(self) ->None:
+        str_html_path = str(Path("assets/generated/_temp_report.html"))
+        try: 
+            pdfkit.from_file(str_html_path, output_path='sample.pdf', configuration=self.config)
+        except OSError:
+            raise AssetsMissingError("Some images are missing. The PDF report could not be generated.")
+    
 
 
 def generate(db_connector: DBConnector) -> None:
@@ -443,4 +463,5 @@ def generate(db_connector: DBConnector) -> None:
     """
     AssetGenerator(db_connector).run()
     ReportCreator().generate()
+    ToPDFConverter().convert()
     logging.info("New report has been generated.")
