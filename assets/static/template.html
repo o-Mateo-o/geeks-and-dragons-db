@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body style="background-color: aquamarine;">
+    <div class="header">
+        <h1>Geeks & Dragons</h1>
+        <p>Raport na dzień {{ data }} dla sklepu z grami nieelektronicznymi Geeks & Dragons.</p>
+    </div>
+    <div class="content">
+        <div class="section" id="sec-pre">
+            <h2>Wstęp</h2>
+            <p>asdasd</p>
+
+        </div>
+        <div class="section" id="sec-1">
+            <h2>Pracownicy miesiąca</h2>
+            <p>asdasd</p>
+            <div class="table-area">
+                <p>Podpis</p>
+                {{ table_best_employees }}
+            </div>
+            <p>asdasd <b>{{ recent_best_employee_name }}</b></p>
+        </div>
+        <div class="section" id="sec-2">
+            <h2>Najlepsi zawodnicy turniejowi</h2>
+            <p>asdasd</p>
+        </div>
+        <div class="section" id="sec-3">
+            <h2>Najbardziej dochodowe gry</h2>
+            <p>asdasd</p>
+
+            <div class="image-area">
+                <p>Podpis</p>
+                <img src="../generated/top_rented_games.svg"
+                    alt="Wykres najbardziej dochodowych w wypożyczeniach gier.">
+            </div>
+
+            <div class="image-area">
+                <p>Podpis</p>
+                <img src="../generated/top_saled_games.svg" alt="Wykres najbardziej dochodowych w sprzedaży gier.">
+            </div>
+        </div>
+        <div class="section" id="sec-4">
+            <h2>Popularność kategorii gier</h2>
+            <p>asdasd</p>
+            <div class="image-area">
+                <p>Podpis</p>
+                <img src="../generated/top_categories.svg" alt="Wykres popularności poszczególnych kategorii gier.">
+            </div>
+        </div>
+        <div class="section" id="sec-5">
+            <h2>Wartości ekstremalne przychodów</h2>
+            <p>asdasd</p>
+        </div>
+        <div class="section" id="sec-6">
+            <h2>Średni tygodniowy ruch w sklepie</h2>
+            <p>asdasd</p>
+            <div class="image-area">
+                <p>Podpis</p>
+                <img src="../generated/weekly_traffic.svg" alt="Wykres średniego tygodniowego ruchu w sklepie.">
+            </div>
+        </div>
+        <div class="section" id="sec-7">
+            <h2>Życie miłosne pracowników</h2>
+            <p>asdasd</p>
+            <div class="image-area">
+                <p>Podpis</p>
+                <img src="../generated/plot_sales_n_dates.svg" alt="Wykres porównujący liczby randek i sprzedaży u pracowników.">
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

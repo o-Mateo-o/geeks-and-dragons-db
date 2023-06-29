@@ -2,8 +2,10 @@
 
 
 import calendar
+import glob
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Union
 
@@ -85,6 +87,7 @@ class AssetGenerator(DBEngineer):
 
     def export_table(self, name: str, df: pd.DataFrame) -> None:
         """Save the data frame to the file as a HTML table.
+        Do not export if the input is empty.
 
         Args:
             name (str): Name of the file.
@@ -92,8 +95,13 @@ class AssetGenerator(DBEngineer):
         """
         table_id = name.replace("_", "-")
         html_table = df.to_html(table_id=table_id, index=False)
-        with open(Path(f"assets/generated/{name}.html"), "w") as f:
-            f.write(html_table.replace("\n", ""))
+        if not df.empty:
+            with open(Path(f"assets/generated/{name}.html"), "w") as f:
+                f.write(html_table.replace("\n", ""))
+        else:
+            logging.warning(
+                f"REPORT: '{name}' table was not created because of the lacking."
+            )
 
     def export_dict(self, name: str, dictionary: str) -> None:
         """Save the selected values in a JSON format.
@@ -109,6 +117,7 @@ class AssetGenerator(DBEngineer):
         self, name: str, df: pd.DataFrame, val: str, labels: str
     ) -> None:
         """Save the pie chart created with the given data as a vector image.
+        Do not export if the input is empty.
 
         Args:
             name (str): Name of the file.
@@ -130,12 +139,18 @@ class AssetGenerator(DBEngineer):
         plt.setp(pcts, color="white")
         plt.setp(texts, fontweight=600)
         plt.tight_layout()
-        plt.savefig(Path(f"assets/generated/{name}.svg"))
+        if not df.empty:
+            plt.savefig(Path(f"assets/generated/{name}.svg"), transparent=True)
+        else:
+            logging.warning(
+                f"REPORT: '{name}' pie chart was not created because of the lacking data"
+            )
 
     def export_barchart(
         self, name: str, df: pd.DataFrame, val: Union[list, str], labels: str
     ) -> None:
         """Save the bar chart created with the given data as a vector image.
+        Do not export if the input is empty.
 
         Args:
             name (str): Name of the file.
@@ -174,12 +189,18 @@ class AssetGenerator(DBEngineer):
         for container in ax.containers:
             ax.bar_label(container, fontweight=600, padding=5)
         # export
-        plt.savefig(Path(f"assets/generated/{name}.svg"), transparent=True)
+        if not df.empty:
+            plt.savefig(Path(f"assets/generated/{name}.svg"), transparent=True)
+        else:
+            logging.warning(
+                f"REPORT: '{name}' bar chart was not created because of the lacking data"
+            )
 
     def export_trendchart(
         self, name: str, df: pd.DataFrame, val: str, labels: str
     ) -> None:
         """Save the scatter + line plot created with the given data as a vector image.
+        Do not export if the input is empty.
 
         Args:
             name (str): Name of the file.
@@ -205,7 +226,19 @@ class AssetGenerator(DBEngineer):
         ax.grid(axis="y")
         ax.set_xticks(x, df[labels], fontweight=600)
         # export
-        plt.savefig(Path(f"assets/generated/{name}.svg"), transparent=True)
+        if not df.empty:
+            plt.savefig(Path(f"assets/generated/{name}.svg"), transparent=True)
+        else:
+            logging.warning(
+                f"REPORT: '{name}' plot was not created because of the lacking data"
+            )
+
+    def remove_dynamic_assets(self) -> None:
+        """Delete all the generated asset files."""
+        str_path = str(Path("assets/generated/*"))
+        files = glob.glob(str_path)
+        for f in files:
+            os.remove(f)
 
     def analyze(self) -> None:
         """Perform all the analyses with the fetched data set and export the results
@@ -249,7 +282,7 @@ class AssetGenerator(DBEngineer):
             labels="game",
         )
         self.export_barchart(
-            name="top_rented_games",
+            name="top_saled_games",
             df=self.data["top_saled_games"],
             val="total_amount",
             labels="game",
@@ -313,6 +346,7 @@ class AssetGenerator(DBEngineer):
         )
         if np.isnan(corr):
             corr = "NONE"
+            logging.warning("REPORT: Dates & sales correlation could not be evaluated.")
         self.export_dict(
             name="correlation",
             dictionary={"pearson": corr},
@@ -320,6 +354,7 @@ class AssetGenerator(DBEngineer):
 
     def run(self) -> None:
         """Prepare all the images, tables and numbers and save them as a dynamic content."""
+        self.remove_dynamic_assets()
         self.fetch()
         self.analyze()
 
