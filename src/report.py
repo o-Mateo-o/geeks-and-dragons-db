@@ -25,7 +25,6 @@ class AssetsMissingError(Exception):
 ...
 
 
-
 class AssetGenerator(DBEngineer):
     """A worker that pulls the relevant data from the server, prints the images
     and prepares the other results for the report.
@@ -52,7 +51,18 @@ class AssetGenerator(DBEngineer):
         }
 
     def _fetch_one(self, cursor: MySQLCursor, view_name: str) -> pd.DataFrame:
-        # TODO:DOC
+        """Fetch one data frame for the views section in the database.
+
+        Args:
+            cursor (MySQLCursor): A cursor.
+            view_name (str): A view name.
+
+        Raises:
+            SQLError: If something has gone wrong with the execution.
+
+        Returns:
+            pd.DataFrame: Data frame representation of the view.
+        """
         try:
             cursor.execute(f"SELECT * FROM {view_name};")
             result = cursor.fetchall()
@@ -67,25 +77,45 @@ class AssetGenerator(DBEngineer):
             raise SQLError(f"Could not fetch the '{view_name}' data.")
 
     def fetch(self) -> None:
-        # TODO:DOC
+        """Fetch all the views necessary for analyses and save them to the data attribute."""
         with self.cursor() as crsr:
             for view in self.data.keys():
                 df = self._fetch_one(cursor=crsr, view_name=view)
                 self.data[view] = df
 
     def export_table(self, name: str, df: pd.DataFrame) -> None:
+        """Save the data frame to the file as a HTML table.
+
+        Args:
+            name (str): Name of the file.
+            df (pd.DataFrame): Some data frame.
+        """
         table_id = name.replace("_", "-")
         html_table = df.to_html(table_id=table_id, index=False)
         with open(Path(f"assets/generated/{name}.html"), "w") as f:
             f.write(html_table.replace("\n", ""))
 
     def export_dict(self, name: str, dictionary: str) -> None:
+        """Save the selected values in a JSON format.
+
+        Args:
+            name (str): Name of the file.
+            dictionary (str): JSON dictionary of content parameters.
+        """
         with open(Path(f"assets/generated/{name}.json"), "w") as f:
             json.dump(dictionary, f)
 
     def export_piechart(
         self, name: str, df: pd.DataFrame, val: str, labels: str
     ) -> None:
+        """Save the pie chart created with the given data as a vector image.
+
+        Args:
+            name (str): Name of the file.
+            df (pd.DataFrame): Some data frame.
+            val (str): Values column.
+            labels (str): Labels column.
+        """
         fig, ax = plt.subplots(1, 1)
         patches, texts, pcts = ax.pie(
             df[val],
@@ -105,6 +135,14 @@ class AssetGenerator(DBEngineer):
     def export_barchart(
         self, name: str, df: pd.DataFrame, val: Union[list, str], labels: str
     ) -> None:
+        """Save the bar chart created with the given data as a vector image.
+
+        Args:
+            name (str): Name of the file.
+            df (pd.DataFrame): Some data frame.
+            val (Union[list, str]): Values column or columns.
+            labels (str): Labels column.
+        """
         fig, ax = plt.subplots(1, 1)
         x = np.arange(df.shape[0])
         palete = sns.cubehelix_palette(rot=0.2, light=0.8, n_colors=2)
@@ -141,6 +179,14 @@ class AssetGenerator(DBEngineer):
     def export_trendchart(
         self, name: str, df: pd.DataFrame, val: str, labels: str
     ) -> None:
+        """Save the scatter + line plot created with the given data as a vector image.
+
+        Args:
+            name (str): Name of the file.
+            df (pd.DataFrame): Some data frame.
+            val (str): Values column.
+            labels (str): Labels column.
+        """
         fig, ax = plt.subplots(1, 1)
         x = np.arange(df.shape[0])
         palete = sns.cubehelix_palette(rot=0.2, light=0.8, n_colors=3)
@@ -162,6 +208,9 @@ class AssetGenerator(DBEngineer):
         plt.savefig(Path(f"assets/generated/{name}.svg"), transparent=True)
 
     def analyze(self) -> None:
+        """Perform all the analyses with the fetched data set and export the results
+        as they are parts of a report dynamic content.
+        """
         # employees
         all_best_employees = self.data["best_employees"].copy()
         fdates = all_best_employees[["month", "year"]].apply(
@@ -171,7 +220,7 @@ class AssetGenerator(DBEngineer):
             all_best_employees["Date"] = []
         else:
             all_best_employees["Date"] = fdates
-        
+
         all_best_employees.rename(
             columns={"employee": "Employee", "number_of_sales": "Sales Number"},
             inplace=True,
@@ -260,15 +309,13 @@ class AssetGenerator(DBEngineer):
             labels="Employee",
         )
         corr = self.data["sales_n_dates"]["Dates"].corr(
-                    self.data["sales_n_dates"]["Sales"], method="pearson"
-                )
+            self.data["sales_n_dates"]["Sales"], method="pearson"
+        )
         if np.isnan(corr):
-            corr = "NONE" 
+            corr = "NONE"
         self.export_dict(
             name="correlation",
-            dictionary={
-                "pearson": corr
-            },
+            dictionary={"pearson": corr},
         )
 
     def run(self) -> None:
