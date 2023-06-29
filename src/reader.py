@@ -38,7 +38,7 @@ class ReportOpener:
                 new_path = json.load(f)["report"]
         except FileNotFoundError:
             raise ReportOpenError(
-                "Cannot evaluate which report is the newest one."
+                "Cannot evaluate which report is the newest one. "
                 + "The memory was cleared. Please, try to generate it again (-r)."
             )
         return Path(new_path)
@@ -68,7 +68,10 @@ class ReportOpener:
         try:
             self._open_any()
         except FileNotFoundError:
-            raise FileNotFoundError("Cannot open the report. The file was not found.")
+            raise FileNotFoundError(
+                "Cannot open the report. The file was not found. "
+                "Please, try to generate it again (-r)."
+            )
 
 
 def open_report() -> None:
