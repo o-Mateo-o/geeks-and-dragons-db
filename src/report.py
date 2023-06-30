@@ -96,7 +96,7 @@ class AssetGenerator(DBEngineer):
             df (pd.DataFrame): Some data frame.
         """
         table_id = name.replace("_", "-")
-        html_table = df.to_html(table_id=table_id, index=False)
+        html_table = df.to_html(table_id=table_id, index=False, border=0)
         with open(Path(f"assets/generated/{name}.html"), "w") as f:
             f.write(html_table.replace("\n", ""))
         if df.empty:
@@ -373,6 +373,8 @@ class ReportCreator:
 
     def __init__(self) -> None:
         self.context = {
+            "abs_path": f"file:///{os.getcwd()}",
+            "style": "",
             "today": f"{datetime.today().strftime('%d.%m.%Y')} r.",
             "table_best_employees": "",
             "recent_best_employee_name": None,
@@ -403,9 +405,11 @@ class ReportCreator:
             with open(Path("assets/generated/correlation.json")) as f:
                 recent_best_employee = json.load(f)
                 self.context["correlation_pearson"] = recent_best_employee["pearson"]
-            self.context["recent_best_employee_name"] = Path(
+            self.context["table_best_employees"] = Path(
                 "assets/generated/table_best_employees.html"
             ).read_text(encoding="utf-8")
+            css = Path("assets/static/style.css").read_text(encoding="utf-8")
+            self.context["style"] = f"<style>{css}</style>"
         except FileNotFoundError:
             raise AssetsMissingError(
                 "Some assets were missing. The report could not be generated."
@@ -447,6 +451,7 @@ class ToPDFConverter:
 
     Attributes:
         config: Wkhtmltopdf configuration.
+
     """
 
     def __init__(self) -> None:
@@ -463,11 +468,16 @@ class ToPDFConverter:
             AssetsMissingError: If some of the images are missing.
         """
         str_temp_html_path = str(Path("assets/generated/_temp_report.html"))
-        str_out_path = str(Path(f"reports/report{datetime.today().strftime('%y%m%d%H%m')}.pdf"))
+        str_out_path = str(
+            Path(f"reports/report{datetime.today().strftime('%y%m%d%H%M')}.pdf")
+        )
         # convert
         try:
             pdfkit.from_file(
-                str_temp_html_path, output_path=str_out_path, configuration=self.config
+                str_temp_html_path,
+                output_path=str_out_path,
+                configuration=self.config,
+                options={"enable-local-file-access": None},
             )
         except FileNotFoundError:
             raise FileNotFoundError("The temporary report file is missing.")
