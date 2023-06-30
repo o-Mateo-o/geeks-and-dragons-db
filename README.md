@@ -114,7 +114,7 @@ Można zmienić serwer, na którym działać ma projekt, jeżeli obecnie jest in
   
 Aby używać skryptów projektu, należy przede wszystkim zainstalować na urządzeniu [Pythona 3.9](https://www.python.org/downloads/release/python-390/). Używany będzie także terminal - dla systemu Windows korzystać należy z [GitBash](https://git-scm.com/download/), instalowanego razem z systemem Git.
 
-Co bardzo istotne, do wygenerowania raportu w formacie _PDF_ potrzebny będzie program [wkhtmltopdf](!https://wkhtmltopdf.org/downloads.html).
+Co bardzo istotne, do wygenerowania raportu w formacie _PDF_ potrzebny będzie program [wkhtmltopdf](https://wkhtmltopdf.org/downloads.html).
 
 Instrukcje instalacji dostępne są na podanych stronach internetowych.
 
