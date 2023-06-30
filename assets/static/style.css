@@ -1,0 +1,116 @@
+.keep-together {
+    page-break-inside: avoid;
+}
+
+.break-before {
+    page-break-before: always;
+}
+
+.break-after {
+    page-break-after: always;
+}
+
+body {
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 0.8em;
+    letter-spacing: 0.07em;
+}
+
+p {
+    color: rgb(36, 42, 46);
+    text-align: justify;
+}
+
+.header {
+    display: grid;
+    justify-content: center;
+}
+
+.header h1 {
+    color: rgb(80, 24, 126);
+    text-align: center;
+    font-size: 3em;
+}
+
+.header p {
+    color: rgb(128, 141, 151);
+    text-align: center;
+}
+
+.content {
+    display: grid;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.section h2 {
+    color: rgb(80, 24, 126);
+    padding-left: 50px;
+    padding-right: 70px;
+}
+
+.section {
+    padding: 10px;
+    margin-top: 50px;
+    background-color: rgb(241, 241, 241);
+    border-radius: 10px 10px 10px 0;
+    box-shadow: -2px 6px 10px rgb(87, 98, 105);
+}
+
+.section p, .section .list-area {
+    padding-left: 70px;
+    padding-right: 70px;
+}
+
+.section .table-area,
+.section .image-area {
+    display: grid;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.table-area p,
+.image-area p {
+    text-align: center;
+    color: rgb(128, 141, 151);
+}
+
+.table-area table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.image-area img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+thead {
+    color: rgb(80, 24, 126);
+    text-decoration: underline;
+}
+
+table {
+    align-content: center;
+    border-style: solid;
+    border-radius: 10px 10px 10px 0;
+    padding: 5px;
+    border-color: rgb(80, 24, 126);
+    border-width: 1.5px;
+    background-color: rgb(247, 247, 247);
+}
+
+td {
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: left;
+}
+
+#icon {
+    height: 1.6em;
+    padding: 0;
+    margin: 0;
+    margin-bottom: -0.4em;
+}

@@ -163,7 +163,7 @@ cython_debug/
 .venv/
 notebooks/draft/
 *log
-reports/report*
 
 # Importanlty, add the following. It contains the password
 *.tmp
+_temp_report.html

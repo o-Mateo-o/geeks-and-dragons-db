@@ -114,9 +114,13 @@ Można zmienić serwer, na którym działać ma projekt, jeżeli obecnie jest in
   
 Aby używać skryptów projektu, należy przede wszystkim zainstalować na urządzeniu [Pythona 3.9](https://www.python.org/downloads/release/python-390/). Używany będzie także terminal - dla systemu Windows korzystać należy z [GitBash](https://git-scm.com/download/), instalowanego razem z systemem Git.
 
+Co bardzo istotne, do wygenerowania raportu w formacie _PDF_ potrzebny będzie program [wkhtmltopdf](https://wkhtmltopdf.org/downloads.html).
+
 Instrukcje instalacji dostępne są na podanych stronach internetowych.
 
-[![PythonVersion](https://img.shields.io/badge/Python-3.9-blue)](https://www.python.org/downloads/release/python-390/) [![GitBash](https://img.shields.io/badge/Git%20Bash-gray)](https://git-scm.com/download/win)
+Dodatkowo, należy upewnić się, iż ścieżka w pliku `config/pdf.gener.json` rzeczywiście prowadzi do pliku wykonywalnego _wkhtmltopdf_. W przeciwnym razie (jeżeli mamy narzędzie zainstalowane na niestandardowej ścieżce), można ją zmienić w tymże pliku konfiguracyjnym.
+
+[![PythonVersion](https://img.shields.io/badge/Python-3.9-blue)](https://www.python.org/downloads/release/python-390/) [![GitBash](https://img.shields.io/badge/Git%20Bash-gray)](https://git-scm.com/download/win) [![wkhtmltopdf](https://img.shields.io/badge/wkhtmltopdf-gray)](https://wkhtmltopdf.org/downloads.html)
 
 ### 2. Pobranie repozytorium
 
@@ -183,8 +187,7 @@ Główne __technologie__ różnych kategorii, używane przy realizacji projektu,
 
 <a id="generowanie-raportow"></a>
   
-[![Jinja](https://img.shields.io/badge/jinja-eeeeee.svg?style=for-the-badge&logo=jinja&logoColor=black)](https://jinja.palletsprojects.com/en/3.1.x/) [![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)](https://dev.w3.org/html5/spec-LC/) [![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)](https://www.w3.org/Style/CSS/Overview.en.html)
-<!-- [![PDFKit](https://img.shields.io/badge/PDFKit-d6b947.svg?style=for-the-badge)](https://pypi.org/project/pdfkit/) -->
+[![Jinja](https://img.shields.io/badge/jinja-eeeeee.svg?style=for-the-badge&logo=jinja&logoColor=black)](https://jinja.palletsprojects.com/en/3.1.x/) [![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)](https://dev.w3.org/html5/spec-LC/) [![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)](https://www.w3.org/Style/CSS/Overview.en.html) [![PDFKit](https://img.shields.io/badge/PDFKit-d6b947.svg?style=for-the-badge)](https://pypi.org/project/pdfkit/)
 
 ### Dokumentacja
 

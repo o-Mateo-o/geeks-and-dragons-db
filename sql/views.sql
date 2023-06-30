@@ -109,7 +109,7 @@ WHERE s.return_oper IS FALSE
 GROUP BY gm.game_category
 ORDER BY COUNT(DISTINCT r.rental_id) + COUNT(DISTINCT s.sale_id) DESC;
 -- q 4.2
-CREATE VIEW bw_profit_months AS (
+CREATE VIEW bw_revenue_months AS (
     SELECT (
             SELECT "maximal"
         ) record_type,
@@ -141,7 +141,7 @@ UNION ALL
     LIMIT 1
 );
 -- q 4.3
-CREATE VIEW weekly_trafic AS
+CREATE VIEW weekly_traffic AS
 SELECT DAYNAME(s.date) name_of_day,
     COUNT(s.sale_id) number_of_sales
 FROM sales s
