@@ -1134,10 +1134,10 @@ class RandomGenerator:
         self.rental = self.rental.rename(
             columns={"penalty_payment": "penalty_payment_id", "price": "payment_id"}
         )
-        self.rental["payment_id"] = self.rental["payment_id"].map(
+        self.rental["payment_id"] = self.rental["rental_id"].map(
             dict(zip(self.payments[self.payments["gid"] == "R"]["pid"], self.payments[self.payments["gid"] == "R"]["payment_id"]))
         )
-        self.rental["penalty_payment_id"] = self.rental["penalty_payment_id"].map(
+        self.rental["penalty_payment_id"] = self.rental["rental_id"].map(
             dict(zip(self.payments[self.payments["gid"] == "RP"]["pid"], self.payments[self.payments["gid"] == "RP"]["payment_id"]))
         )
         self.rental.drop(columns=["invoice", "penalty_invoice"], inplace=True)
@@ -1156,7 +1156,7 @@ class RandomGenerator:
         self.inventory["purchase_payment_id"] = self.inventory["inventory_id"].map(
             dict(zip(self.payments[self.payments["gid"] == "I"]["pid"], self.payments[self.payments["gid"] == "I"]["payment_id"]))
         )
-        self.inventory["price_id"] = self.inventory["price_id"].map(
+        self.inventory["price_id"] = self.inventory["inventory_id"].map(
             dict(zip(self.game_prices["current_price"], self.game_prices["price_id"]))
         )
         self.inventory.drop(columns=["invoice_id"], inplace=True)
@@ -1180,7 +1180,7 @@ class RandomGenerator:
             columns={"title": "title_id"}
         )
         self.maintenance_expenses["payment_id"] = self.maintenance_expenses[
-            "updated_at"
+            "spend_id"
         ].map(dict(zip(self.payments[self.payments["gid"] == "ME"]["pid"], self.payments[self.payments["gid"] == "ME"]["payment_id"])))
         self.maintenance_expenses = self.maintenance_expenses.reindex(
             ["spend_id", "title_id", "payment_id", "date", "updated_at"], axis=1
@@ -1188,8 +1188,8 @@ class RandomGenerator:
 
     def cleanse_sales(self) -> None:
         self.sales = self.sales.rename(columns={"price": "payment_id"})
-        self.sales["payment_id"] = self.sales["date"].map(
-            dict(zip(self.payments["updated_at"], self.payments["payment_id"]))
+        self.sales["payment_id"] = self.sales["sale_id"].map(
+            dict(zip(self.payments[self.payments["gid"] == "S"]["pid"], self.payments[self.payments["gid"] == "S"]["payment_id"]))
         )
         self.sales.drop(columns=["invoice"], inplace=True)
 

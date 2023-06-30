@@ -158,7 +158,7 @@ class DBFiller(DBEngineer):
         with self.cursor(commit=True) as crsr:
             for row in df.values.tolist():
                 statement = f"INSERT INTO {table} VALUES ({','.join(['%s'] * len(row))});"
-                crsr.execute(statement, list(map(self._sqlize_nans, row)))
+                crsr.execute(statement, [self._sqlize_nans(val) for val in row])
 
     @modify_safely
     def fill_all_tables(self, random_data: dict) -> None:
