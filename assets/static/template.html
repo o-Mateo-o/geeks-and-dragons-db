@@ -32,19 +32,18 @@
                 <p>Pracownicy miesiąca.</p>
                 {{ table_best_employees }}
             </div>
-            <p>W ostatnim miesiącu więc najlepszy pracownik to <b>{{ recent_best_employee_name }}.</b></p>
+            <p>Widzimy więc, iż w ostatnim miesiącu najlepszy pracownik to <b> {{ recent_best_employee_name }}.</b></p>
         </div>
         <div class="section keep-together" id="sec-2">
             <h2>Najlepsi zawodnicy turniejowi</h2>
             <p>Wyznaczamy dziesięciu najlepszych zawodników w turnieju dla każdej rozegranej turniejowej gry. Bierzemy
                 pod uwagę
                 względne miejsca w turniejach. Są to kolejno:</p>
-
-            <!-- tutaj ma być lista -->
+            <p>{{ top_players_lists }} </p>
         </div>
         <div class="section keep-together" id="sec-3">
             <h2>Najbardziej dochodowe gry</h2>
-            <p>Patrzymy teraz, które gry (tytuły) przynoszą największe zyski, zarówno ze sprzedaży jak
+            <p>Patrzymy teraz, które gry (tytuły) przynoszą największe zyski, zarówno ze sprzedaży, jak
                 i z wypożyczeń.</p>
 
             <div class="image-area">
@@ -60,37 +59,50 @@
         </div>
         <div class="section keep-together" id="sec-4">
             <h2>Popularność kategorii gier</h2>
-            <p>asdasd</p>
+            <p>Badamy, która z kategorii gier jest najbardziej popularna. Bierzemy pod uwagę liczbę wypożyczeń oraz
+                sprzedaży gier z danej kategorii. Rezultat można zobaczyć na wykresie.</p>
             <div class="image-area">
-                <p>Podpis</p>
+                <p>Stosunki liczb sprzedaży i wypożyczeń w poszczególnych kategoriach gier.</p>
                 <!-- <img src="{{ abs_path }}/assets/generated/top_categories.svg" alt="Wykres popularności poszczególnych kategorii gier."> -->
             </div>
         </div>
         <div class="section keep-together" id="sec-5">
             <h2>Wartości ekstremalne przychodów</h2>
-            <p>Najmniejsze miesięczne przychody wyniosły <b>{{revenue_data_worst_amount}}</b>
-                ({{revenue_data_worst_date}})</p>
-            <p>Największe miesięczne przychody wyniosły <b>{{revenue_data_best_amount}}</b> ({{revenue_data_best_date}})
+            <p>Wyliczamy najbardziej i najmniej dochodowy miesiąc od początku funkcjonowania sklepu. Patrzymy na
+                przychody, czyli
+                transakcje, gdzie pieniądze wpływają konto sklepu. Mogą być to opłaty za kupno lub wypożyczenie gry,
+                jak i wpisowe za udział w turnieju.</p>
+            <p>Okazuje się, żę najmniejsze miesięczne przychody wyniosły <b>
+                    {{revenue_data_worst_amount}} zł</b>
+                <i>({{revenue_data_worst_date}})</i>.
+            </p>
+            <p>Z drugiej strony, największa z obserwacji to rząd <b>
+                    {{revenue_data_best_amount}} zł</b>
+                <i>({{revenue_data_best_date}})</i>.
             </p>
         </div>
         <div class="section keep-together" id="sec-6">
             <h2>Średni tygodniowy ruch w sklepie</h2>
-            <p>asdasd</p>
+            <p>Analizujemy teraz, w jakim dniu tygodnia sprzedawana jest największa liczba gier. Pokazujemy na wykresie
+                średnie dla całego okresu funkcjonowania sklepu nateżnenia.</p>
             <div class="image-area">
-                <p>Podpis</p>
+                <p>Średnia liczba gier sprzedanych dziennie dla każdego dnia tygodnia.</p>
                 <!-- <img src="{{ abs_path }}/assets/generated/weekly_traffic.svg" alt="Wykres średniego tygodniowego ruchu w sklepie."> -->
             </div>
         </div>
         <div class="section keep-together" id="sec-7">
             <h2>Życie miłosne pracowników</h2>
-            <p>asdasd</p>
+            <p>Ostatecznie, staramy się dowiedzieć, czy posiadanie partnera lub partnerki wpływa na jakość
+                wykonywania obowiązków przez pracownika. Konkretnie interesuje nas, czy pracownik z bujnym życiem
+                miłosnym sprzedaje więcej gier. Statystyki dla każdego z pracowników przedstawiamy na wykresie, a
+                dodatkowo wyznaczamy korelację.</p>
             <div class="image-area">
-                <p>Podpis</p>
+                <p>Liczby randek i liczby sprzedaży, dla każdego (obecni i byli) z pracowników sklepu.</p>
                 <!-- <img src="{{ abs_path }}/assets/generated/plot_sales_n_dates.svg"
                     alt="Wykres porównujący liczby randek i sprzedaży u pracowników."> -->
             </div>
-
-            <p>Korelacja to {{ correlation_pearson }}</p>
+            <p>Współczynnik korelacji Pearsona dla zmiennej liczby randek i przeprowadzonych operacji sprzedaży to <b>
+                    {{ correlation_pearson }}</b>.</p>
         </div>
         <div class="section keep-together" id="sec-end">
             <h2>Podsumowanie</h2>

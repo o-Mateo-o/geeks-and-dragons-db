@@ -349,6 +349,7 @@ class AssetGenerator(DBEngineer):
         corr = self.data["sales_n_dates"]["Dates"].corr(
             self.data["sales_n_dates"]["Sales"], method="pearson"
         )
+        corr = np.round(corr, 2)
         if np.isnan(corr):
             corr = "NONE"
             logging.warning("REPORT: Dates & sales correlation could not be evaluated.")
@@ -377,6 +378,7 @@ class ReportCreator:
             "style": "",
             "today": f"{datetime.today().strftime('%d.%m.%Y')} r.",
             "table_best_employees": "",
+            "top_players_lists": "",
             "recent_best_employee_name": None,
             "revenue_data_worst_amount": None,
             "revenue_data_worst_date": None,
@@ -385,9 +387,11 @@ class ReportCreator:
             "correlation_pearson": None,
         }
         try:
+            # best employees - name
             with open(Path("assets/generated/recent.best.employee.json")) as f:
                 recent_best_employee = json.load(f)
                 self.context["recent_best_employee_name"] = recent_best_employee["name"]
+            # revenue records
             with open(Path("assets/generated/revenue.data.json")) as f:
                 recent_best_employee = json.load(f)
                 self.context["revenue_data_worst_amount"] = recent_best_employee[
@@ -402,12 +406,17 @@ class ReportCreator:
                 self.context["revenue_data_best_date"] = recent_best_employee[
                     "best.date"
                 ]
+            # dates & sales correlation
             with open(Path("assets/generated/correlation.json")) as f:
                 recent_best_employee = json.load(f)
                 self.context["correlation_pearson"] = recent_best_employee["pearson"]
+            # best emplotyees - table
             self.context["table_best_employees"] = Path(
                 "assets/generated/table_best_employees.html"
             ).read_text(encoding="utf-8")
+            # top players - list
+            # ! TODO
+            # style
             css = Path("assets/static/style.css").read_text(encoding="utf-8")
             self.context["style"] = f"<style>{css}</style>"
         except FileNotFoundError:
@@ -483,7 +492,7 @@ class ToPDFConverter:
             raise FileNotFoundError("The temporary report file is missing.")
         except OSError:
             raise AssetsMissingError(
-                "Some images are missing. The PDF report could not be generated."
+                "Some images are missing or the PDF file is opened. The PDF report could not be generated."
             )
         # remove temp data
         try:
