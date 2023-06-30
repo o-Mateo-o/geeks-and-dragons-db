@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    {{ style }}
+
+
+    <div class="header">
+        <h1>Geeks & Dragons <img id="icon" src="{{ abs_path }}/assets/static/dice.svg"></h1>
+        <p>Raport na dzień {{ today }}</p>
+    </div>
+    <div class="content">
+        <div class="section keep-together" id="sec-pre">
+            <h2>Wstęp</h2>
+            <p>Niniejszy dokument jest raportem z postawowymi analizami dla sklepu Geeks &
+                Dragons, zajmującego się sprzedażą i wypożyczaniem gier nieelektronicznych oraz organizującego turnieje.
+            </p>
+
+        </div>
+        <div class="section keep-together" id="sec-1">
+            <h2>Pracownicy miesiąca</h2>
+            <p>Sprawdzamy, który z pracowników dokonał najwięcej sprzedaży w każdym z miesięcy, gdy czynny jest sklep. W
+                wyniku otrzymujemy wiersze z miesiącem w danym roku oraz imieniem i nazwiskiem najlepszego pracownika.
+            </p>
+            <div class="table-area">
+                <p>Pracownicy miesiąca.</p>
+                {{ table_best_employees }}
+            </div>
+            <p>W ostatnim miesiącu więc najlepszy pracownik to <b>{{ recent_best_employee_name }}.</b></p>
+        </div>
+        <div class="section keep-together" id="sec-2">
+            <h2>Najlepsi zawodnicy turniejowi</h2>
+            <p>Wyznaczamy dziesięciu najlepszych zawodników w turnieju dla każdej rozegranej turniejowej gry. Bierzemy
+                pod uwagę
+                względne miejsca w turniejach. Są to kolejno:</p>
+
+            <!-- tutaj ma być lista -->
+        </div>
+        <div class="section keep-together" id="sec-3">
+            <h2>Najbardziej dochodowe gry</h2>
+            <p>Patrzymy teraz, które gry (tytuły) przynoszą największe zyski, zarówno ze sprzedaży jak
+                i z wypożyczeń.</p>
+
+            <div class="image-area">
+                <p>Najbardziej dochodowe w wypożyczeniach gry.</p>
+                <!-- <img src="{{ abs_path }}/assets/generated/top_rented_games.svg"
+                    alt="Wykres najbardziej dochodowych w wypożyczeniach gier."> -->
+            </div>
+
+            <div class="image-area">
+                <p>Najbardziej dochodowe w sprzedaży gry.</p>
+                <!-- <img src="{{ abs_path }}/assets/generated/top_saled_games.svg" alt="Wykres najbardziej dochodowych w sprzedaży gier."> -->
+            </div>
+        </div>
+        <div class="section keep-together" id="sec-4">
+            <h2>Popularność kategorii gier</h2>
+            <p>asdasd</p>
+            <div class="image-area">
+                <p>Podpis</p>
+                <!-- <img src="{{ abs_path }}/assets/generated/top_categories.svg" alt="Wykres popularności poszczególnych kategorii gier."> -->
+            </div>
+        </div>
+        <div class="section keep-together" id="sec-5">
+            <h2>Wartości ekstremalne przychodów</h2>
+            <p>Najmniejsze miesięczne przychody wyniosły <b>{{revenue_data_worst_amount}}</b>
+                ({{revenue_data_worst_date}})</p>
+            <p>Największe miesięczne przychody wyniosły <b>{{revenue_data_best_amount}}</b> ({{revenue_data_best_date}})
+            </p>
+        </div>
+        <div class="section keep-together" id="sec-6">
+            <h2>Średni tygodniowy ruch w sklepie</h2>
+            <p>asdasd</p>
+            <div class="image-area">
+                <p>Podpis</p>
+                <!-- <img src="{{ abs_path }}/assets/generated/weekly_traffic.svg" alt="Wykres średniego tygodniowego ruchu w sklepie."> -->
+            </div>
+        </div>
+        <div class="section keep-together" id="sec-7">
+            <h2>Życie miłosne pracowników</h2>
+            <p>asdasd</p>
+            <div class="image-area">
+                <p>Podpis</p>
+                <!-- <img src="{{ abs_path }}/assets/generated/plot_sales_n_dates.svg"
+                    alt="Wykres porównujący liczby randek i sprzedaży u pracowników."> -->
+            </div>
+
+            <p>Korelacja to {{ correlation_pearson }}</p>
+        </div>
+        <div class="section keep-together" id="sec-end">
+            <h2>Podsumowanie</h2>
+            <p>asdasd</p>
+        </div>
+    </div>
+</body>
+
+</html>

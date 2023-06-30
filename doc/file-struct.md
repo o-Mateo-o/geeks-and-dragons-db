@@ -11,6 +11,7 @@
     - [Połączenie](#połączenie)
     - [Generowanie danych](#generowanie-danych)
     - [Przygotowanie środowiska](#przygotowanie-środowiska)
+    - [Generowanie raportu PDF](#generowanie-raportu-pdf)
   
 Powrót do strony głównej: [README.md](../README.md).
 
@@ -23,6 +24,7 @@ Poniższe drzewo projektu zawiera opisy zawartości folderów oraz poszczególny
 ┣ 📂assets                      - zasoby potrzebne do generowania raportu
 ┃ ┣ 📂generated                 - pliki składowe raportu wygenerowane dynamicznie
 ┃ ┣ ┣ ...
+┃ ┣ ┣ _temp_report.html         - tworzony w czasie generowania roboczy plik html raportu 
 ┃ ┣ 📂static                    - stałe elementy raportu
 ┃ ┣ ┣ 📜style.css               - reguły stylu dla raportu
 ┃ ┣ ┣ 📜template.html           - szablon raportu
@@ -30,6 +32,7 @@ Poniższe drzewo projektu zawiera opisy zawartości folderów oraz poszczególny
 ┃ ┣ 📂prompts                   - zewnętrzne tabele (.csv) używane do losowania
 ┃ ┣ ┣ ...
 ┃ ┣ ⚙️database.connection.json  - podstawowe ustawienia połączenia z bazą
+┃ ┣ ⚙️pdf.gener.json            - parametry związane z narzędziem wkhtmltopdf
 ┃ ┣ ⚙️random.settings.json      - parametry związane z generowaniem danych
 ┣ 📂doc                         - wszelkie pliki dokumentacji
 ┃ ┣ 📂images                    - ilustracje używane w dokumentacji
@@ -44,6 +47,7 @@ Poniższe drzewo projektu zawiera opisy zawartości folderów oraz poszczególny
 ┃ ┣ 📜tables.sql                - komendy tworzące tabele
 ┃ ┣ 📜views.sql                 - komendy tworzące widoki
 ┣ 📂reports                     - wygenerowane raporty
+┃ ┣ ⚙️recent.json               - dane na temat raportów przechowywane u użytkownika 
 ┃ ┣ ...
 ┣ 📂src                         - kod źródłowy aplikacji zarządzającej bazą danych
 ┃ ┣ 📜__init__.py
@@ -83,3 +87,7 @@ Dodatkowo, wszystkie tabele `config/prompts/*.csv` można zastąpić według uzn
 <a id="przygotowanie-srodowiska"></a>
 
 Komendy przygotowane w `setup.sh` (szczegóły użycia są przedstawione przy okazji [instrukcji obsługi aplikacji](../README.md#sposób-użycia)), zmodyfikować dla konkretnych warunków systemu. Powinny działać dla domyślnych ścieżek instalacji, ale nie musi tak być. Tak naprawdę plik ten służy wyłącznie do stworzenia i uruchomienia wirtualnego środowiska oraz zainstalowania zależności.
+
+### Generowanie raportu PDF
+
+Ścieżka do pliku wykonywalnego narzędzia _wkhtmltopdf_ znajduje się w pliku `config/pdf.gener.json`. Należy upewnić się, że wspomniany program faktycznie znajduje się pod tym adresem. Jest to wspominane także w [instrukcji obsługi aplikacji](../README.md#sposób-użycia).
