@@ -541,8 +541,8 @@ class ToPDFConverter:
         except FileNotFoundError:
             raise FileNotFoundError("The temporary report file is missing.")
         except OSError:
-            raise AssetsMissingError(
-                "Some images are missing or the PDF file is opened. The PDF report could not be generated."
+            logging.error(
+                "Some images are missing or the PDF file is opened. The PDF report was not be generated properly."
             )
         # remove temp data
         try:
