@@ -323,7 +323,7 @@ Sama nazwa turnieju nie identyfikuje wydarzenia, gdyż potencjalnie cyklicznoś�
 
 <a id="tabela-rental"></a>
 
-Ta tabela jest rejestrem wszystkich wypożyczeń w historii sklepu. Wypożyczana jest gra z magazynu (tylko z puli tych, które są na to przeznaczone) i wydawana klientowi na okres 5 dni za stałą ustaloną kwotę, obliczaną dla każdej gry. Dodatkowo, każdy dzień przekroczenia terminu skutkuje kumulowanym naliczeniem kary w wysokości 30% ceny jednorazowego wypożyczenia gry. Zakładamy, że opłata za wypożyczenie naliczana jest od razu, a kara przy zwrocie produktu. Jeśli klient jest terminowy, płatność kary pozostawiona jest z pustym identyfikatorem. Przypadek klienta, który nigdy nie oddaje gry nie wpływa na mechanikę bazy. Jego płatność kary może być tylko inna, niż przewidują podstawowe zasady, ale o tym zdecyduje sąd.
+Ta tabela jest rejestrem wszystkich wypożyczeń w historii sklepu. Wypożyczana jest gra z magazynu (tylko z puli tych, które są na to przeznaczone) i wydawana klientowi na okres 72 godzin za stałą ustaloną kwotę, obliczaną dla każdej gry. Dodatkowo, każdy dzień przekroczenia terminu skutkuje kumulowanym naliczeniem kary w wysokości 30% ceny jednorazowego wypożyczenia gry. Zakładamy, że opłata za wypożyczenie naliczana jest od razu, a kara przy zwrocie produktu. Jeśli klient jest terminowy, płatność kary pozostawiona jest z pustym identyfikatorem. Przypadek klienta, który nigdy nie oddaje gry nie wpływa na mechanikę bazy. Jego płatność kary może być tylko inna, niż przewidują podstawowe zasady, ale o tym zdecyduje sąd.
 
 | Atrybut | Opis |
 |-------------|--------|
