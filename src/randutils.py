@@ -1,10 +1,10 @@
 """Helper functions for data generation."""
 
-import numpy as np
-import pandas as pd
 import datetime
-import numpy.typing as npt
+import itertools
+
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 from faker import Faker
 from unidecode import unidecode_expect_ascii
@@ -143,8 +143,14 @@ class RandomHelpers:
     def gen_expenses_dates(self):
         base = pd.DataFrame(
             self.prompts["prompt_dates"].loc[
-                (self.prompts["prompt_dates"]["date"].dt.day == self.config["payment_day"])
-                | (self.prompts["prompt_dates"]["date"].dt.day == self.config["payment_day"] + 1),
+                (
+                    self.prompts["prompt_dates"]["date"].dt.day
+                    == self.config["payment_day"]
+                )
+                | (
+                    self.prompts["prompt_dates"]["date"].dt.day
+                    == self.config["payment_day"] + 1
+                ),
                 "date",
             ]
         )
@@ -155,7 +161,8 @@ class RandomHelpers:
 
     def gen_rent_expenses(self):
         date_df = self.prompts["prompt_dates"].loc[
-            self.prompts["prompt_dates"]["date"].dt.day == self.config["payment_day"], "date"
+            self.prompts["prompt_dates"]["date"].dt.day == self.config["payment_day"],
+            "date",
         ]
         title = date_df.dt.month_name(locale="pl_PL").apply(
             lambda x: "CZYNSZ " + str(x).upper()
@@ -174,7 +181,8 @@ class RandomHelpers:
 
     def gen_energy_expenses(self):
         date_df = self.prompts["prompt_dates"].loc[
-            self.prompts["prompt_dates"]["date"].dt.day == self.config["payment_day"], "date"
+            self.prompts["prompt_dates"]["date"].dt.day == self.config["payment_day"],
+            "date",
         ]
         title = date_df.dt.month_name(locale="pl_PL").apply(
             lambda x: "ENERGIA ELEKTRYCZNA " + str(x).upper()
@@ -197,7 +205,8 @@ class RandomHelpers:
 
     def gen_water_expenses(self):
         date_df = self.prompts["prompt_dates"].loc[
-            self.prompts["prompt_dates"]["date"].dt.day == self.config["payment_day"], "date"
+            self.prompts["prompt_dates"]["date"].dt.day == self.config["payment_day"],
+            "date",
         ]
         title = date_df.dt.month_name(locale="pl_PL").apply(
             lambda x: "WODA " + str(x).upper()
@@ -221,10 +230,12 @@ class RandomHelpers:
     def gen_heat_expenses(self):
         dates = []
         date_df = self.prompts["prompt_dates"].loc[
-            self.prompts["prompt_dates"]["date"].dt.day == self.config["payment_day"], "date"
+            self.prompts["prompt_dates"]["date"].dt.day == self.config["payment_day"],
+            "date",
         ]
         for j in range(
-            self.prompts["prompt_dates"]["date"].iloc[0].year, self.prompts["prompt_dates"]["date"].iloc[-1].year + 1
+            self.prompts["prompt_dates"]["date"].iloc[0].year,
+            self.prompts["prompt_dates"]["date"].iloc[-1].year + 1,
         ):
             for i in range(
                 self.config["warm_months"]["first"],
@@ -252,7 +263,7 @@ class RandomHelpers:
             }
         )
         return df
-    
+
     def gen_salary_expenses(self, staff: pd.DataFramef):
         date_df = self.gen_expenses_dates()
         all_staff = pd.concat(
@@ -289,3 +300,249 @@ class RandomHelpers:
         )
         df.dropna(inplace=True)
         return df
+
+    def prepar_tournament_game(self):
+        # all the tournament title & game options
+        games = self.prompts["prompt_games"].loc[
+            self.prompts["prompt_games"]["tournament"] == "TAK",
+            ["name", "type", "category"],
+        ]
+        tournament_games = pd.merge(
+            games,
+            self.prompts["prompt_tournaments"],
+            left_on=["type", "category"],
+            right_on=["type", "category"],
+            suffixes=["_game", "_tournament"],
+        )
+        tournament_games = tournament_games[["name_game", "name_tournament"]]
+        return tournament_games
+
+    def gen_tournament_staff(self, n=int):
+        available_staff = (
+            self.prompts["prompt_staff_shifts"]
+            .loc[
+                (
+                    self.prompts["prompt_staff_shifts"]["weekday"]
+                    == self.config["event_info"]["weekday"]
+                )
+                & (
+                    self.prompts["prompt_staff_shifts"]["hour"]
+                    >= self.config["event_info"]["hour"]
+                )
+            ]["staff_id"]
+            .unique()
+        )
+        return np.random.choice(available_staff, size=n)
+
+    @staticmethod
+    def count_matches(x):
+        total = 0
+        while x >= 0:
+            total += 2**x
+            x -= 1
+        return total
+
+    def gen_sign_u_date(self, deadline: datetime.datetime):
+        deadline = pd.to_datetime(deadline)
+        date = pd.to_datetime(
+            self.prompts["prompt_dates"]["date"]
+            .loc[
+                (self.prompts["prompt_dates"]["date"] < deadline)
+                & (
+                    self.prompts["prompt_dates"]["date"]
+                    > deadline
+                    - pd.DateOffset(
+                        days=self.config["event_info"]["can_sign_up_offset_days"]
+                    )
+                )
+            ]
+            .sample(1, ignore_index=True)
+            .values[0]
+        )
+        date += pd.DateOffset(
+            hours=np.random.randint(
+                self.config["shop_open_hours"]["from"],
+                self.config["shop_open_hours"]["to"],
+            ),
+            minutes=np.random.randint(0, 60),
+            seconds=np.random.randint(0, 60),
+        )
+        return date
+
+    @np.vectorize
+    @staticmethod
+    def v_repeat(date: datetime.datetime, volume: int):
+        return itertools.repeat(date, int(volume))
+
+    @np.vectorize
+    @staticmethod
+    def v_timedelta(h: int, m: int, s: int):
+        datetime.timedelta(hours=int(h), minutes=int(m), seconds=int(s))
+
+    @np.vectorize
+    def v_get_staff_id(self, timestamp: datetime.datetime):
+        # general of gen_tournament_staff
+        available_staff = self.prompts["prompt_staff_shifts"][
+            (self.prompts["prompt_staff_shifts"]["weekday"] == timestamp.weekday())
+            & (self.prompts["prompt_staff_shifts"]["hour"] == timestamp.hour)
+        ]["staff_id"]
+        return np.random.choice(available_staff)
+
+    def gen_sell_inventory(self) -> pd.DataFrame:
+        # evaluate a total game number
+        total_games_n = np.round(
+            self.prompts["prompt_dates"]["volume_sales"].sum()
+            * (self.config["inventory_multiplier"] + np.random.exponential())
+        )
+        game_counts = list(
+            map(round, self.prompts["prompt_games"]["weights"] * total_games_n)
+        )
+        # repeat the games
+        games_gener = itertools.chain(
+            *self.v_repeat(self.prompts["prompt_games"]["name"], game_counts)
+        )
+        games = np.array(list(games_gener))
+        # add the basic details to the data frame
+        s_inventory = pd.DataFrame(
+            {
+                "game": np.random.permutation(games),
+                "destination": np.full(games.size, "S"),
+                "active": np.full(games.size, True),
+            }
+        )
+        # add the prices from the prompt table
+        s_inventory = (
+            pd.merge(
+                s_inventory,
+                self.prompts["prompt_games"][["name", "purchase"]],
+                left_on="game",
+                right_on="name",
+                how="inner",
+            )
+            .rename(columns={"purchase": "price"})
+            .drop(columns="name")
+        )
+        # add the procurment prices as some fraction of the standard one
+        s_inventory["purchase_payment"] = (
+            s_inventory["price"] * self.config["bulk_ratio"]
+        ).round(2)
+        s_inventory = s_inventory.sample(n=s_inventory.shape[0]).reset_index(drop=True)
+        # get the delivery dates
+        delivery_count = (
+            self.config["avg_supply_yearly_rate"] * self.config["shop_lifetime_years"]
+        )
+        delivery_dates = self.prompts["prompt_dates"]["date"][
+            :: int(self.prompts["prompt_dates"].shape[0] / delivery_count)
+        ].copy()
+        delivery_dates += datetime.timedelta(
+            hours=self.config["shop_open_hours"]["from"]
+        )
+        # the final grouping
+        group_dates = np.repeat(
+            delivery_dates.to_numpy(), np.ceil(total_games_n / delivery_count)
+        )[: sum(game_counts)]
+        s_inventory = s_inventory.reset_index(drop=True)
+        s_inventory["delivery_date"] = group_dates
+        return s_inventory
+
+    def gen_rent_inventory(self) -> pd.DataFrame:
+        total_games_n = self.config["rental_games_n"]
+        game_counts = list(
+            map(round, self.prompts["prompt_games"]["weights"] * total_games_n)
+        )
+        # repeat the games
+        games_gener = itertools.chain(
+            *self.v_repeat(self.prompts["prompt_games"]["name"], game_counts)
+        )
+        games = np.array(list(games_gener))
+        # active statuses
+        active_status = np.full(games.size, True)
+        active_status[: self.config["inactive_rental_games"]] = False
+        active_status = np.random.permutation(active_status)
+        # add the basic details to the data frame
+        r_inventory = pd.DataFrame(
+            {
+                "game": np.random.permutation(games),
+                "destination": np.full(games.size, "R"),
+                "active": active_status,
+            }
+        )
+        # add the prices from the prompt table; temporarily prices are full
+        r_inventory = (
+            pd.merge(
+                r_inventory,
+                self.prompts["prompt_games"][["name", "purchase"]],
+                left_on="game",
+                right_on="name",
+                how="inner",
+            )
+            .rename(columns={"purchase": "price"})
+            .drop(columns="name")
+        )
+        # add the procurment prices as some fraction of the standard one
+        r_inventory["purchase_payment"] = (
+            r_inventory["price"] * self.config["bulk_ratio"]
+        ).round(2)
+        # the delivery dates
+        r_inventory["delivery_date"] = self.prompts["prompt_games"]["date"].iloc[
+            0
+        ] + datetime.timedelta(hours=self.config["shop_open_hours"]["from"])
+        r_inventory["price"] = (
+            r_inventory["price"] * self.config["rental_price_ratio"]
+        ).round(2)
+        return r_inventory
+
+    def gen_tournament_inventory(self, tournaments: pd.DataFrame) -> pd.DataFrame:
+        # find the required game counts
+        game_counts_tournaments = (
+            tournaments[["game", "tree_levels"]]
+            .groupby("game")
+            .max()
+            .apply(lambda x: 2**x)
+        ).reset_index()
+        # repeat the games
+        games_gener = itertools.chain(
+            *self.v_repeat(
+                game_counts_tournaments["game"], game_counts_tournaments["tree_levels"]
+            )
+        )
+        games = np.array(list(games_gener))
+        # add the basic details to the data frame
+        t_inventory = pd.DataFrame(
+            {
+                "game": np.random.permutation(games),
+                "destination": np.full(games.size, "T"),
+                "active": np.full(games.size, True),
+            }
+        )
+        t_inventory = (
+            pd.merge(
+                t_inventory,
+                self.prompts["prompt_games"][["name", "purchase"]],
+                left_on="game",
+                right_on="name",
+                how="inner",
+            )
+            .rename(columns={"purchase": "price"})
+            .drop(columns="name")
+        )
+        # add the procurment prices as some fraction of the standard one
+        t_inventory["purchase_payment"] = (
+            t_inventory["price"] * self.config["bulk_ratio"]
+        ).round(2)
+        # the delivery dates
+        t_inventory["delivery_date"] = self.prompts["prompt_dates"]["date"].iloc[
+            0
+        ] + datetime.timedelta(hours=self.config["shop_open_hours"]["from"])
+        t_inventory["price"] = np.nan
+        return t_inventory
+    
+    def proper_return_date(self, timestamp: datetime.datetime, date: datetime.datetime):
+        if (timestamp.day == date.day) & (timestamp.hour < date.hour):
+            return timestamp.replace(hour=self.config["shop_open_hours"]["from"])
+        elif timestamp.hour < self.config["shop_open_hours"]["from"]:
+            return timestamp.replace(hour=self.config["shop_open_hours"]["from"])
+        elif timestamp.hour >= self.config["shop_open_hours"]["to"]:
+            return timestamp.replace(hour=self.config["shop_open_hours"]["to"] - 1)
+        else:
+            return timestamp

@@ -1,13 +1,14 @@
 """Random data generation pipeline and export."""
 
-import logging
 import datetime
-from pathlib import Path
 import itertools
+import json
+import logging
+from pathlib import Path
+
 import holidays
 import numpy as np
 import pandas as pd
-import json
 from faker import Faker
 
 from src.randutils import RandomHelpers
@@ -47,6 +48,8 @@ class RandomGenerator:
                 "prompt_first_names_females": self.prompt_first_names_females,
                 "prompt_last_names_females": self.prompt_last_names_females,
                 "prompt_dates": self.prompt_dates,
+                "prompt_games": self.prompt_games,
+                "prompt_tournaments": self.prompt_tournaments,
                 "prompt_emails": self.prompt_emails,
             },
         )
@@ -83,8 +86,8 @@ class RandomGenerator:
         self.prompt_dates["weekday"] = self.prompt_dates["date"].apply(
             lambda date: date.weekday()
         )
-        self.prompt_dates["weekday_name"] = self.prompt_dates["weekday"].astype(str).map(
-            self.config["weekday_dict"]
+        self.prompt_dates["weekday_name"] = (
+            self.prompt_dates["weekday"].astype(str).map(self.config["weekday_dict"])
         )
         # filtering sundays and holidays
         holidays_pl = holidays.Poland()
@@ -251,7 +254,10 @@ class RandomGenerator:
                 & (shifts["hour"] < self.config["shop_open_hours"]["to"])
             )
             | (
-                (shifts["weekday"] > self.config["sh1op_open_hours"]["shift_aft_reg_ch"])
+                (
+                    shifts["weekday"]
+                    > self.config["sh1op_open_hours"]["shift_aft_reg_ch"]
+                )
                 & (shifts["hour"] >= self.config["shop_open_hours"]["shift_aft_from_b"])
                 & (shifts["hour"] < self.config["shop_open_hours"]["to"])
             )
@@ -272,7 +278,9 @@ class RandomGenerator:
         )
 
     def gen_realtionships(self) -> None:
-        n = int(np.ceil(self.config["staff_number"] * self.config["relationships"]["ratio"]))
+        n = int(
+            np.ceil(self.config["staff_number"] * self.config["relationships"]["ratio"])
+        )
         staff_id = []
         staff_gender = []
         update = []
@@ -321,7 +329,9 @@ class RandomGenerator:
         )
         self.relationships.sort_values(by=["updated_at"], inplace=True)
         self.relationships = self.relationships.reset_index(drop=True)
-        self.relationships["relationship_id"] = self.relationships.reset_index()["index"] + 1
+        self.relationships["relationship_id"] = (
+            self.relationships.reset_index()["index"] + 1
+        )
         self.relationships["partner_id"] = self.relationships.reset_index()["index"] + 1
         self.relationships = self.relationships.reindex(
             labels=[
@@ -332,8 +342,8 @@ class RandomGenerator:
                 "dates_number",
                 "updated_at",
             ],
-            axis=1,)
-        
+            axis=1,
+        )
 
     def gen_partners(self) -> None:
         partner = self.relationships["partner_id"]
@@ -357,13 +367,15 @@ class RandomGenerator:
                 "updated_at": self.relationships["updated_at"],
             }
         )
-        self.partners["name"] = self.random_helpers.gen_one_name(self.partners["gender"], mode="first")
+        self.partners["name"] = self.random_helpers.gen_one_name(
+            self.partners["gender"], mode="first"
+        )
         self.partners.sort_values(by=["updated_at"], inplace=True)
         self.partners = self.partners.reindex(
             labels=["partner_id", "name", "gender", "updated_at"], axis=1
         )
         self.relationships.drop(columns=["staff_gender"], inplace=True)
-        self.partners =  self.partners.reset_index(drop=True)
+        self.partners = self.partners.reset_index(drop=True)
 
     def gen_mock_customers(self) -> None:
         self.customers = pd.DataFrame(
@@ -399,9 +411,15 @@ class RandomGenerator:
 
         self.maintenance_expenses.sort_values(by=["updated_at"], inplace=True)
         self.maintenance_expenses = self.maintenance_expenses.reset_index(drop=True)
-        self.maintenance_expenses["payment_id"] = self.maintenance_expenses.reset_index()["index"] + 1
-        self.maintenance_expenses["invoice_id"] = self.maintenance_expenses.reset_index()["index"] + 1
-        self.maintenance_expenses["spend_id"] = self.maintenance_expenses.reset_index()["index"] + 1
+        self.maintenance_expenses["payment_id"] = (
+            self.maintenance_expenses.reset_index()["index"] + 1
+        )
+        self.maintenance_expenses["invoice_id"] = (
+            self.maintenance_expenses.reset_index()["index"] + 1
+        )
+        self.maintenance_expenses["spend_id"] = (
+            self.maintenance_expenses.reset_index()["index"] + 1
+        )
         self.maintenance_expenses = self.maintenance_expenses.reindex(
             [
                 "spend_id",
@@ -416,82 +434,59 @@ class RandomGenerator:
             axis=1,
         )
 
-    def gen_expense_types():
-        df = pd.DataFrame(
+    def gen_expense_types(self) -> None:
+        self.expense_types = pd.DataFrame(
             {
-                "expenses_type": maintenance_expenses["type"],
-                "updated_at": maintenance_expenses["updated_at"],
+                "expenses_type": self.maintenance_expenses["type"],
+                "updated_at": self.maintenance_expenses["updated_at"],
             }
         )
-        df.drop_duplicates(subset=["expenses_type"], keep="last", inplace=True)
-        df.sort_values(by=["updated_at"], inplace=True)
-        df = df.reset_index(drop=True)
-        df["expenses_type_id"] = df.reset_index()["index"] + 1
-        df = df.reindex(["expenses_type_id", "expenses_type", "updated_at"], axis=1)
-        return df
+        self.expense_types.drop_duplicates(
+            subset=["expenses_type"], keep="last", inplace=True
+        )
+        self.expense_types.sort_values(by=["updated_at"], inplace=True)
+        self.expense_types = self.expense_types.reset_index(drop=True)
+        self.expense_types["expenses_type_id"] = (
+            self.expense_types.reset_index()["index"] + 1
+        )
+        self.expense_types = self.expense_types.reindex(
+            ["expenses_type_id", "expenses_type", "updated_at"], axis=1
+        )
 
-    def gen_expense_titles():
-        df = pd.DataFrame(
+    def gen_expense_titles(self) -> None:
+        self.expense_titles = pd.DataFrame(
             {
-                "title": maintenance_expenses["title"],
-                "expenses_type": maintenance_expenses["type"],
-                "updated_at": maintenance_expenses["updated_at"],
+                "title": self.maintenance_expenses["title"],
+                "expenses_type": self.maintenance_expenses["type"],
+                "updated_at": self.maintenance_expenses["updated_at"],
             }
         )
-        df.drop_duplicates(subset=["title"], keep="last", inplace=True)
-        df = pd.merge(
-            df,
-            expense_types[["expenses_type_id", "expenses_type"]],
+        self.expense_titles.drop_duplicates(subset=["title"], keep="last", inplace=True)
+        self.expense_titles = pd.merge(
+            self.expense_titles,
+            self.expense_types[["expenses_type_id", "expenses_type"]],
             how="left",
             on=["expenses_type"],
         )
-        df.sort_values(by=["updated_at"], inplace=True)
-        df = df.reset_index(drop=True)
-        df["title_id"] = df.reset_index()["index"] + 1
-        df = df.reindex(["title_id", "title", "expenses_type_id", "updated_at"], axis=1)
-        return df
-
-    def _gen_tournament_game():
-        games = prompt_games.loc[
-            prompt_games["tournament"] == "TAK", ["name", "type", "category"]
-        ]
-        tournament_games = pd.merge(
-            games,
-            prompt_tournaments,
-            left_on=["type", "category"],
-            right_on=["type", "category"],
-            suffixes=["_game", "_tournament"],
+        self.expense_titles.sort_values(by=["updated_at"], inplace=True)
+        self.expense_titles = self.expense_titles.reset_index(drop=True)
+        self.expense_titles["title_id"] = self.expense_titles.reset_index()["index"] + 1
+        self.expense_titles = self.expense_titles.reindex(
+            ["title_id", "title", "expenses_type_id", "updated_at"], axis=1
         )
-        tournament_games = tournament_games[["name_game", "name_tournament"]]
-        return tournament_games
 
-    def _gen_staff_handler():
-        #
-        available_staff = prompt_staff_shifts.loc[
-            (prompt_staff_shifts["weekday"] == config["event_info"]["weekday"])
-            & (prompt_staff_shifts["hour"] >= config["event_info"]["hour"])
-        ]["staff_id"].unique()
-
-        return np.random.choice(available_staff)
-
-    def count_matches(x):
-        total = 0
-        while x >= 0:
-            total += 2**x
-            x -= 1
-        return total
-
-    def gen_tournaments():
+    def gen_tournaments(self) -> None:
         dates = pd.DataFrame(
-            prompt_dates.loc[
-                prompt_dates["weekday"] == config["event_info"]["weekday"], "date"
+            self.prompt_dates.loc[
+                self.prompt_dates["weekday"] == self.config["event_info"]["weekday"],
+                "date",
             ].iloc[
-                config["event_info"]["start_offset_weeks"] :: config["event_info"][
-                    "period_weeks"
-                ]
+                self.config["event_info"]["start_offset_weeks"] :: self.config[
+                    "event_info"
+                ]["period_weeks"]
             ]
         ).reset_index()["date"]
-        tournament = _gen_tournament_game()
+        tournament = self.random_helpers.prepar_tournament_game()
         tournament = tournament.sample(
             dates.shape[0], replace=False, ignore_index=True
         )  # cannot be the same row
@@ -500,8 +495,10 @@ class RandomGenerator:
             self.config["tournament_tree_params"]["max"] + 1,
             size=dates.shape[0],
         )
-        matches = map(lambda x: count_matches(x), tree_levels_number)
-        df = pd.DataFrame(
+        matches = map(
+            lambda x: self.random_helpers.count_matches(x), tree_levels_number
+        )
+        self.tournaments = pd.DataFrame(
             {
                 "name": tournament["name_tournament"],
                 "game": tournament["name_game"],
@@ -514,7 +511,7 @@ class RandomGenerator:
                 - datetime.timedelta(
                     days=self.config["event_info"]["deadline_offset_days"]
                 ),
-                "staff_id": [_gen_staff_handler() for _ in range(dates.shape[0])],
+                "staff_id": self.random_helpers.gen_tournament_staff(dates.shape[0]),
                 "expenses": np.round(
                     self.config["exponses_params"]["mean"]
                     + np.random.gamma(
@@ -528,11 +525,11 @@ class RandomGenerator:
                 + datetime.timedelta(hours=self.config["event_info"]["hour"]),
             }
         )
-        df.sort_values(by=["updated_at"], inplace=True)
-        df = df.reset_index(drop=True)
-        df["tournament_id"] = df.reset_index()["index"] + 1
-        df["invoice_id"] = df["tournament_id"]
-        df = df.reindex(
+        self.tournaments.sort_values(by=["updated_at"], inplace=True)
+        self.tournaments = self.tournaments.reset_index(drop=True)
+        self.tournaments["tournament_id"] = self.tournaments.reset_index()["index"] + 1
+        self.tournaments["invoice_id"] = self.tournaments["tournament_id"]
+        self.tournaments = self.tournaments.reindex(
             [
                 "tournament_id",
                 "name",
@@ -549,43 +546,14 @@ class RandomGenerator:
             ],
             axis=1,
         )
-        return df
 
-    def _sign_up_date_generator(deadline):
-        deadline = pd.to_datetime(deadline)
-        date = pd.to_datetime(
-            prompt_dates["date"]
-            .loc[
-                (prompt_dates["date"] < deadline)
-                & (
-                    prompt_dates["date"]
-                    > deadline
-                    - pd.DateOffset(
-                        days=self.config["event_info"]["can_sign_up_offset_days"]
-                    )
-                )
-            ]
-            .sample(1, ignore_index=True)
-            .values[0]
-        )
-        date += pd.DateOffset(
-            hours=np.random.randint(
-                self.config["shop_open_hours"]["from"],
-                self.config["shop_open_hours"]["to"],
-            ),
-            minutes=np.random.randint(0, 60),
-            seconds=np.random.randint(0, 60),
-            n=df.shape[0],
-        )
-        return date
-
-    def gen_participations():
+    def gen_participations(self) -> None:
         # participants number
         players = pd.merge(
-            tournaments[
+            self.tournaments[
                 ["game", "tree_levels", "tournament_id", "fee", "sign_up_deadline"]
             ],
-            prompt_games[["name", "participants_number"]],
+            self.prompt_games[["name", "participants_number"]],
             left_on=["game"],
             right_on=["name"],
             how="left",
@@ -596,7 +564,7 @@ class RandomGenerator:
 
         # customer_id and place
         participants = map(
-            lambda x: customers["customer_id"]
+            lambda x: self.customers["customer_id"]
             .sample(x, replace=False, ignore_index=True)
             .values,
             players_number,
@@ -604,17 +572,25 @@ class RandomGenerator:
         players["place"] = players["players"].apply(lambda x: [*range(1, x + 1)])
         players["customer_id"] = list(participants)
 
-        df = players[
+        self.participations = players[
             ["tournament_id", "customer_id", "fee", "sign_up_deadline", "place"]
         ]
-        df = df.explode(["customer_id", "place"], ignore_index=True)
-        df["sign_up_date"] = df["sign_up_deadline"].apply(_sign_up_date_generator)
-        df["updated_at"] = df["sign_up_date"].copy()
-        df.sort_values(by=["updated_at"], inplace=True)
-        df = df.reset_index(drop=True)
-        df["particip_id"] = df.reset_index()["index"] + 1
-        df["invoice_id"] = df.reset_index()["index"] + 1
-        df = df.reindex(
+        self.participations = self.participations.explode(
+            ["customer_id", "place"], ignore_index=True
+        )
+        self.participations["sign_up_date"] = self.participations[
+            "sign_up_deadline"
+        ].apply(self.random_helpers.gen_sign_u_date)
+        self.participations["updated_at"] = self.participations["sign_up_date"].copy()
+        self.participations.sort_values(by=["updated_at"], inplace=True)
+        self.participations = self.participations.reset_index(drop=True)
+        self.participations["particip_id"] = (
+            self.participations.reset_index()["index"] + 1
+        )
+        self.participations["invoice_id"] = (
+            self.participations.reset_index()["index"] + 1
+        )
+        self.participations = self.participations.reindex(
             [
                 "particip_id",
                 "tournament_id",
@@ -627,169 +603,30 @@ class RandomGenerator:
             ],
             axis=1,
         )
-        return df
 
-    v_repeat = np.vectorize(lambda date, volume: itertools.repeat(date, int(volume)))
-
-    def _gen_sell_inventory() -> pd.DataFrame:
-        # evaluate a total game number
-        total_games_n = np.round(
-            prompt_dates["volume_sales"].sum()
-            * (config["inventory_multiplier"] + np.random.exponential())
-        )
-        game_counts = list(map(round, prompt_games["weights"] * total_games_n))
-        # repeat the games
-        games_gener = itertools.chain(*v_repeat(prompt_games["name"], game_counts))
-        games = np.array(list(games_gener))
-        # add the basic details to the data frame
-        s_inventory = pd.DataFrame(
-            {
-                "game": np.random.permutation(games),
-                "destination": np.full(games.size, "S"),
-                "active": np.full(games.size, True),
-            }
-        )
-        # add the prices from the prompt table
-        s_inventory = (
-            pd.merge(
-                s_inventory,
-                prompt_games[["name", "purchase"]],
-                left_on="game",
-                right_on="name",
-                how="inner",
-            )
-            .rename(columns={"purchase": "price"})
-            .drop(columns="name")
-        )
-        # add the procurment prices as some fraction of the standard one
-        s_inventory["purchase_payment"] = (
-            s_inventory["price"] * config["bulk_ratio"]
-        ).round(2)
-        s_inventory = s_inventory.sample(n=s_inventory.shape[0]).reset_index(drop=True)
-        # get the delivery dates
-        delivery_count = (
-            config["avg_supply_yearly_rate"] * config["shop_lifetime_years"]
-        )
-        delivery_dates = prompt_dates["date"][
-            :: int(prompt_dates.shape[0] / delivery_count)
-        ].copy()
-        delivery_dates += datetime.timedelta(
-            hours=self.config["shop_open_hours"]["from"]
-        )
-        # the final grouping
-        group_dates = np.repeat(
-            delivery_dates.to_numpy(), np.ceil(total_games_n / delivery_count)
-        )[: sum(game_counts)]
-        s_inventory = s_inventory.reset_index(drop=True)
-        s_inventory["delivery_date"] = group_dates
-        return s_inventory
-
-    def _gen_rent_inventory() -> pd.DataFrame:
-        total_games_n = config["rental_games_n"]
-        game_counts = list(map(round, prompt_games["weights"] * total_games_n))
-        # repeat the games
-        games_gener = itertools.chain(*v_repeat(prompt_games["name"], game_counts))
-        games = np.array(list(games_gener))
-        # active statuses
-        active_status = np.full(games.size, True)
-        active_status[: config["inactive_rental_games"]] = False
-        active_status = np.random.permutation(active_status)
-        # add the basic details to the data frame
-        r_inventory = pd.DataFrame(
-            {
-                "game": np.random.permutation(games),
-                "destination": np.full(games.size, "R"),
-                "active": active_status,
-            }
-        )
-        # add the prices from the prompt table; temporarily prices are full
-        r_inventory = (
-            pd.merge(
-                r_inventory,
-                prompt_games[["name", "purchase"]],
-                left_on="game",
-                right_on="name",
-                how="inner",
-            )
-            .rename(columns={"purchase": "price"})
-            .drop(columns="name")
-        )
-        # add the procurment prices as some fraction of the standard one
-        r_inventory["purchase_payment"] = (
-            r_inventory["price"] * config["bulk_ratio"]
-        ).round(2)
-        # the delivery dates
-        r_inventory["delivery_date"] = prompt_dates["date"].iloc[
-            0
-        ] + datetime.timedelta(hours=self.config["shop_open_hours"]["from"])
-        r_inventory["price"] = (
-            r_inventory["price"] * config["rental_price_ratio"]
-        ).round(2)
-        return r_inventory
-
-    def _gen_tournament_inventory() -> pd.DataFrame:
-        # find the required game counts
-        game_counts_tournaments = (
-            tournaments[["game", "tree_levels"]]
-            .groupby("game")
-            .max()
-            .apply(lambda x: 2**x)
-        ).reset_index()
-        # repeat the games
-        games_gener = itertools.chain(
-            *v_repeat(
-                game_counts_tournaments["game"], game_counts_tournaments["tree_levels"]
-            )
-        )
-        games = np.array(list(games_gener))
-
-        # add the basic details to the data frame
-        t_inventory = pd.DataFrame(
-            {
-                "game": np.random.permutation(games),
-                "destination": np.full(games.size, "T"),
-                "active": np.full(games.size, True),
-            }
-        )
-        t_inventory = (
-            pd.merge(
-                t_inventory,
-                prompt_games[["name", "purchase"]],
-                left_on="game",
-                right_on="name",
-                how="inner",
-            )
-            .rename(columns={"purchase": "price"})
-            .drop(columns="name")
-        )
-        # add the procurment prices as some fraction of the standard one
-        t_inventory["purchase_payment"] = (
-            t_inventory["price"] * config["bulk_ratio"]
-        ).round(2)
-        # the delivery dates
-        t_inventory["delivery_date"] = prompt_dates["date"].iloc[
-            0
-        ] + datetime.timedelta(hours=self.config["shop_open_hours"]["from"])
-        t_inventory["price"] = np.nan
-        return t_inventory
-
-    def gen_inventory():
+    def gen_inventory(self) -> None:
         # concat the parts
-        inventory = pd.concat(
-            [_gen_sell_inventory(), _gen_rent_inventory(), _gen_tournament_inventory()]
+        self.inventory = pd.concat(
+            [
+                self.random_helpers.gen_sell_inventory(),
+                self.random_helpers.gen_rent_inventory(),
+                self.random_helpers.gen_tournament_inventory(self.tournaments),
+            ]
         )
         # add updated at value
-        inventory["updated_at"] = inventory["delivery_date"]
-        inventory = inventory.sort_values(by=["updated_at"])
+        self.inventory["updated_at"] = self.inventory["delivery_date"]
+        self.inventory = self.inventory.sort_values(by=["updated_at"])
         # index it
-        inventory = inventory.reset_index(drop=True)
-        inventory["inventory_id"] = inventory.reset_index()["index"] + 1
+        self.inventory = self.inventory.reset_index(drop=True)
+        self.inventory["inventory_id"] = self.inventory.reset_index()["index"] + 1
         # add invoice numbers
-        uniq_dates = np.sort(np.unique(inventory["delivery_date"]))
+        uniq_dates = np.sort(np.unique(self.inventory["delivery_date"]))
         invoice_translator = dict(zip(uniq_dates, np.arange(uniq_dates.size) + 1))
-        inventory["invoice_id"] = inventory["delivery_date"].map(invoice_translator)
+        self.inventory["invoice_id"] = self.inventory["delivery_date"].map(
+            invoice_translator
+        )
         # export it
-        inventory = inventory.reindex(
+        self.inventory = self.inventory.reindex(
             [
                 "inventory_id",
                 "game",
@@ -803,94 +640,77 @@ class RandomGenerator:
             ],
             axis=1,
         )
-        return inventory
 
-    def gen_game_prices():
-        df = inventory.drop_duplicates(
+    def gen_game_prices(self) -> None:
+        self.game_prices = self.inventory.drop_duplicates(
             subset=["price"], keep="last", ignore_index=True
         )[["price", "updated_at"]]
-        df.rename(columns={"price": "current_price"}, inplace=True)
-        df = df.sort_values(["updated_at"])
+        self.game_prices.rename(columns={"price": "current_price"}, inplace=True)
+        self.game_prices = self.game_prices.sort_values(["updated_at"])
         # set id
-        df = df.reset_index(drop=True)
-        df["price_id"] = df.reset_index()["index"] + 1
-        df = df.reindex(["price_id", "current_price", "updated_at"], axis=1)
-        return df
-
-    def gen_sales():
-        v_repeat = np.vectorize(
-            lambda date, volume: itertools.repeat(date, int(volume))
-        )
-        v_timedelta = np.vectorize(
-            lambda h, m, s: datetime.timedelta(
-                hours=int(h), minutes=int(m), seconds=int(s)
-            )
+        self.game_prices = self.game_prices.reset_index(drop=True)
+        self.game_prices["price_id"] = self.game_prices.reset_index()["index"] + 1
+        self.game_prices = self.game_prices.reindex(
+            ["price_id", "current_price", "updated_at"], axis=1
         )
 
-        @np.vectorize
-        def v_get_staff_id(timestamp):
-            available_staff = prompt_staff_shifts[
-                (prompt_staff_shifts["weekday"] == timestamp.weekday())
-                & (prompt_staff_shifts["hour"] == timestamp.hour)
-            ]["staff_id"]
-            return np.random.choice(available_staff)
-
+    def gen_sales(self) -> None:
         # get a list of dates for each customer
         dates_gener = itertools.chain(
-            *v_repeat(prompt_dates["date"], prompt_dates["volume_sales"])
+            *self.random_helpers.v_repeat(
+                self.prompt_dates["date"], self.prompt_dates["volume_sales"]
+            )
         )
         dates = np.array(list(dates_gener))
         # add random time to the date
         hours = np.array(
             np.random.choice(
-                prompt_hours["hour"], p=prompt_hours["prob"], size=dates.size
+                self.prompt_hours["hour"], p=self.prompt_hours["prob"], size=dates.size
             )
         )
         minutes = np.random.randint(0, 60, size=dates.size)
         seconds = np.random.randint(0, 60, size=dates.size)
-        timestamps = dates + v_timedelta(hours, minutes, seconds)
+        timestamps = dates + self.random_helpers.v_timedelta(hours, minutes, seconds)
         timestamps.sort()
         # staff ids
-        staff = v_get_staff_id(timestamps)
+        staff = self.random_helpers.v_get_staff_id(timestamps)
         # how many at once are bought
         pcs = np.random.choice(
-            list(config["customer_pcs_probas"].keys()),
-            p=list(config["customer_pcs_probas"].values()),
+            list(self.config["customer_pcs_probas"].keys()),
+            p=list(self.config["customer_pcs_probas"].values()),
             size=dates.size,
         ).astype(int)
         # make a data frame and add invoices as ix
-        sales = pd.DataFrame({"date": timestamps, "staff_id": staff, "pcs": pcs})
-        sales = sales.reset_index().rename(columns={"index": "invoice"})
+        self.sales = pd.DataFrame({"date": timestamps, "staff_id": staff, "pcs": pcs})
+        self.sales = self.sales.reset_index().rename(columns={"index": "invoice"})
         # additional rows when the pieces number is larger than one
-        for pcs_n in config["customer_pcs_probas"].keys():
-            selection = sales[sales["pcs"] == int(pcs_n)]
-            sales = pd.concat([sales] + [selection] * (int(pcs_n) - 1))
-        sales = sales.reset_index(drop=True).drop("pcs", axis="columns")
+        for pcs_n in self.config["customer_pcs_probas"].keys():
+            selection = self.sales[self.sales["pcs"] == int(pcs_n)]
+            self.sales = pd.concat([self.sales] + [selection] * (int(pcs_n) - 1))
+        self.sales = self.sales.reset_index(drop=True).drop("pcs", axis="columns")
         # pre-filter the inventory table
-        global inventory  # DELETE THAT!!!!!!!!!!!
-        sales_inventory = inventory[inventory["destination"] == "S"]
-        sales = pd.concat(
+        sales_inventory = self.inventory[self.inventory["destination"] == "S"]
+        self.sales = pd.concat(
             [
-                sales,
+                self.sales,
                 sales_inventory.iloc[: sales.shape[0]].reset_index()[
                     ["inventory_id", "price", "delivery_date"]
                 ],
             ],
             axis=1,
         )
-        sales = sales[~(sales["date"] < sales["delivery_date"])]
-        sales = sales.drop(columns=["delivery_date"])
-        inventory.loc[sales["inventory_id"], "active"] = False
-
+        self.sales = self.sales[~(sales["date"] < sales["delivery_date"])]
+        self.sales = self.sales.drop(columns=["delivery_date"])
+        self.inventory.loc[self.sales["inventory_id"], "active"] = False
         # other details
-        sales["updated_at"] = sales["date"]
-        sales["return_oper"] = False
+        self.sales["updated_at"] = self.sales["date"]
+        self.sales["return_oper"] = False
         # export
-        sales.sort_values("updated_at", inplace=True)
+        self.sales.sort_values("updated_at", inplace=True)
         # fix
-        sales = sales.reset_index(drop=True)
-        sales["sale_id"] = sales.reset_index()["index"] + 1
-        sales = sales.reindex(
+        self.sales = self.sales.reset_index(drop=True)
+        self.sales["sale_id"] = self.sales.reset_index()["index"] + 1
+        self.sales = self.sales.reindex(
             [
                 "sale_id",
                 "inventory_id",
@@ -903,9 +723,8 @@ class RandomGenerator:
             ],
             axis=1,
         )
-        return sales
 
-    def gen_rental():
+    def gen_rental(self) -> None:
         rental_date = []
         return_dates = []
         customer = []
@@ -918,76 +737,65 @@ class RandomGenerator:
         invoice = []
         penalty_invoice = []
 
-        @np.vectorize
-        def v_get_staff_id(timestamp):
-            available_staff = prompt_staff_shifts[
-                (prompt_staff_shifts["weekday"] == timestamp.weekday())
-                & (prompt_staff_shifts["hour"] == timestamp.hour)
-            ]["staff_id"]
-            return np.random.choice(available_staff)
-
-        def v_proper_return_date(timestamp, date):
-            if (timestamp.day == date.day) & (timestamp.hour < date.hour):
-                return timestamp.replace(hour=config["shop_open_hours"]["from"])
-            elif timestamp.hour < config["shop_open_hours"]["from"]:
-                return timestamp.replace(hour=config["shop_open_hours"]["from"])
-            elif timestamp.hour >= config["shop_open_hours"]["to"]:
-                return timestamp.replace(hour=config["shop_open_hours"]["to"] - 1)
-            else:
-                return timestamp
-
-        for j in range(prompt_dates["date"].shape[0]):
-            for i in range(int(prompt_dates["volume_rental"][j])):
-                hour = np.random.choice(prompt_hours["hour"], p=prompt_hours["prob"])
-                date = prompt_dates["date"][j] + datetime.timedelta(
+        for j in range(self.prompt_dates["date"].shape[0]):
+            for i in range(int(self.prompt_dates["volume_rental"][j])):
+                hour = np.random.choice(
+                    self.prompt_hours["hour"], p=self.prompt_hours["prob"]
+                )
+                date = self.prompt_dates["date"][j] + datetime.timedelta(
                     hours=int(hour),
                     minutes=np.random.randint(0, 60),
                     seconds=np.random.randint(0, 60),
                 )
-                game = np.random.choice(prompt_games["name"], p=prompt_games["weights"])
-                staff_id = v_get_staff_id(date)
+                game = np.random.choice(
+                    self.prompt_games["name"], p=self.prompt_games["weights"]
+                )
+                staff_id = self.random_helpers.v_get_staff_id(date)
                 holding_time = np.random.gamma(
                     self.config["holding_time_params"]["shape"],
                     scale=self.config["holding_time_params"]["scale"],
                 )
-                return_date_t = prompt_dates["date"][j] + datetime.timedelta(
+                return_date_t = self.prompt_dates["date"][j] + datetime.timedelta(
                     days=int(holding_time),
                     hours=round(abs(holding_time) % 1 * 24, 2),
                     minutes=np.random.randint(0, 60),
                     seconds=np.random.randint(0, 60),
                 )
-                return_date = v_proper_return_date(return_date_t, date)
-
+                return_date = self.random_helpers.proper_return_date(
+                    return_date_t, date
+                )
                 mask = (
-                    (inventory["game"] == game)
-                    & (inventory["delivery_date"] < date)
-                    & (inventory["destination"] == "R")
-                    & (inventory["active"] == True)
+                    (self.inventory["game"] == game)
+                    & (self.inventory["delivery_date"] < date)
+                    & (self.inventory["destination"] == "R")
+                    & (self.inventory["active"] == True)
                 )
                 if mask.any():
                     customer.append(int(np.random.choice(customers["customer_id"])))
-                    price.append(inventory["price"].loc[mask.idxmax()])
+                    price.append(self.inventory["price"].loc[mask.idxmax()])
                     rental_date.append(date)
                     staff.append(staff_id)
-                    game_inventory_id = inventory["inventory_id"].loc[mask.idxmax()]
+                    game_inventory_id = self.inventory["inventory_id"].loc[
+                        mask.idxmax()
+                    ]
                     inventory_ids.append(game_inventory_id)
                     invoice.append(f"{i}{j}")
                     if return_date > datetime.datetime.today():
                         return_dates.append(np.nan)
                         update.append(date)
-                        inventory.loc[mask.idxmax(), "active"] = False
+                        self.inventory.loc[mask.idxmax(), "active"] = False
                         penalty.append(np.nan)
                         penalty_invoice.append(np.nan)
                     else:
                         return_dates.append(return_date)
                         update.append(return_date)
                         delta = return_date - date
-                        if delta.days > config["rental_allowed_days"]:
+                        if delta.days > self.config["rental_allowed_days"]:
                             penalty.append(
                                 (
                                     (
-                                        inventory[
-                                            inventory["inventory_id"]
+                                        self.inventory[
+                                            self.inventory["inventory_id"]
                                             == game_inventory_id
                                         ]["price"]
                                     )
@@ -1003,7 +811,7 @@ class RandomGenerator:
                             penalty_invoice.append(np.nan)
                     rate.append(np.random.randint(1, 11))
 
-        df = pd.DataFrame(
+        self.rental = pd.DataFrame(
             {
                 "inventory_id": inventory_ids,
                 "customer_id": customer,
@@ -1018,10 +826,10 @@ class RandomGenerator:
                 "updated_at": update,
             }
         )
-        df.sort_values("updated_at", inplace=True)
-        df = df.reset_index(drop=True)
-        df["rental_id"] = df.reset_index()["index"] + 1
-        df = df.reindex(
+        self.rental.sort_values("updated_at", inplace=True)
+        self.rental = self.rental.reset_index(drop=True)
+        self.rental["rental_id"] = self.rental.reset_index()["index"] + 1
+        self.rental = self.rental.reindex(
             [
                 "rental_id",
                 "inventory_id",
@@ -1038,32 +846,31 @@ class RandomGenerator:
             ],
             axis=1,
         )
-        return df
 
-    def gen_games():
-        update = inventory[["game", "delivery_date"]].groupby(["game"]).min()
-        games = pd.merge(prompt_games, update, left_on=["name"], right_on=["game"])
-        games = games[
+    def gen_games(self) -> None:
+        update = self.inventory[["game", "delivery_date"]].groupby(["game"]).min()
+        self.games = pd.merge(
+            self.prompt_games, update, left_on=["name"], right_on=["game"]
+        )
+        self.games = self.games[
             ["name", "description", "category", "type", "tournament", "delivery_date"]
         ]
-        games.rename(
+        self.games.rename(
             columns={
                 "name": "title",
                 "description": "description",
-                "category": "category",
-                "type": "type",
                 "tournament": "competitivity",
                 "delivery_date": "updated_at",
             },
             inplace=True,
         )
-        games["competitivity"] = games["competitivity"].apply(
+        self.games["competitivity"] = self.games["competitivity"].apply(
             lambda x: True if x == "TAK" else False
         )
-        games.sort_values(["updated_at"], inplace=True)
-        games = games.reset_index(drop=True)
-        games["game_id"] = games.reset_index()["index"] + 1
-        games = games.reindex(
+        self.games.sort_values(["updated_at"], inplace=True)
+        self.games = self.games.reset_index(drop=True)
+        self.games["game_id"] = self.games.reset_index()["index"] + 1
+        self.games = self.games.reindex(
             [
                 "game_id",
                 "title",
@@ -1075,56 +882,71 @@ class RandomGenerator:
             ],
             axis=1,
         )
-        return games
 
-    def gen_game_categories():
-        df = games[["category", "updated_at"]].drop_duplicates("category", keep="first")
-        df.rename(columns={"category": "game_category"}, inplace=True)
-        df = df.reset_index(drop=True)
-        df["category_id"] = df.reset_index()["index"] + 1
-        df = df.reindex(["category_id", "game_category", "updated_at"], axis=1)
-        return df
+    def gen_game_categories(self) -> None:
+        self.game_categories = games[["category", "updated_at"]].drop_duplicates(
+            "category", keep="first"
+        )
+        self.game_categories.rename(columns={"category": "game_category"}, inplace=True)
+        self.game_categories = self.game_categories.reset_index(drop=True)
+        self.game_categories["category_id"] = (
+            self.game_categories.reset_index()["index"] + 1
+        )
+        self.game_categories = self.game_categories.reindex(
+            ["category_id", "game_category", "updated_at"], axis=1
+        )
 
-    def gen_game_types():
-        df = games[["type", "updated_at"]].drop_duplicates("type", keep="first")
-        df.rename(columns={"type": "game_type"}, inplace=True)
-        df = df.reset_index(drop=True)
-        df["type_id"] = df.reset_index()["index"] + 1
-        df = df.reindex(["type_id", "game_type", "updated_at"], axis=1)
-        return df
+    def gen_game_types(self) -> None:
+        self.game_types = games[["type", "updated_at"]].drop_duplicates(
+            "type", keep="first"
+        )
+        self.game_types.rename(columns={"type": "game_type"}, inplace=True)
+        self.game_types = self.game_types.reset_index(drop=True)
+        self.game_types["type_id"] = self.game_types.reset_index()["index"] + 1
+        self.game_types = self.game_types.reindex(
+            ["type_id", "game_type", "updated_at"], axis=1
+        )
 
-    def _customers_updated():
-        global customers
+    def update_mock_customers(self) -> None:
         active_customers = pd.concat(
             [
-                rental[["customer_id", "updated_at"]],
-                participations[["customer_id", "updated_at"]],
+                self.rental[["customer_id", "updated_at"]],
+                self.participations[["customer_id", "updated_at"]],
             ],
             ignore_index=True,
         )
-        customers = pd.merge(
-            customers,
+        self.customers = pd.merge(
+            self.customers,
             active_customers.groupby(by="customer_id").min(),
             on="customer_id",
         )
-        customers.sort_values("updated_at", inplace=True)
-        customers.reset_index(drop=True, inplace=True)
-        return customers
+        self.customers.sort_values("updated_at", inplace=True)
+        self.customers.reset_index(drop=True, inplace=True)
 
-    def gen_real_customers():
-        global customers
-        customers = _customers_updated()
-        customers["gender"] = np.random.choice(["M", "F"], size=customers.shape[0])
-        customers["phone"] = gen_one_phone(np.zeros(customers.shape[0]))
-        customers["city"] = np.random.choice(
-            prompt_cities["city"], p=prompt_cities["prob"], size=customers.shape[0]
+    def gen_real_customers(self) -> None:
+        self.customers["gender"] = np.random.choice(
+            ["M", "F"], size=self.customers.shape[0]
         )
-        customers["first_name"] = gen_one_name(customers["gender"], "first")
-        customers["last_name"] = gen_one_name(customers["gender"], "last")
-        customers["email"] = gen_email(customers["first_name"], customers["last_name"])
-        customers["previous_customer_id"] = customers["customer_id"]
-        customers["customer_id"] = customers.reset_index()["index"] + 1
-        customers = customers.reindex(
+        self.customers["phone"] = self.random_helpers.gen_one_phone(
+            np.zeros(self.customers.shape[0])
+        )
+        self.customers["city"] = np.random.choice(
+            self.prompt_cities["city"],
+            p=self.prompt_cities["prob"],
+            size=self.customers.shape[0],
+        )
+        self.customers["first_name"] = self.random_helpers.gen_one_name(
+            self.customers["gender"], "first"
+        )
+        self.customers["last_name"] = self.random_helpers.gen_one_name(
+            self.customers["gender"], "last"
+        )
+        self.customers["email"] = self.random_helpers.gen_email(
+            self.customers["first_name"], self.customers["last_name"]
+        )
+        self.customers["previous_customer_id"] = self.customers["customer_id"]
+        self.customers["customer_id"] = self.customers.reset_index()["index"] + 1
+        self.customers = self.customers.reindex(
             columns=[
                 "customer_id",
                 "previous_customer_id",
@@ -1136,22 +958,20 @@ class RandomGenerator:
                 "updated_at",
             ]
         )
-        return customers
 
-    def gen_cities():
-        merged_df = pd.concat([customers, staff], ignore_index=True)
-        merged_df.sort_values(["updated_at"], inplace=True)
-        merged_df.drop_duplicates(subset=["city"], keep="first", inplace=True)
-        city = pd.DataFrame(
+    def gen_cities(self) -> None:
+        merged_people = pd.concat([customers, staff], ignore_index=True)
+        merged_people.sort_values(["updated_at"], inplace=True)
+        merged_people.drop_duplicates(subset=["city"], keep="first", inplace=True)
+        self.city = pd.DataFrame(
             {
-                "city": merged_df["city"],
-                "updated_at": merged_df["updated_at"],
+                "city": merged_people["city"],
+                "updated_at": merged_people["updated_at"],
             }
         )
-        city = city.reset_index(drop=True)
-        city["city_id"] = city.reset_index()["index"] + 1
-        city = city.reindex(["city_id", "city", "updated_at"], axis=1)
-        return city
+        self.city = self.city.reset_index(drop=True)
+        self.city["city_id"] = self.city.reset_index()["index"] + 1
+        self.city = self.city.reindex(["city_id", "city", "updated_at"], axis=1)
 
     def _gen_working_payments():
         # inventory
@@ -1340,7 +1160,7 @@ class RandomGenerator:
         )
         games = games.rename(columns={"category": "category_id", "type": "type_id"})
 
-    def prepare_data(self):
+    def prepare_data(self) -> None:
         self.read_prompts()
         self.gen_prompt_dates()
         self.gen_prompt_hours()
@@ -1348,6 +1168,7 @@ class RandomGenerator:
         self._assign_random_helpers()
         self.gen_staff()
         self.gen_prompt_staff_shifts()
+        self._assign_random_helpers()  # yes, again
         self.gen_realtionships()
         self.gen_partners()
         self.gen_mock_customers()
@@ -1363,6 +1184,8 @@ class RandomGenerator:
         self.gen_games()
         self.gen_game_categories()
         self.gen_game_types()
+        self.update_mock_customers()
+        # break
         self.gen_real_customers()
         self.gen_cities()
         self._gen_working_payments()
