@@ -104,6 +104,33 @@ class AssetGenerator(DBEngineer):
                 f"REPORT: '{name}' table was not created because of the lacking data."
             )
 
+    def export_group_list(
+        self,
+        name: str,
+        df: pd.DataFrame,
+        group: str,
+        keys: str,
+        values: str,
+        group_name: str,
+    ) -> None:
+        df.sort_values(by=[group, values], ascending=[True, False], inplace=True)
+        html_list_elems = []
+        html_list_elems.append('<div class="list-area">')
+        for group_unit in np.unique(df[group]):
+            html_list_elems.append(f"<h3>{group_name} &ndash; {group_unit}</h3>")
+            html_list_elems.append("<ol>")
+            for i, row in df[df[group] == group_unit].iterrows():
+                html_list_elems.append(f"<li>{row[keys]} (<i>{row[values]}</i>)</li>")
+            html_list_elems.append("</ol>")
+        html_list_elems.append("</div>")
+        html_list = "".join(html_list_elems)
+        with open(Path(f"assets/generated/{name}.html"), "w") as f:
+            f.write(html_list)
+        if df.empty:
+            logging.warning(
+                f"REPORT: '{name}' lists were not created because of the lacking data."
+            )
+
     def export_dict(self, name: str, dictionary: str) -> None:
         """Save the selected values in a JSON format.
 
@@ -273,9 +300,15 @@ class AssetGenerator(DBEngineer):
             name="recent_best_employee",
             dictionary={"name": best_empl},
         )
-        # .........
-        
-        # self.data["top_players"]
+        # top players per game
+        self.export_group_list(
+            name="top_players_lists",
+            df=self.data["top_players"],
+            group="game",
+            keys="player",
+            values="avg_score",
+            group_name="Gra",
+        )
         # top saled and renter games
         self.export_barchart(
             name="top_rented_games",
@@ -416,7 +449,9 @@ class ReportCreator:
                 "assets/generated/table_best_employees.html"
             ).read_text(encoding="utf-8")
             # top players - list
-            # ! TODO
+            self.context["top_players_lists"] = Path(
+                "assets/generated/top_players_lists.html"
+            ).read_text(encoding="utf-8")
             # style
             css = Path("assets/static/style.css").read_text(encoding="utf-8")
             self.context["style"] = f"<style>{css}</style>"
