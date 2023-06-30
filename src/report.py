@@ -113,16 +113,31 @@ class AssetGenerator(DBEngineer):
         values: str,
         group_name: str,
     ) -> None:
+        """Save the data frame to the file as a series of lists.
+        Do not export if the input is empty.
+
+        Args:
+            name (str): Name of the file.
+            df (pd.DataFrame): Some data frame.
+            group (str): A column of gorup names.
+            keys (str): A column of key names.
+            values (str): A column of keys' values.
+            group_name (str): A group prefix of subsections.
+        """
+        # prepare the order
         df.sort_values(by=[group, values], ascending=[True, False], inplace=True)
         html_list_elems = []
         html_list_elems.append('<div class="list-area">')
+        # divide by groups
         for group_unit in np.unique(df[group]):
             html_list_elems.append(f"<h3>{group_name} &ndash; {group_unit}</h3>")
             html_list_elems.append("<ol>")
+            # list within a group
             for i, row in df[df[group] == group_unit].iterrows():
                 html_list_elems.append(f"<li>{row[keys]} (<i>{row[values]}</i>)</li>")
             html_list_elems.append("</ol>")
         html_list_elems.append("</div>")
+        # join the components
         html_list = "".join(html_list_elems)
         with open(Path(f"assets/generated/{name}.html"), "w") as f:
             f.write(html_list)
