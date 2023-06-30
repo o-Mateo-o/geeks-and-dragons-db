@@ -39,6 +39,30 @@ class RandomGenerator:
         self.prompt_emails = pd.DataFrame()
         self.prompt_tournaments = pd.DataFrame()
 
+        self.prompt_dates = pd.DataFrame()
+        self.prompt_hours = pd.DataFrame()
+        self.prompt_games = pd.DataFrame()
+        self.staff = pd.DataFrame()
+        self.prompt_staff_shifts = pd.DataFrame()
+        self.relationships = pd.DataFrame()
+        self.partners = pd.DataFrame()
+        self.customers = pd.DataFrame()
+        self.maintenance_expenses = pd.DataFrame()
+        self.expense_types = pd.DataFrame()
+        self.expense_titles = pd.DataFrame()
+        self.tournaments = pd.DataFrame()
+        self.participations = pd.DataFrame()
+        self.inventory = pd.DataFrame()
+        self.game_prices = pd.DataFrame()
+        self.sales = pd.DataFrame()
+        self.rental = pd.DataFrame()
+        self.games = pd.DataFrame()
+        self.game_categories = pd.DataFrame()
+        self.game_types = pd.DataFrame()
+        self.city = pd.DataFrame()
+        self.payments = pd.DataFrame()
+        self.invoices = pd.DataFrame()
+
     def _assign_random_helpers(self) -> None:
         self.random_helpers = RandomHelpers(
             self.config,
@@ -973,9 +997,11 @@ class RandomGenerator:
         self.city["city_id"] = self.city.reset_index()["index"] + 1
         self.city = self.city.reindex(["city_id", "city", "updated_at"], axis=1)
 
-    def _gen_working_payments():
+    def gen_working_payments(self):
         # inventory
-        df_inv = inventory[["purchase_payment", "invoice_id", "updated_at"]].rename(
+        df_inv = self.inventory[
+            ["purchase_payment", "invoice_id", "updated_at"]
+        ].rename(
             columns={
                 "purchase_payment": "amount",
                 "invoice_id": "invoice",
@@ -985,18 +1011,18 @@ class RandomGenerator:
         df_inv["invoice"] = "I" + df_inv["invoice"].astype(str)
         df_inv["amount"] = -df_inv["amount"]
         # sales
-        df_sales = sales[["price", "invoice", "date"]].rename(
+        df_sales = self.sales[["price", "invoice", "date"]].rename(
             columns={"price": "amount"}
         )
         df_sales["invoice"] = "S" + df_sales["invoice"].astype(str)
         # rent
-        df_rent = rental[["price", "invoice", "rental_date"]].rename(
+        df_rent = self.rental[["price", "invoice", "rental_date"]].rename(
             columns={"price": "amount", "rental_date": "date"}
         )
         df_rent["invoice"] = "R" + df_rent["invoice"].astype(str)
         # rent penalty
         df_rent_penalty = (
-            rental[["penalty_payment", "penalty_invoice", "return_date"]]
+            self.rental[["penalty_payment", "penalty_invoice", "return_date"]]
             .dropna()
             .rename(
                 columns={
@@ -1008,13 +1034,13 @@ class RandomGenerator:
         )
         df_rent_penalty["invoice"] = "R" + df_rent_penalty["invoice"].astype(str)
         # expenses
-        df_exp = maintenance_expenses[["amount", "invoice_id", "updated_at"]].rename(
-            columns={"updated_at": "date", "invoice_id": "invoice"}
-        )
+        df_exp = self.maintenance_expenses[
+            ["amount", "invoice_id", "updated_at"]
+        ].rename(columns={"updated_at": "date", "invoice_id": "invoice"})
         df_exp["invoice"] = "ME" + df_exp["invoice"].astype(str)
         df_exp["amount"] = -df_exp["amount"]
         # tour
-        df_tour = tournaments[["expenses", "invoice_id", "updated_at"]].rename(
+        df_tour = self.tournaments[["expenses", "invoice_id", "updated_at"]].rename(
             columns={
                 "expenses": "amount",
                 "invoice_id": "invoice",
@@ -1024,144 +1050,153 @@ class RandomGenerator:
         df_tour["invoice"] = "T" + df_tour["invoice"].astype(str)
         df_tour["amount"] = -df_tour["amount"]
         # participations
-        df_part = participations[["fee", "invoice_id", "updated_at"]].rename(
+        df_part = self.participations[["fee", "invoice_id", "updated_at"]].rename(
             columns={"fee": "amount", "invoice_id": "invoice", "updated_at": "date"}
         )
         df_part["invoice"] = "P" + df_part["invoice"].astype(str)
-        df = pd.concat(
+        self.payments = pd.concat(
             [df_inv, df_sales, df_rent, df_rent_penalty, df_exp, df_tour, df_part],
             ignore_index=True,
         )
-        return df
 
-    def gen_invoices():
-        df = working_payments[["invoice", "date"]]
-        df = df.drop_duplicates("invoice")
-        df["updated_at"] = df.loc[:, "date"]
-        df = df.reset_index(drop=True)
-        df["invoice_id"] = df.reset_index()["index"] + 1
-        df = df.reindex(["invoice_id", "invoice", "date", "updated_at"], axis=1)
-        return df
+    def gen_invoices(self) -> None:
+        self.invoices = self.payments[["invoice", "date"]]
+        self.invoices = self.invoices.drop_duplicates("invoice")
+        self.invoices["updated_at"] = self.invoices.loc[:, "date"]
+        self.invoices = self.invoices.reset_index(drop=True)
+        self.invoices["invoice_id"] = self.invoices.reset_index()["index"] + 1
+        self.invoices = self.invoices.reindex(
+            ["invoice_id", "invoice", "date", "updated_at"], axis=1
+        )
 
-    def gen_payments():
-        df = pd.merge(working_payments, invoices, on="invoice")[
+    def gen_payments(self) -> None:
+        self.payments = pd.merge(self.payments, self.invoices, on="invoice")[
             ["amount", "invoice_id", "updated_at"]
         ]
-        df = df.reset_index(drop=True)
-        df["payment_id"] = df.reset_index()["index"] + 1
-        df = df.reindex(["payment_id", "amount", "invoice_id", "updated_at"], axis=1)
-        return df
+        self.payments = self.payments.reset_index(drop=True)
+        self.payments["payment_id"] = self.payments.reset_index()["index"] + 1
+        self.payments = self.payments.reindex(
+            ["payment_id", "amount", "invoice_id", "updated_at"], axis=1
+        )
 
-    def customers_cleaning():
-        global customers
-        customers["city"] = customers["city"].map(
-            dict(zip(city["city"], city["city_id"]))
+    def cleanse_customers(self) -> None:
+        self.customers["city"] = self.customers["city"].map(
+            dict(zip(self.city["city"], self.city["city_id"]))
         )
-        customers = customers.rename(columns={"city": "city_id"})
-        customers.drop(columns=["previous_customer_id"], inplace=True)
+        self.customers = self.customers.rename(columns={"city": "city_id"})
+        self.customers.drop(columns=["previous_customer_id"], inplace=True)
 
-    def participations_cleaning():
-        global participations
-        participations.rename(columns={"fee": "fee_payment_id"}, inplace=True)
-        participations["customer_id"] = participations["customer_id"].map(
-            dict(zip(customers["previous_customer_id"], customers["customer_id"]))
+    def cleanse_participations(self) -> None:
+        self.participations.rename(columns={"fee": "fee_payment_id"}, inplace=True)
+        self.participations["customer_id"] = self.participations["customer_id"].map(
+            dict(
+                zip(
+                    self.customers["previous_customer_id"],
+                    self.customers["customer_id"],
+                )
+            )
         )
-        participations["fee_payment_id"] = participations["updated_at"].map(
-            dict(zip(payments["updated_at"], payments["payment_id"]))
+        self.participations["fee_payment_id"] = self.participations["updated_at"].map(
+            dict(zip(self.payments["updated_at"], self.payments["payment_id"]))
         )
-        participations.drop(columns=["invoice_id"], inplace=True)
+        self.participations.drop(columns=["invoice_id"], inplace=True)
 
-    def tournaments_cleaning():
-        global tournaments
-        tournaments["game"] = tournaments["game"].map(
-            dict(zip(games["title"], games["game_id"]))
+    def cleanse_tournaments(self) -> None:
+        self.tournaments["game"] = self.tournaments["game"].map(
+            dict(zip(self.games["title"], self.games["game_id"]))
         )
-        tournaments = tournaments.rename(
+        self.tournaments = self.tournaments.rename(
             columns={"game": "game_id", "expenses": "expenses_payments_id"}
         )
-        tournaments["expenses_payments_id"] = tournaments["updated_at"].map(
-            dict(zip(payments["updated_at"], payments["payment_id"]))
+        self.tournaments["expenses_payments_id"] = self.tournaments["updated_at"].map(
+            dict(zip(self.payments["updated_at"], self.payments["payment_id"]))
         )
-        tournaments.drop(columns=["tree_levels", "invoice_id"], inplace=True)
+        self.tournaments.drop(columns=["tree_levels", "invoice_id"], inplace=True)
 
-    def rental_cleaning():
-        global rental
-        rental["customer_id"] = rental["customer_id"].map(
-            dict(zip(customers["previous_customer_id"], customers["customer_id"]))
+    def cleanse_rental(self) -> None:
+        self.rental["customer_id"] = self.rental["customer_id"].map(
+            dict(
+                zip(
+                    self.customers["previous_customer_id"],
+                    self.customers["customer_id"],
+                )
+            )
         )
-        rental = rental.rename(
+        self.rental = self.rental.rename(
             columns={"penalty_payment": "penalty_payment_id", "price": "payment_id"}
         )
-        rental.drop(columns=["invoice", "penalty_invoice"], inplace=True)
+        self.rental.drop(columns=["invoice", "penalty_invoice"], inplace=True)
 
-    def inventory_cleaning():
-        global inventory
-        inventory["game"] = inventory["game"].map(
-            dict(zip(games["title"], games["game_id"]))
+    def cleanse_inventory(self) -> None:
+        self.inventory["game"] = self.inventory["game"].map(
+            dict(zip(self.games["title"], self.games["game_id"]))
         )
-        inventory = inventory.rename(
+        self.inventory = self.inventory.rename(
             columns={
                 "game": "game_id",
                 "price": "price_id",
                 "purchase_payment": "purchase_payment_id",
             }
         )
-        inventory["purchase_payment_id"] = inventory["updated_at"].map(
-            dict(zip(payments["updated_at"], payments["payment_id"]))
+        self.inventory["purchase_payment_id"] = self.inventory["updated_at"].map(
+            dict(zip(self.payments["updated_at"], self.payments["payment_id"]))
         )
-        inventory["price_id"] = inventory["price_id"].map(
-            dict(zip(game_prices["current_price"], game_prices["price_id"]))
+        self.inventory["price_id"] = self.inventory["price_id"].map(
+            dict(zip(self.game_prices["current_price"], self.game_prices["price_id"]))
         )
-        inventory.drop(columns=["invoice_id"], inplace=True)
+        self.inventory.drop(columns=["invoice_id"], inplace=True)
 
-    def staff_cleaning():
-        global staff
-        temp = dict(zip(city["city"], city["city_id"]))
-        staff["city"] = staff["city"].map(temp)
-        staff.rename(columns={"city": "city_id"}, inplace=True)
+    def cleanse_staff(self) -> None:
+        temp_cities = dict(zip(self.city["city"], self.city["city_id"]))
+        self.staff["city"] = self.staff["city"].map(temp_cities)
+        self.staff.rename(columns={"city": "city_id"}, inplace=True)
 
-    def invoices_cleaning():
-        global invoices
-        invoices.drop(columns=["invoice"], inplace=True)
+    def cleanse_invoices(self) -> None:
+        self.invoices.drop(columns=["invoice"], inplace=True)
 
-    def maintenance_expenses_cleaning():
-        global maintenance_expenses
-        maintenance_expenses["title"] = maintenance_expenses["title"].map(
-            dict(zip(expense_titles["title"], expense_titles["title_id"]))
+    def cleanse_maintenance_expenses(self) -> None:
+        self.maintenance_expenses["title"] = self.maintenance_expenses["title"].map(
+            dict(zip(self.expense_titles["title"], self.expense_titles["title_id"]))
         )
-        maintenance_expenses = maintenance_expenses.drop(
+        self.maintenance_expenses = self.maintenance_expenses.drop(
             columns=["invoice_id", "amount", "type"]
         )
-        maintenance_expenses = maintenance_expenses.rename(
+        self.maintenance_expenses = self.maintenance_expenses.rename(
             columns={"title": "title_id"}
         )
-        maintenance_expenses["payment_id"] = maintenance_expenses["updated_at"].map(
-            dict(zip(payments["updated_at"], payments["payment_id"]))
-        )
-        maintenance_expenses = maintenance_expenses.reindex(
+        self.maintenance_expenses["payment_id"] = self.maintenance_expenses[
+            "updated_at"
+        ].map(dict(zip(self.payments["updated_at"], self.payments["payment_id"])))
+        self.maintenance_expenses = self.maintenance_expenses.reindex(
             ["spend_id", "title_id", "payment_id", "date", "updated_at"], axis=1
         )
 
-    def sales_cleaning():
-        global sales
-        sales = sales.rename(columns={"price": "payment_id"})
-        sales["payment_id"] = sales["date"].map(
-            dict(zip(payments["updated_at"], payments["payment_id"]))
+    def cleanse_sales(self) -> None:
+        self.sales = self.sales.rename(columns={"price": "payment_id"})
+        self.sales["payment_id"] = self.sales["date"].map(
+            dict(zip(self.payments["updated_at"], self.payments["payment_id"]))
         )
-        sales.drop(columns=["invoice"], inplace=True)
+        self.sales.drop(columns=["invoice"], inplace=True)
 
-    def games_cleaning():
-        global games
-        games["category"] = games["category"].map(
-            dict(zip(game_categories["game_category"], game_categories["category_id"]))
+    def cleanse_games(self) -> None:
+        self.games["category"] = self.games["category"].map(
+            dict(
+                zip(
+                    self.game_categories["game_category"],
+                    self.game_categories["category_id"],
+                )
+            )
         )
-        games["type"] = games["type"].map(
-            dict(zip(game_types["game_type"], game_types["type_id"]))
+        self.games["type"] = self.games["type"].map(
+            dict(zip(self.game_types["game_type"], self.game_types["type_id"]))
         )
-        games = games.rename(columns={"category": "category_id", "type": "type_id"})
+        self.games = self.games.rename(
+            columns={"category": "category_id", "type": "type_id"}
+        )
 
     def prepare_data(self) -> None:
         self.read_prompts()
+        #
         self.gen_prompt_dates()
         self.gen_prompt_hours()
         self.prepar_prompt_games()
@@ -1185,22 +1220,22 @@ class RandomGenerator:
         self.gen_game_categories()
         self.gen_game_types()
         self.update_mock_customers()
-        # break
         self.gen_real_customers()
         self.gen_cities()
-        self._gen_working_payments()
+        self.gen_working_payments()
         self.gen_invoices()
         self.gen_payments()
-        self.participations_cleaning()
-        self.tournaments_cleaning()
-        self.rental_cleaning()
-        self.customers_cleaning()
-        self.inventory_cleaning()
-        self.staff_cleaning()
-        self.invoices_cleaning()
-        self.maintenance_expenses_cleaning()
-        self.sales_cleaning()
-        self.games_cleaning()
+        #
+        self.cleanse_participations()
+        self.cleanse_tournaments()
+        self.cleanse_rental()
+        self.cleanse_customers()
+        self.cleanse_inventory()
+        self.cleanse_staff()
+        self.cleanse_invoices()
+        self.cleanse_maintenance_expenses()
+        self.cleanse_sales()
+        self.cleanse_games()
 
     def fetch(self) -> dict:
         """Gather all the final data frames and assign them to the string table names.
@@ -1217,7 +1252,7 @@ class RandomGenerator:
             "expense_types": self.expense_types,
             "games": self.games,
             "game_categories": self.game_categories,
-            "game_prices": self.cugame_pricess,
+            "game_prices": self.game_prices,
             "game_types": self.game_types,
             "inventory": self.inventory,
             "invoices": self.invoices,
@@ -1239,7 +1274,6 @@ def generate_data() -> dict:
     Returns:
         dict: Dictionary of table names and the generated data frames.
     """
-    data = {}
-    # data = RandomGenerator().fetch() # ! this is the correct line
+    data = RandomGenerator().fetch()
     logging.info("Random values have been generated.")
     return data
