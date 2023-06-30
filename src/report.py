@@ -567,3 +567,4 @@ def generate(db_connector: DBConnector) -> None:
     ReportCreator().generate()
     ToPDFConverter().convert()
     logging.info("New report has been generated.")
+

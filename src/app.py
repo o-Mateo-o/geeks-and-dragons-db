@@ -43,8 +43,8 @@ class DBManagerApp:
         """
         password = getpass("Enter the connection password:")
         db_connector = connection.DBConnector(password)
-        print(":)")
         return db_connector
+    
 
     def _run(self, f: bool, r: bool, o: bool) -> None:
         """With the options provided establish the connection if needed,

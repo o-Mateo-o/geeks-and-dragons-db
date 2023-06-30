@@ -6,7 +6,6 @@ import itertools
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
-from faker import Faker
 from unidecode import unidecode_expect_ascii
 
 
@@ -17,76 +16,79 @@ class RandomHelpers:
         self.phone_base = []
         self.email_base = []
 
-    @np.vectorize
     def gen_one_phone(self, *args) -> str:
-        while True:
-            # get the prefix and the rest of digits
-            digits = [
-                np.random.choice(self.config["phone_num_prefixes"]),
-                *np.random.randint(0, 10, size=7),
-            ]
-            # concat the digits
-            phone = "".join(map(str, digits))
-            if not phone in self.phone_base:
-                break
-        self.phone_base.append(phone)
-        return phone
+        def _scalar_fun(*args):
+            while True:
+                # get the prefix and the rest of digits
+                digits = [
+                    np.random.choice(self.config["phone_num_prefixes"]),
+                    *np.random.randint(0, 10, size=7),
+                ]
+                # concat the digits
+                phone = "".join(map(str, digits))
+                if not phone in self.phone_base:
+                    break
+            self.phone_base.append(phone)
+            return phone
 
-    @np.vectorize
+        return np.vectorize(_scalar_fun)(*args)
+
     def gen_one_name(self, gender: str, mode: str) -> str:
-        # first or last name colname mode
-        if mode == "first":
-            col = "first_name"
-            dfs = {
-                "M": self.prompts["prompt_first_names_males"],
-                "F": self.prompts["prompt_first_names_females"],
-            }
-        elif mode == "last":
-            col = "last_name"
-            dfs = {
-                "M": self.prompts["prompt_last_names_males"],
-                "F": self.prompts["prompt_last_names_females"],
-            }
-        else:
-            raise ValueError(f"Cannot generate a name in {mode} mode")
-        # random name based on gender and stats
-        df = dfs[gender]
-        return np.random.choice(df[col], p=df["prob"])
+        def _scalar_fun(gender: str, mode: str):
+            # first or last name colname mode
+            if mode == "first":
+                col = "first_name"
+                dfs = {
+                    "M": self.prompts["prompt_first_names_males"],
+                    "F": self.prompts["prompt_first_names_females"],
+                }
+            elif mode == "last":
+                col = "last_name"
+                dfs = {
+                    "M": self.prompts["prompt_last_names_males"],
+                    "F": self.prompts["prompt_last_names_females"],
+                }
+            else:
+                raise ValueError(f"Cannot generate a name in {mode} mode")
+            # random name based on gender and stats
+            df = dfs[gender]
+            return np.random.choice(df[col], p=df["prob"])
 
-    @np.vectorize
+        return np.vectorize(_scalar_fun)(gender, mode)
+
     def gen_email(self, first_name: str, last_name: str) -> str:
-        # join the names and cleanse it
-        raw_name = f"{first_name.lower()}.{last_name.lower()}"
-        cleansed_name = unidecode_expect_ascii(raw_name)
-        # initially do not add the number after the name
-        number = ""
-        while True:
-            # concat all the elements
-            domain = np.random.choice(self.prompts["prompt_emails"]["domain"])
-            email = f"{cleansed_name}{number}@{domain}"
-            # in the second iteration add the number
-            number = np.random.randint(0, 10)
-            if not email in self.email_base:
-                break
-        self.email_base.append(email)
-        return email
+        def _scalar_fun(first_name: str, last_name: str):
+            # join the names and cleanse it
+            raw_name = f"{first_name.lower()}.{last_name.lower()}"
+            cleansed_name = unidecode_expect_ascii(raw_name)
+            # initially do not add the number after the name
+            number = ""
+            while True:
+                # concat all the elements
+                domain = np.random.choice(self.prompts["prompt_emails"]["domain"])
+                email = f"{cleansed_name}{number}@{domain}"
+                # in the second iteration add the number
+                number = np.random.randint(0, 10)
+                if not email in self.email_base:
+                    break
+            self.email_base.append(email)
+            return email
+
+        return np.vectorize(_scalar_fun)(first_name, last_name)
 
     def gen_staff_to_date(self) -> npt.NDArray:
         # NULL fill
-        dates = np.zeros(self.config["staff_number"], dtype=np.object_)
+        dates = np.zeros(self.config["staff_number"], dtype=pd.Timestamp)
         dates[:] = np.nan
         # find the constants
         some_employee_ix = -2
-        shop_open_date = self.prompts["prompt_dates"]["date"].iloc[0]
-        today = self.prompts["prompt_dates"]["date"].iloc[-1]
         # fire him
-        dates[some_employee_ix] = Faker().date_between(
-            shop_open_date + datetime.timedelta(days=90),
-            today - datetime.timedelta(days=90),
+        dates[some_employee_ix] = np.random.choice(
+            self.prompts["prompt_dates"]["date"].iloc[90:-90]
         )
         return dates
 
-    def gen_staff_form_date(self, staff: pd.DataFrame) -> npt.NDArray:
+    def gen_staff_from_date(self, staff: pd.DataFrame) -> npt.NDArray:
         # hire all of them
         dates = np.zeros(self.config["staff_number"], dtype=np.object_)
         dates[:] = self.prompts["prompt_dates"]["date"].iloc[0]
@@ -95,10 +97,12 @@ class RandomHelpers:
         ones_end_date = (
             staff["to_date"].loc[staff["to_date"].isnull() == False].values[0]
         )
-        dates[some_employee_ix] = ones_end_date + datetime.timedelta(days=30)
+        dates[some_employee_ix] = pd.Timestamp(ones_end_date) + datetime.timedelta(
+            days=30
+        )
         return dates
 
-    def gen_staff_update_time(self, staff: pd.DataFrame) -> npt.NDArray:
+    def gen_staff_update_time(self, staff: pd.DataFrame):
         df_date = staff[["to_date", "from_date"]]
         return df_date.max(axis=1, skipna=True, numeric_only=False).apply(
             lambda date: date
@@ -264,7 +268,7 @@ class RandomHelpers:
         )
         return df
 
-    def gen_salary_expenses(self, staff: pd.DataFramef):
+    def gen_salary_expenses(self, staff: pd.DataFrame):
         date_df = self.gen_expenses_dates()
         all_staff = pd.concat(
             [staff[["first_name", "last_name", "current_salary"]]] * date_df.shape[0],
@@ -369,24 +373,27 @@ class RandomHelpers:
         )
         return date
 
-    @np.vectorize
     @staticmethod
+    @np.vectorize
     def v_repeat(date: datetime.datetime, volume: int):
         return itertools.repeat(date, int(volume))
 
-    @np.vectorize
     @staticmethod
-    def v_timedelta(h: int, m: int, s: int):
-        datetime.timedelta(hours=int(h), minutes=int(m), seconds=int(s))
-
     @np.vectorize
-    def v_get_staff_id(self, timestamp: datetime.datetime):
-        # general of gen_tournament_staff
-        available_staff = self.prompts["prompt_staff_shifts"][
-            (self.prompts["prompt_staff_shifts"]["weekday"] == timestamp.weekday())
-            & (self.prompts["prompt_staff_shifts"]["hour"] == timestamp.hour)
-        ]["staff_id"]
-        return np.random.choice(available_staff)
+    def v_timedelta(h: int, m: int, s: int):
+        return datetime.timedelta(hours=int(h), minutes=int(m), seconds=int(s))
+
+    def v_get_staff_id(self, timestamp: pd.Timestamp):
+        def _scalar_fun(timestamp: pd.Timestamp):
+            # general of gen_tournament_staff
+            available_staff = self.prompts["prompt_staff_shifts"][
+                (self.prompts["prompt_staff_shifts"]["weekday"] == timestamp.weekday())
+                & (self.prompts["prompt_staff_shifts"]["hour"] == timestamp.hour)
+            ]["staff_id"]
+
+            return np.random.choice(available_staff)
+
+        return np.vectorize(_scalar_fun)(timestamp)
 
     def gen_sell_inventory(self) -> pd.DataFrame:
         # evaluate a total game number
@@ -484,7 +491,7 @@ class RandomHelpers:
             r_inventory["price"] * self.config["bulk_ratio"]
         ).round(2)
         # the delivery dates
-        r_inventory["delivery_date"] = self.prompts["prompt_games"]["date"].iloc[
+        r_inventory["delivery_date"] = self.prompts["prompt_dates"]["date"].iloc[
             0
         ] + datetime.timedelta(hours=self.config["shop_open_hours"]["from"])
         r_inventory["price"] = (
@@ -536,7 +543,7 @@ class RandomHelpers:
         ] + datetime.timedelta(hours=self.config["shop_open_hours"]["from"])
         t_inventory["price"] = np.nan
         return t_inventory
-    
+
     def proper_return_date(self, timestamp: datetime.datetime, date: datetime.datetime):
         if (timestamp.day == date.day) & (timestamp.hour < date.hour):
             return timestamp.replace(hour=self.config["shop_open_hours"]["from"])

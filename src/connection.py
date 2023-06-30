@@ -10,7 +10,6 @@ from mysql.connector import connect
 from mysql.connector.cursor import MySQLCursor
 from mysql.connector.errors import ProgrammingError
 
-
 class SQLError(Exception):
     """An error related to connection, statement execution etc."""
 

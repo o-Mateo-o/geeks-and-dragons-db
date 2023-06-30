@@ -2,7 +2,6 @@ colorama==0.4.6
 colorlog==6.7.0
 contourpy==1.1.0
 cycler==0.11.0
-Faker==18.11.2
 fonttools==4.40.0
 holidays==0.27.1
 importlib-resources==5.12.0

@@ -4,6 +4,8 @@ import logging
 from pathlib import Path
 
 import pandas as pd
+from typing import Any 
+import numpy as np
 from mysql.connector.errors import ProgrammingError
 from tqdm import tqdm
 
@@ -128,6 +130,20 @@ class DBFiller(DBEngineer):
     Args:
         db_connector (DBConnector): A custom data base connector.
     """
+    @staticmethod
+    def _sqlize_nans(value: Any) -> Any:
+        """Replace numpy nan with sql null.
+
+        Args:
+            value (Any): Some value.
+
+        Returns:
+            Any: Safe, not-nan value.
+        """
+        if isinstance(value, float) and np.isnan(value):
+            return None
+        else:
+            return value
 
     def fill_table(self, table: str, df: pd.DataFrame) -> None:
         """Fill one database table with the data provided.
@@ -138,10 +154,13 @@ class DBFiller(DBEngineer):
                 It has to keep the column order given by the database.
         """
         # ! TODO: test the errors if the col number does not match
+       
         with self.cursor(commit=True) as crsr:
             for row in df.values.tolist():
-                crsr.execute(f"INSERT INTO {table} VALUES {tuple(row)}")
+                statement = f"INSERT INTO {table} VALUES ({','.join(['%s'] * len(row))});"
+                crsr.execute(statement, list(map(self._sqlize_nans, row)))
 
+    @modify_safely
     def fill_all_tables(self, random_data: dict) -> None:
         """Fill all the database tables with the data provided.
         Use the `fill_table` method multiple times and display the progress
@@ -151,8 +170,7 @@ class DBFiller(DBEngineer):
             random_data (dict): A dictionary of table names and the
                 generated data frames.
         """
-        # ! TODO: check if tqdm required. otherwise delete and uninstall
-        bar_format = "Filled tables: {bar:20} {n_fmt}/{total_fmt}"
+        bar_format = "Filled tables: {bar:20} {n_fmt}/{total_fmt} (it might take a while)"
         for table, df in tqdm(random_data.items(), bar_format=bar_format):
             self.fill_table(table, df)
 

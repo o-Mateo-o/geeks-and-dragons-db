@@ -9,7 +9,7 @@ from pathlib import Path
 import holidays
 import numpy as np
 import pandas as pd
-from faker import Faker
+from tqdm import tqdm
 
 from src.randutils import RandomHelpers
 
@@ -74,6 +74,7 @@ class RandomGenerator:
                 "prompt_dates": self.prompt_dates,
                 "prompt_games": self.prompt_games,
                 "prompt_tournaments": self.prompt_tournaments,
+                "prompt_staff_shifts": self.prompt_staff_shifts,
                 "prompt_emails": self.prompt_emails,
             },
         )
@@ -205,7 +206,7 @@ class RandomGenerator:
         )
         # details
         self.staff["city"] = np.full(self.staff.shape[0], "Wrocław")
-        self.staff["from_date"] = self.random_helpers.gen_staff_form_date(self.staff)
+        self.staff["from_date"] = self.random_helpers.gen_staff_from_date(self.staff)
         self.staff["first_name"] = self.random_helpers.gen_one_name(
             self.staff["gender"], "first"
         )
@@ -278,10 +279,7 @@ class RandomGenerator:
                 & (shifts["hour"] < self.config["shop_open_hours"]["to"])
             )
             | (
-                (
-                    shifts["weekday"]
-                    > self.config["sh1op_open_hours"]["shift_aft_reg_ch"]
-                )
+                (shifts["weekday"] > self.config["shop_open_hours"]["shift_aft_reg_ch"])
                 & (shifts["hour"] >= self.config["shop_open_hours"]["shift_aft_from_b"])
                 & (shifts["hour"] < self.config["shop_open_hours"]["to"])
             )
@@ -311,25 +309,22 @@ class RandomGenerator:
         current_staff = self.staff.loc[self.staff["current_salary"].isnull() == False]
         for _ in range(n):
             employee = np.random.choice(
-                current_staff.staff_id.values,
-                p=current_staff.current_salary.values,
+                current_staff.staff_id,
+                p=current_staff.current_salary / current_staff.current_salary.sum(),
             )
-            staff_id.append(*employee)
+            staff_id.append(employee)
             staff_gender.append(
-                *current_staff["gender"]
-                .loc[current_staff.staff_id == employee[0]]
-                .values
+                *current_staff["gender"].loc[current_staff.staff_id == employee].values
+            )
+            date_range = pd.date_range(
+                start=current_staff["from_date"]
+                .loc[current_staff["staff_id"] == employee]
+                .values[0],
+                end=self.prompt_dates["date"].iloc[-1],
             )
             update.append(
-                Faker().date_between_dates(
-                    pd.to_datetime(
-                        current_staff.from_date.loc[
-                            current_staff.staff_id == employee[0]
-                        ].values[0]
-                    ),
-                    self.prompt_dates["date"].iloc[-1],
-                )
-                + pd.DateOffset(
+                pd.Timestamp(np.random.choice(date_range))
+                + datetime.timedelta(
                     hours=np.random.randint(
                         self.config["shop_open_hours"]["from"],
                         self.config["shop_open_hours"]["to"],
@@ -376,13 +371,9 @@ class RandomGenerator:
         weight = self.config["heterosexuals_ratio"]
         for el in staff_gender:
             if el == "M":
-                gender.append(
-                    np.random.choice(["M", "F"], weights=[1 - weight, weight])
-                )
+                gender.append(np.random.choice(["M", "F"], p=[1 - weight, weight]))
             elif el == "F":
-                gender.append(
-                    np.random.choice(["M", "F"], weights=[weight, 1 - weight])
-                )
+                gender.append(np.random.choice(["M", "F"], p=[weight, 1 - weight]))
 
         self.partners = pd.DataFrame(
             {
@@ -417,22 +408,20 @@ class RandomGenerator:
                 self.random_helpers.gen_energy_expenses(),
                 self.random_helpers.gen_water_expenses(),
                 self.random_helpers.gen_heat_expenses(),
-                self.random_helpers.gen_salary_expenses(staff),
+                self.random_helpers.gen_salary_expenses(self.staff),
             ]
         )
-        self.maintenance_expenses["updated_at"] = (
-            self.maintenance_expenses["date"]
-            + pd.DateOffset(
-                hours=np.random.randint(
-                    self.config["shop_open_hours"]["from"],
-                    self.config["shop_open_hours"]["to"],
-                ),
-                minutes=np.random.randint(0, 60),
-                seconds=np.random.randint(0, 60),
-                n=self.maintenance_expenses.shape[0],
+        self.maintenance_expenses["updated_at"] = self.maintenance_expenses[
+            "date"
+        ] + pd.DateOffset(
+            hours=np.random.randint(
+                self.config["shop_open_hours"]["from"],
+                self.config["shop_open_hours"]["to"],
             ),
+            minutes=np.random.randint(0, 60),
+            seconds=np.random.randint(0, 60),
         )
-
+        
         self.maintenance_expenses.sort_values(by=["updated_at"], inplace=True)
         self.maintenance_expenses = self.maintenance_expenses.reset_index(drop=True)
         self.maintenance_expenses["payment_id"] = (
@@ -672,11 +661,13 @@ class RandomGenerator:
         self.game_prices.rename(columns={"price": "current_price"}, inplace=True)
         self.game_prices = self.game_prices.sort_values(["updated_at"])
         # set id
+        self.game_prices = self.game_prices.dropna()
         self.game_prices = self.game_prices.reset_index(drop=True)
         self.game_prices["price_id"] = self.game_prices.reset_index()["index"] + 1
         self.game_prices = self.game_prices.reindex(
             ["price_id", "current_price", "updated_at"], axis=1
         )
+        
 
     def gen_sales(self) -> None:
         # get a list of dates for each customer
@@ -717,14 +708,16 @@ class RandomGenerator:
         self.sales = pd.concat(
             [
                 self.sales,
-                sales_inventory.iloc[: sales.shape[0]].reset_index()[
+                sales_inventory.iloc[: self.sales.shape[0]].reset_index()[
                     ["inventory_id", "price", "delivery_date"]
                 ],
             ],
             axis=1,
         )
-        self.sales = self.sales[~(sales["date"] < sales["delivery_date"])]
+        self.sales = self.sales[~(self.sales["date"] < self.sales["delivery_date"])]
         self.sales = self.sales.drop(columns=["delivery_date"])
+        self.sales = self.sales.dropna()
+        self.sales["inventory_id"] = self.sales["inventory_id"].astype(int)
         self.inventory.loc[self.sales["inventory_id"], "active"] = False
         # other details
         self.sales["updated_at"] = self.sales["date"]
@@ -795,7 +788,9 @@ class RandomGenerator:
                     & (self.inventory["active"] == True)
                 )
                 if mask.any():
-                    customer.append(int(np.random.choice(customers["customer_id"])))
+                    customer.append(
+                        int(np.random.choice(self.customers["customer_id"]))
+                    )
                     price.append(self.inventory["price"].loc[mask.idxmax()])
                     rental_date.append(date)
                     staff.append(staff_id)
@@ -823,7 +818,7 @@ class RandomGenerator:
                                             == game_inventory_id
                                         ]["price"]
                                     )
-                                    * config["penalty_ratio"]
+                                    * self.config["penalty_ratio"]
                                 )
                                 .to_numpy()[0]
                                 .round(2)
@@ -908,7 +903,7 @@ class RandomGenerator:
         )
 
     def gen_game_categories(self) -> None:
-        self.game_categories = games[["category", "updated_at"]].drop_duplicates(
+        self.game_categories = self.games[["category", "updated_at"]].drop_duplicates(
             "category", keep="first"
         )
         self.game_categories.rename(columns={"category": "game_category"}, inplace=True)
@@ -921,7 +916,7 @@ class RandomGenerator:
         )
 
     def gen_game_types(self) -> None:
-        self.game_types = games[["type", "updated_at"]].drop_duplicates(
+        self.game_types = self.games[["type", "updated_at"]].drop_duplicates(
             "type", keep="first"
         )
         self.game_types.rename(columns={"type": "game_type"}, inplace=True)
@@ -984,7 +979,7 @@ class RandomGenerator:
         )
 
     def gen_cities(self) -> None:
-        merged_people = pd.concat([customers, staff], ignore_index=True)
+        merged_people = pd.concat([self.customers, self.staff], ignore_index=True)
         merged_people.sort_values(["updated_at"], inplace=True)
         merged_people.drop_duplicates(subset=["city"], keep="first", inplace=True)
         self.city = pd.DataFrame(
@@ -1010,16 +1005,22 @@ class RandomGenerator:
         )
         df_inv["invoice"] = "I" + df_inv["invoice"].astype(str)
         df_inv["amount"] = -df_inv["amount"]
+        df_inv["pid"] = self.inventory["inventory_id"]
+        df_inv["gid"] = "I"
         # sales
         df_sales = self.sales[["price", "invoice", "date"]].rename(
             columns={"price": "amount"}
         )
         df_sales["invoice"] = "S" + df_sales["invoice"].astype(str)
+        df_sales["pid"] = self.sales["sale_id"]
+        df_sales["gid"] = "S"
         # rent
         df_rent = self.rental[["price", "invoice", "rental_date"]].rename(
             columns={"price": "amount", "rental_date": "date"}
         )
         df_rent["invoice"] = "R" + df_rent["invoice"].astype(str)
+        df_rent["pid"] = self.rental["rental_id"]
+        df_rent["gid"] = "R"
         # rent penalty
         df_rent_penalty = (
             self.rental[["penalty_payment", "penalty_invoice", "return_date"]]
@@ -1033,12 +1034,16 @@ class RandomGenerator:
             )
         )
         df_rent_penalty["invoice"] = "R" + df_rent_penalty["invoice"].astype(str)
+        df_rent_penalty["pid"] = self.rental["rental_id"]
+        df_rent_penalty["gid"] = "RP"
         # expenses
         df_exp = self.maintenance_expenses[
             ["amount", "invoice_id", "updated_at"]
         ].rename(columns={"updated_at": "date", "invoice_id": "invoice"})
         df_exp["invoice"] = "ME" + df_exp["invoice"].astype(str)
         df_exp["amount"] = -df_exp["amount"]
+        df_exp["pid"] = self.maintenance_expenses["spend_id"]
+        df_exp["gid"] = "ME"
         # tour
         df_tour = self.tournaments[["expenses", "invoice_id", "updated_at"]].rename(
             columns={
@@ -1049,11 +1054,15 @@ class RandomGenerator:
         )
         df_tour["invoice"] = "T" + df_tour["invoice"].astype(str)
         df_tour["amount"] = -df_tour["amount"]
+        df_tour["pid"] = self.tournaments["tournament_id"]
+        df_tour["gid"] = "T"
         # participations
         df_part = self.participations[["fee", "invoice_id", "updated_at"]].rename(
             columns={"fee": "amount", "invoice_id": "invoice", "updated_at": "date"}
         )
         df_part["invoice"] = "P" + df_part["invoice"].astype(str)
+        df_part["pid"] = self.participations["particip_id"]
+        df_part["gid"] = "P"
         self.payments = pd.concat(
             [df_inv, df_sales, df_rent, df_rent_penalty, df_exp, df_tour, df_part],
             ignore_index=True,
@@ -1071,12 +1080,12 @@ class RandomGenerator:
 
     def gen_payments(self) -> None:
         self.payments = pd.merge(self.payments, self.invoices, on="invoice")[
-            ["amount", "invoice_id", "updated_at"]
+            ["amount", "invoice_id", "updated_at", "pid", "gid"]
         ]
         self.payments = self.payments.reset_index(drop=True)
         self.payments["payment_id"] = self.payments.reset_index()["index"] + 1
         self.payments = self.payments.reindex(
-            ["payment_id", "amount", "invoice_id", "updated_at"], axis=1
+            ["payment_id", "amount", "invoice_id", "updated_at", "pid", "gid"], axis=1
         )
 
     def cleanse_customers(self) -> None:
@@ -1096,8 +1105,8 @@ class RandomGenerator:
                 )
             )
         )
-        self.participations["fee_payment_id"] = self.participations["updated_at"].map(
-            dict(zip(self.payments["updated_at"], self.payments["payment_id"]))
+        self.participations["fee_payment_id"] = self.participations["particip_id"].map(
+            dict(zip(self.payments[self.payments["gid"] == "P"]["pid"], self.payments[self.payments["gid"] == "P"]["payment_id"]))
         )
         self.participations.drop(columns=["invoice_id"], inplace=True)
 
@@ -1108,8 +1117,8 @@ class RandomGenerator:
         self.tournaments = self.tournaments.rename(
             columns={"game": "game_id", "expenses": "expenses_payments_id"}
         )
-        self.tournaments["expenses_payments_id"] = self.tournaments["updated_at"].map(
-            dict(zip(self.payments["updated_at"], self.payments["payment_id"]))
+        self.tournaments["expenses_payments_id"] = self.tournaments["tournament_id"].map(
+            dict(zip(self.payments[self.payments["gid"] == "T"]["pid"], self.payments[self.payments["gid"] == "T"]["payment_id"]))
         )
         self.tournaments.drop(columns=["tree_levels", "invoice_id"], inplace=True)
 
@@ -1125,6 +1134,12 @@ class RandomGenerator:
         self.rental = self.rental.rename(
             columns={"penalty_payment": "penalty_payment_id", "price": "payment_id"}
         )
+        self.rental["payment_id"] = self.rental["payment_id"].map(
+            dict(zip(self.payments[self.payments["gid"] == "R"]["pid"], self.payments[self.payments["gid"] == "R"]["payment_id"]))
+        )
+        self.rental["penalty_payment_id"] = self.rental["penalty_payment_id"].map(
+            dict(zip(self.payments[self.payments["gid"] == "RP"]["pid"], self.payments[self.payments["gid"] == "RP"]["payment_id"]))
+        )
         self.rental.drop(columns=["invoice", "penalty_invoice"], inplace=True)
 
     def cleanse_inventory(self) -> None:
@@ -1138,8 +1153,8 @@ class RandomGenerator:
                 "purchase_payment": "purchase_payment_id",
             }
         )
-        self.inventory["purchase_payment_id"] = self.inventory["updated_at"].map(
-            dict(zip(self.payments["updated_at"], self.payments["payment_id"]))
+        self.inventory["purchase_payment_id"] = self.inventory["inventory_id"].map(
+            dict(zip(self.payments[self.payments["gid"] == "I"]["pid"], self.payments[self.payments["gid"] == "I"]["payment_id"]))
         )
         self.inventory["price_id"] = self.inventory["price_id"].map(
             dict(zip(self.game_prices["current_price"], self.game_prices["price_id"]))
@@ -1166,7 +1181,7 @@ class RandomGenerator:
         )
         self.maintenance_expenses["payment_id"] = self.maintenance_expenses[
             "updated_at"
-        ].map(dict(zip(self.payments["updated_at"], self.payments["payment_id"])))
+        ].map(dict(zip(self.payments[self.payments["gid"] == "ME"]["pid"], self.payments[self.payments["gid"] == "ME"]["payment_id"])))
         self.maintenance_expenses = self.maintenance_expenses.reindex(
             ["spend_id", "title_id", "payment_id", "date", "updated_at"], axis=1
         )
@@ -1194,48 +1209,56 @@ class RandomGenerator:
             columns={"category": "category_id", "type": "type_id"}
         )
 
+    def cleanse_payments(self) -> None:
+        self.payments = self.payments.drop(columns=["pid", "gid"])
+
     def prepare_data(self) -> None:
-        self.read_prompts()
-        #
-        self.gen_prompt_dates()
-        self.gen_prompt_hours()
-        self.prepar_prompt_games()
-        self._assign_random_helpers()
-        self.gen_staff()
-        self.gen_prompt_staff_shifts()
-        self._assign_random_helpers()  # yes, again
-        self.gen_realtionships()
-        self.gen_partners()
-        self.gen_mock_customers()
-        self.gen_maintenance_expenses()
-        self.gen_expense_types()
-        self.gen_expense_titles()
-        self.gen_tournaments()
-        self.gen_participations()
-        self.gen_inventory()
-        self.gen_game_prices()
-        self.gen_sales()
-        self.gen_rental()
-        self.gen_games()
-        self.gen_game_categories()
-        self.gen_game_types()
-        self.update_mock_customers()
-        self.gen_real_customers()
-        self.gen_cities()
-        self.gen_working_payments()
-        self.gen_invoices()
-        self.gen_payments()
-        #
-        self.cleanse_participations()
-        self.cleanse_tournaments()
-        self.cleanse_rental()
-        self.cleanse_customers()
-        self.cleanse_inventory()
-        self.cleanse_staff()
-        self.cleanse_invoices()
-        self.cleanse_maintenance_expenses()
-        self.cleanse_sales()
-        self.cleanse_games()
+        pipeline = [
+            self.read_prompts,
+            self.gen_prompt_dates,
+            self.gen_prompt_hours,
+            self.prepar_prompt_games,
+            self._assign_random_helpers,
+            self.gen_staff,
+            self.gen_prompt_staff_shifts,
+            self._assign_random_helpers,  # yes, again
+            self.gen_realtionships,
+            self.gen_partners,
+            self.gen_mock_customers,
+            self.gen_maintenance_expenses,
+            self.gen_expense_types,
+            self.gen_expense_titles,
+            self.gen_tournaments,
+            self.gen_participations,
+            self.gen_inventory,
+            self.gen_game_prices,
+            self.gen_sales,
+            self.gen_rental,
+            self.gen_games,
+            self.gen_game_categories,
+            self.gen_game_types,
+            self.update_mock_customers,
+            self.gen_real_customers,
+            self.gen_cities,
+            self.gen_working_payments,
+            self.gen_invoices,
+            self.gen_payments,
+            self.cleanse_participations,
+            self.cleanse_tournaments,
+            self.cleanse_rental,
+            self.cleanse_customers,
+            self.cleanse_inventory,
+            self.cleanse_staff,
+            self.cleanse_invoices,
+            self.cleanse_maintenance_expenses,
+            self.cleanse_sales,
+            self.cleanse_games,
+            self.cleanse_payments,
+        ]
+
+        bar_format = "Completed data generating steps: {bar:20} {n_fmt}/{total_fmt} (it might a while)"
+        for fun in tqdm(pipeline, bar_format=bar_format):
+            fun()
 
     def fetch(self) -> dict:
         """Gather all the final data frames and assign them to the string table names.
@@ -1245,7 +1268,7 @@ class RandomGenerator:
                 generated data frames.
         """
         self.prepare_data()
-        return {
+        result = {
             "city": self.city,
             "customers": self.customers,
             "expense_titles": self.expense_titles,
@@ -1266,6 +1289,7 @@ class RandomGenerator:
             "staff": self.staff,
             "tournaments": self.tournaments,
         }
+        return result
 
 
 def generate_data() -> dict:
