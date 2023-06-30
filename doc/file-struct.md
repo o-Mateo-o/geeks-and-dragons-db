@@ -55,6 +55,7 @@ Poniższe drzewo projektu zawiera opisy zawartości folderów oraz poszczególny
 ┃ ┣ 📜connection.py             - funkcjonalność odpowiedzialna za połączenie
 ┃ ┣ 📜drandom.py                - funkcjonalność generowania danych
 ┃ ┣ 📜fillup.py                 - funkcjonalność uzupełniania bazy
+┃ ┣ 📜randutils.py              - pomocnicze metody do generowania danych
 ┃ ┣ 📜reader.py                 - funkcjonalność odczytu raportu
 ┃ ┣ 📜report.py                 - funkcjonalność generowania raportu
 ┣ 📂tests                       - paczka testująca src (chwilowo pusta)

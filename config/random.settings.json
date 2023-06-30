@@ -1,0 +1,130 @@
+{
+    "staff_number": 6,
+    "pay_day": 5,
+    "customers_number": 1500,
+    "shop_lifetime_years": 2,
+    "traffic_decrease_magnitude": 4,
+    "shop_open_hours": {
+        "from": 8,
+        "to": 20,
+        "pick": 17,
+        "shift_aft_from_a": 14,
+        "shift_aft_from_b": 12,
+        "shift_mor_to_a": 15,
+        "shift_mor_to_b": 13,
+        "shift_mor_reg_ch": 4,
+        "shift_aft_reg_ch": 3
+    },
+    "traffic_std": 1.5,
+    "rental_to_sales_ratio": 0.25,
+    "salary_settings": {
+        "minimal": 3530,
+        "exp_scale": 100
+    },
+    "weekday_dict": {
+        "0": "Monday",
+        "1": "Tuesday",
+        "2": "Wednesday",
+        "3": "Thursday",
+        "4": "Friday",
+        "5": "Saturday"
+    },
+    "customer_pcs_probas": {
+        "1": 0.7,
+        "2": 0.25,
+        "3": 0.05
+    },
+    "staff_shifts": {
+        "morning": [
+            1,
+            2
+        ],
+        "afternoon": [
+            3,
+            4,
+            6
+        ],
+        "fired": [
+            5
+        ]
+    },
+    "event_info": {
+        "weekday": 4,
+        "hour": 15,
+        "deadline_offset_days": 3,
+        "can_sign_up_offset_days": 14,
+        "start_offset_weeks": 5,
+        "period_weeks": 6,
+        "fee": 50
+    },
+    "initial_customer_n": 25,
+    "daily_customer_increment": 0.015,
+    "weekly_extras_multip": 1,
+    "weekly_extras": {
+        "0": 2,
+        "1": 1,
+        "2": 0,
+        "3": 4,
+        "4": 5,
+        "5": 5
+    },
+    "bulk_ratio": 0.35,
+    "inventory_multiplier": 1.2,
+    "phone_num_prefixes": [
+        45,
+        50,
+        51,
+        53,
+        57,
+        60,
+        66,
+        69,
+        72,
+        73,
+        78,
+        79,
+        88
+    ],
+    "avg_supply_yearly_rate": 3,
+    "rental_games_n": 70,
+    "inactive_rental_games": 3,
+    "rental_price_ratio": 0.2,
+    "rental_allowed_days": 3,
+    "penalty_ratio": 0.3,
+    "holding_time_params": {
+        "scale": 3,
+        "shape": 2
+    },
+    "exponses_params": {
+        "mean": 200,
+        "shape": 1.2,
+        "scale": 20
+    },
+    "tournament_tree_params": {
+        "min": 2,
+        "max": 4
+    },
+    "maintenance": {
+        "energy_loc": 150,
+        "energy_scale": 4,
+        "energy_min": 100,
+        "water_loc": 50,
+        "water_scale": 2,
+        "water_min": 15,
+        "heat_loc": 100,
+        "heat_scale": 4,
+        "heat_min": 0,
+        "venue_rent": 3250
+    },
+    "relationships": {
+        "avg_dates_n": 5,
+        "std_dates_n": 2,
+        "ratio": 1.5
+    },
+    "heterosexuals_ratio": 0.9,
+    "warm_months": {
+        "first": 4,
+        "last": 10
+    },
+    "payment_day": 5
+}
