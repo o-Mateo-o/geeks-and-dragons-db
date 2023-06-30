@@ -10,7 +10,7 @@
 <body>
     {{ style }}
 
-
+    <link rel="stylesheet" type="text/css" href="style.css" />
     <div class="header">
         <h1>Geeks & Dragons <img id="icon" src="{{ abs_path }}/assets/static/dice.svg"></h1>
         <p>Raport na dzień {{ today }}</p>
@@ -39,7 +39,7 @@
             <p>Wyznaczamy dziesięciu najlepszych zawodników w turnieju dla każdej rozegranej turniejowej gry. Bierzemy
                 pod uwagę
                 względne miejsca w turniejach. Są to kolejno:</p>
-            <p>{{ top_players_lists }} </p>
+            {{ top_players_lists }}
         </div>
         <div class="section keep-together" id="sec-3">
             <h2>Najbardziej dochodowe gry</h2>
@@ -106,7 +106,12 @@
         </div>
         <div class="section keep-together" id="sec-end">
             <h2>Podsumowanie</h2>
-            <p>asdasd</p>
+            <p>Powyższe statystyki dają podstawowy pogląd o działaniu sklepu i pozwalają na bieżąco kontrolować
+                jego działalność.
+            </p>
+            <p>
+                Raport i bazę danych przygotowała grupa słodzitkich <i>Jamniczków</i> z numerkiem 17.
+            </p>
         </div>
     </div>
 </body>

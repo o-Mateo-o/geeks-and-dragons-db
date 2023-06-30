@@ -274,7 +274,8 @@ class AssetGenerator(DBEngineer):
             dictionary={"name": best_empl},
         )
         # .........
-
+        
+        # self.data["top_players"]
         # top saled and renter games
         self.export_barchart(
             name="top_rented_games",
@@ -443,7 +444,6 @@ class ReportCreator:
         """
         try:
             template = Path("assets/static/template.html").read_text(encoding="utf-8")
-        # ! table can be empty
         except FileNotFoundError:
             AssetsMissingError(
                 "The main template is missing. The report could not be generated."
