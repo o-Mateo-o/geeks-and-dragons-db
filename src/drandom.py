@@ -299,7 +299,7 @@ class RandomGenerator:
             drop=True
         )
 
-    def gen_realtionships(self) -> None:
+    def gen_relationships(self) -> None:
         n = int(
             np.ceil(self.config["staff_number"] * self.config["relationships"]["ratio"])
         )
@@ -718,7 +718,7 @@ class RandomGenerator:
         self.sales = self.sales.drop(columns=["delivery_date"])
         self.sales = self.sales.dropna()
         self.sales["inventory_id"] = self.sales["inventory_id"].astype(int)
-        self.inventory.loc[self.sales["inventory_id"], "active"] = False
+        self.inventory.loc[self.inventory["inventory_id"].isin(self.sales["inventory_id"]), "active"] = False
         # other details
         self.sales["updated_at"] = self.sales["date"]
         self.sales["return_oper"] = False
@@ -767,7 +767,7 @@ class RandomGenerator:
                 game = np.random.choice(
                     self.prompt_games["name"], p=self.prompt_games["weights"]
                 )
-                staff_id = self.random_helpers.v_get_staff_id(date)
+                staff_id = int(self.random_helpers.v_get_staff_id(date))
                 holding_time = np.random.gamma(
                     self.config["holding_time_params"]["shape"],
                     scale=self.config["holding_time_params"]["scale"],
@@ -1222,7 +1222,7 @@ class RandomGenerator:
             self.gen_staff,
             self.gen_prompt_staff_shifts,
             self._assign_random_helpers,  # yes, again
-            self.gen_realtionships,
+            self.gen_relationships,
             self.gen_partners,
             self.gen_mock_customers,
             self.gen_maintenance_expenses,
@@ -1255,7 +1255,7 @@ class RandomGenerator:
             self.cleanse_games,
             self.cleanse_payments,
         ]
-
+        
         bar_format = "Completed data generating steps: {bar:20} {n_fmt}/{total_fmt} (it might a while)"
         for fun in tqdm(pipeline, bar_format=bar_format):
             fun()

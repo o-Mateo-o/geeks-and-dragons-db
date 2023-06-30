@@ -140,7 +140,7 @@ class RandomHelpers:
     def random_normal_bounded(n, loc, scale, condition, round_d=0):
         # norm rvs with minimum value condition
         arr = np.random.normal(scale=scale, loc=loc, size=n)
-        mask = arr > condition
+        mask = arr <= condition
         arr[mask] = condition
         return arr.round(round_d)
 

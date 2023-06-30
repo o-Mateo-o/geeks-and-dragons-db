@@ -140,7 +140,7 @@ class DBFiller(DBEngineer):
         Returns:
             Any: Safe, not-nan value.
         """
-        if isinstance(value, float) and np.isnan(value):
+        if pd.isnull(value):
             return None
         else:
             return value
@@ -172,7 +172,7 @@ class DBFiller(DBEngineer):
         """
         bar_format = "Filled tables: {bar:20} {n_fmt}/{total_fmt} (it might take a while)"
         for table, df in tqdm(random_data.items(), bar_format=bar_format):
-            self.fill_table(table, df)
+            self.fill_table(table, df)        
 
     def run(self, random_data: dict):
         """Fill all the tables in the database. Use the `fill_all_tables` method.
