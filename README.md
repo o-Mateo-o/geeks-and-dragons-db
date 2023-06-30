@@ -120,7 +120,7 @@ Instrukcje instalacji dostępne są na podanych stronach internetowych.
 
 Dodatkowo, należy upewnić się, iż ścieżka w pliku `config/pdf.gener.json` rzeczywiście prowadzi do pliku wykonywalnego _wkhtmltopdf_. W przeciwnym razie (jeżeli mamy narzędzie zainstalowane na niestandardowej ścieżce), można ją zmienić w tymże pliku konfiguracyjnym.
 
-[![PythonVersion](https://img.shields.io/badge/Python-3.9-blue)](https://www.python.org/downloads/release/python-390/) [![GitBash](https://img.shields.io/badge/Git%20Bash-gray)](https://git-scm.com/download/win) [![wkhtmltopdf](https://img.shields.io/badge/wkhtmltopdf-blue)](https://wkhtmltopdf.org/downloads.html)
+[![PythonVersion](https://img.shields.io/badge/Python-3.9-blue)](https://www.python.org/downloads/release/python-390/) [![GitBash](https://img.shields.io/badge/Git%20Bash-gray)](https://git-scm.com/download/win) [![wkhtmltopdf](https://img.shields.io/badge/wkhtmltopdf-gray)](https://wkhtmltopdf.org/downloads.html)
 
 ### 2. Pobranie repozytorium
 
