@@ -10,7 +10,6 @@
 <body>
     {{ style }}
 
-    <!-- <link rel="stylesheet" type="text/css" href="style.css" /> -->
     <div class="header">
         <h1>Geeks & Dragons <img id="icon" src="{{ abs_path }}/assets/static/dice.svg"></h1>
         <p>Raport na dzień {{ today }}</p>
@@ -47,13 +46,14 @@
                 i z wypożyczeń.</p>
             <div class="image-area">
                 <p>Najbardziej dochodowe w wypożyczeniach gry.</p>
-                <!-- <img src="{{ abs_path }}/assets/generated/top_rented_games.svg"
-                    alt="Wykres najbardziej dochodowych w wypożyczeniach gier."> -->
+                <img src="{{ abs_path }}/assets/generated/top_rented_games.svg"
+                    alt="Wykres najbardziej dochodowych w wypożyczeniach gier.">
             </div>
 
             <div class="image-area">
                 <p>Najbardziej dochodowe w sprzedaży gry.</p>
-                <!-- <img src="{{ abs_path }}/assets/generated/top_saled_games.svg" alt="Wykres najbardziej dochodowych w sprzedaży gier."> -->
+                <img src="{{ abs_path }}/assets/generated/top_saled_games.svg"
+                    alt="Wykres najbardziej dochodowych w sprzedaży gier.">
             </div>
         </div>
         <div class="section keep-together" id="sec-4">
@@ -62,7 +62,8 @@
                 sprzedaży gier z danej kategorii. Rezultat można zobaczyć na wykresie.</p>
             <div class="image-area">
                 <p>Stosunki liczb sprzedaży i wypożyczeń w poszczególnych kategoriach gier.</p>
-                <!-- <img src="{{ abs_path }}/assets/generated/top_categories.svg" alt="Wykres popularności poszczególnych kategorii gier."> -->
+                <img src="{{ abs_path }}/assets/generated/top_categories.svg"
+                    alt="Wykres popularności poszczególnych kategorii gier.">
             </div>
         </div>
         <div class="section keep-together" id="sec-5">
@@ -86,7 +87,8 @@
                 średnie dla całego okresu funkcjonowania sklepu nateżnenia.</p>
             <div class="image-area">
                 <p>Średnia liczba gier sprzedanych dziennie dla każdego dnia tygodnia.</p>
-                <!-- <img src="{{ abs_path }}/assets/generated/weekly_traffic.svg" alt="Wykres średniego tygodniowego ruchu w sklepie."> -->
+                <img src="{{ abs_path }}/assets/generated/weekly_traffic.svg"
+                    alt="Wykres średniego tygodniowego ruchu w sklepie.">
             </div>
         </div>
         <div class="section keep-together" id="sec-7">
@@ -97,8 +99,8 @@
                 dodatkowo wyznaczamy korelację.</p>
             <div class="image-area">
                 <p>Liczby randek i liczby sprzedaży, dla każdego (obecni i byli) z pracowników sklepu.</p>
-                <!-- <img src="{{ abs_path }}/assets/generated/plot_sales_n_dates.svg"
-                    alt="Wykres porównujący liczby randek i sprzedaży u pracowników."> -->
+                <img src="{{ abs_path }}/assets/generated/plot_sales_n_dates.svg"
+                    alt="Wykres porównujący liczby randek i sprzedaży u pracowników.">
             </div>
             <p>Współczynnik korelacji Pearsona dla zmiennej liczby randek i przeprowadzonych operacji sprzedaży to <b>
                     {{ correlation_pearson }}</b>.</p>
