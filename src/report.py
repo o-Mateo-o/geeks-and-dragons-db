@@ -184,7 +184,7 @@ class AssetGenerator(DBEngineer):
         plt.setp(texts, fontweight=600)
         plt.tight_layout()
         if not df.empty:
-            plt.savefig(Path(f"assets/generated/{name}.svg"), transparent=True)
+            plt.savefig(Path(f"assets/generated/{name}.svg"), transparent=True, bbox_inches = 'tight')
         else:
             logging.warning(
                 f"REPORT: '{name}' pie chart was not created because of the lacking data"

@@ -1156,7 +1156,7 @@ class RandomGenerator:
         self.inventory["purchase_payment_id"] = self.inventory["inventory_id"].map(
             dict(zip(self.payments[self.payments["gid"] == "I"]["pid"], self.payments[self.payments["gid"] == "I"]["payment_id"]))
         )
-        self.inventory["price_id"] = self.inventory["inventory_id"].map(
+        self.inventory["price_id"] = self.inventory["price_id"].map(
             dict(zip(self.game_prices["current_price"], self.game_prices["price_id"]))
         )
         self.inventory.drop(columns=["invoice_id"], inplace=True)
@@ -1256,7 +1256,7 @@ class RandomGenerator:
             self.cleanse_payments,
         ]
         
-        bar_format = "Completed data generating steps: {bar:20} {n_fmt}/{total_fmt} (it might a while)"
+        bar_format = "Completed data generating steps: {bar:20} {n_fmt}/{total_fmt} (it might take a while)"
         for fun in tqdm(pipeline, bar_format=bar_format):
             fun()
 

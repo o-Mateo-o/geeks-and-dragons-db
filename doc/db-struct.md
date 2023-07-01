@@ -1,6 +1,6 @@
 # Dokumentacja konstrukcji bazy danych
 
-Dokumentujemy tu działanie bazy danych dla stacjonarnego sklepu Geeks & Dragons, funkcjonującego we Wrocławiu od dwóch lat[^1]. Zajmuje się on sprzedażą i wypożyczaniem gier planszowych (oraz podobnych) oraz organizacją turniejów w tych grach.
+Dokumentujemy tu działanie bazy danych dla stacjonarnego sklepu Geeks & Dragons, funkcjonującego we Wrocławiu od roku[^1]. Zajmuje się on sprzedażą i wypożyczaniem gier planszowych (oraz podobnych) oraz organizacją turniejów w tych grach.
 
 ## Spis treści
 

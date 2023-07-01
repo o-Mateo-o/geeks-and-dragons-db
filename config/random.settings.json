@@ -2,7 +2,7 @@
     "staff_number": 6,
     "pay_day": 5,
     "customers_number": 1500,
-    "shop_lifetime_years": 2,
+    "shop_lifetime_years": 1,
     "traffic_decrease_magnitude": 4,
     "shop_open_hours": {
         "from": 8,

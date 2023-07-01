@@ -170,7 +170,7 @@ class DBFiller(DBEngineer):
             random_data (dict): A dictionary of table names and the
                 generated data frames.
         """
-        bar_format = "Filled tables: {bar:20} {n_fmt}/{total_fmt} (it might take a while)"
+        bar_format = "Filled tables: {bar:20} {n_fmt}/{total_fmt} (it might take longer a while)"
         for table, df in tqdm(random_data.items(), bar_format=bar_format):
             self.fill_table(table, df)        
 
