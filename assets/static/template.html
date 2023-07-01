@@ -9,20 +9,20 @@
 
 <body>
     {{ style }}
-
+    <link rel="stylesheet" href="./style.css">
     <div class="header">
         <h1>Geeks & Dragons <img id="icon" src="{{ abs_path }}/assets/static/dice.svg"></h1>
         <p>Raport na dzień {{ today }}</p>
     </div>
     <div class="content">
-        <div class="section keep-together" id="sec-pre">
+        <div class="section " id="sec-pre">
             <h2>Wstęp</h2>
             <p>Niniejszy dokument jest raportem z podstawowymi analizami dla sklepu Geeks &
                 Dragons, zajmującego się sprzedażą i wypożyczaniem gier nieelektronicznych oraz organizującego turnieje.
             </p>
 
         </div>
-        <div class="section keep-together" id="sec-1">
+        <div class="section " id="sec-1">
             <h2>Pracownicy miesiąca</h2>
             <p>Sprawdzamy, który z pracowników dokonał najwięcej sprzedaży w każdym z miesięcy, gdy czynny jest sklep. W
                 wyniku otrzymujemy wiersze z miesiącem w danym roku oraz imieniem i nazwiskiem najlepszego pracownika.
@@ -33,14 +33,14 @@
             </div>
             <p>Widzimy więc, iż w ostatnim miesiącu najlepszy pracownik to <b> {{ recent_best_employee_name }}.</b></p>
         </div>
-        <div class="section keep-together" id="sec-2">
+        <div class="section " id="sec-2">
             <h2>Najlepsi zawodnicy turniejowi</h2>
             <p>Wyznaczamy dziesięciu najlepszych zawodników w turnieju dla każdej rozegranej turniejowej gry. Bierzemy
                 pod uwagę
                 względne miejsca w turniejach. Są to kolejno:</p>
             {{ top_players_lists }}
         </div>
-        <div class="section keep-together" id="sec-3">
+        <div class="section " id="sec-3">
             <h2>Najbardziej dochodowe gry</h2>
             <p>Patrzymy teraz, które gry (tytuły) przynoszą największe zyski, zarówno ze sprzedaży, jak
                 i z wypożyczeń.</p>
@@ -56,7 +56,7 @@
                     alt="Wykres najbardziej dochodowych w sprzedaży gier.">
             </div>
         </div>
-        <div class="section keep-together" id="sec-4">
+        <div class="section " id="sec-4">
             <h2>Popularność kategorii gier</h2>
             <p>Badamy, która z kategorii gier jest najbardziej popularna. Bierzemy pod uwagę liczbę wypożyczeń oraz
                 sprzedaży gier z danej kategorii. Rezultat można zobaczyć na wykresie.</p>
@@ -66,7 +66,7 @@
                     alt="Wykres popularności poszczególnych kategorii gier.">
             </div>
         </div>
-        <div class="section keep-together" id="sec-5">
+        <div class="section " id="sec-5">
             <h2>Wartości ekstremalne przychodów</h2>
             <p>Wyliczamy najbardziej i najmniej dochodowy miesiąc od początku funkcjonowania sklepu. Patrzymy na
                 przychody, czyli
@@ -81,7 +81,7 @@
                 <i>({{revenue_data_best_date}})</i>.
             </p>
         </div>
-        <div class="section keep-together" id="sec-6">
+        <div class="section " id="sec-6">
             <h2>Średni tygodniowy ruch w sklepie</h2>
             <p>Analizujemy teraz, w jakim dniu tygodnia sprzedawana jest największa liczba gier. Pokazujemy na wykresie
                 Średnie natężenie ruchu dla całego okresu funkcjonowania sklepu.</p>
@@ -91,21 +91,26 @@
                     alt="Wykres średniego tygodniowego ruchu w sklepie.">
             </div>
         </div>
-        <div class="section keep-together" id="sec-7">
+        <div class="section " id="sec-7">
             <h2>Życie miłosne pracowników</h2>
             <p>Ostatecznie, staramy się dowiedzieć, czy posiadanie partnera lub partnerki wpływa na jakość
                 wykonywania obowiązków przez pracownika. Konkretnie interesuje nas, czy pracownik z bujnym życiem
-                miłosnym sprzedaje więcej gier. Statystyki dla każdego z pracowników przedstawiamy na wykresie, a
+                miłosnym sprzedaje więcej gier. Statystyki dla każdego z pracowników przedstawiamy na wykresach, a
                 dodatkowo wyznaczamy korelację.</p>
             <div class="image-area">
-                <p>Liczby randek i liczby sprzedaży, dla każdego (obecni i byli) z pracowników sklepu.</p>
-                <img src="{{ abs_path }}/assets/generated/plot_sales_n_dates.svg"
-                    alt="Wykres porównujący liczby randek i sprzedaży u pracowników.">
+                <p>Liczby sprzedaży dla pracowników sklepu.</p>
+                <img src="{{ abs_path }}/assets/generated/plot_sales_n_dates_sales.svg"
+                    alt="Wykres liczby randek u pracowników.">
+            </div>
+            <div class="image-area">
+                <p>Liczby randek dla pracowników sklepu.</p>
+                <img src="{{ abs_path }}/assets/generated/plot_sales_n_dates_dates.svg"
+                    alt="Wykres liczby sprzedaży u pracowników.">
             </div>
             <p>Współczynnik korelacji Pearsona dla zmiennej liczby randek i przeprowadzonych operacji sprzedaży to <b>
                     {{ correlation_pearson }}</b>.</p>
         </div>
-        <div class="section keep-together" id="sec-end">
+        <div class="section " id="sec-end">
             <h2>Podsumowanie</h2>
             <p>Powyższe statystyki dają podstawowy pogląd o działaniu sklepu i pozwalają na bieżąco kontrolować
                 jego działalność.

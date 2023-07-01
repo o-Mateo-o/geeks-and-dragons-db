@@ -57,7 +57,7 @@
         "period_weeks": 6,
         "fee": 50
     },
-    "initial_customer_n": 25,
+    "initial_customer_n": 20,
     "daily_customer_increment": 0.015,
     "weekly_extras_multip": 1,
     "weekly_extras": {

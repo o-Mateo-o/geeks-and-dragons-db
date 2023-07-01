@@ -69,14 +69,15 @@ class AssetGenerator(DBEngineer):
         """
         try:
             cursor.execute(f"SELECT * FROM {view_name};")
-            result = cursor.fetchall()
-            if result:
-                return pd.DataFrame(result)
+            rows = cursor.fetchall()
+            cursor.execute(f"SHOW COLUMNS FROM {view_name};")
+            header_info = cursor.fetchall()
+            colnames = [col for col, *info in header_info]
+            if rows:
+                return pd.DataFrame(rows, columns=colnames)
             else:
-                # in case the table is empty
-                cursor.execute(f"SHOW COLUMNS FROM {view_name};")
-                result = cursor.fetchall()
-                return pd.DataFrame({col: [] for col, *info in result})
+                # in case the table is empty               
+                return pd.DataFrame({col: [] for col in colnames})
         except ProgrammingError:
             raise SQLError(f"Could not fetch the '{view_name}' data.")
 
@@ -97,7 +98,7 @@ class AssetGenerator(DBEngineer):
         """
         table_id = name.replace("_", "-")
         html_table = df.to_html(table_id=table_id, index=False, border=0)
-        with open(Path(f"assets/generated/{name}.html"), "w") as f:
+        with open(Path(f"assets/generated/{name}.html"), "w", encoding="utf-8") as f:
             f.write(html_table.replace("\n", ""))
         if df.empty:
             logging.warning(
@@ -134,12 +135,12 @@ class AssetGenerator(DBEngineer):
             html_list_elems.append("<ol>")
             # list within a group
             for i, row in df[df[group] == group_unit].iterrows():
-                html_list_elems.append(f"<li>{row[keys]} (<i>{row[values]}</i>)</li>")
+                html_list_elems.append(f"<li>{row[keys]} (<i>{row[values]:.2f}</i>)</li>")
             html_list_elems.append("</ol>")
         html_list_elems.append("</div>")
         # join the components
         html_list = "".join(html_list_elems)
-        with open(Path(f"assets/generated/{name}.html"), "w") as f:
+        with open(Path(f"assets/generated/{name}.html"), "w", encoding="utf-8") as f:
             f.write(html_list)
         if df.empty:
             logging.warning(
@@ -190,7 +191,7 @@ class AssetGenerator(DBEngineer):
             )
 
     def export_barchart(
-        self, name: str, df: pd.DataFrame, val: Union[list, str], labels: str
+        self, name: str, df: pd.DataFrame, val: str, labels: str
     ) -> None:
         """Save the bar chart created with the given data as a vector image.
         Do not export if the input is empty.
@@ -198,7 +199,7 @@ class AssetGenerator(DBEngineer):
         Args:
             name (str): Name of the file.
             df (pd.DataFrame): Some data frame.
-            val (Union[list, str]): Values column or columns.
+            val (str): Values column or columns.
             labels (str): Labels column.
         """
         fig, ax = plt.subplots(1, 1)
@@ -206,18 +207,8 @@ class AssetGenerator(DBEngineer):
         palete = sns.cubehelix_palette(rot=0.2, light=0.8, n_colors=2)
         alpha_color = (0, 0, 0, 0)
         # bars
-        if len(val) == 2:
-            width = 0.35
-            ax.bar(
-                x=x - 0.2, height=df[val[0]], width=width, color=palete[1], label=val[0]
-            )
-            ax.bar(
-                x=x + 0.2, height=df[val[1]], width=width, color=palete[0], label=val[1]
-            )
-            ax.legend()
-        elif len(val) == 1:
-            width = 0.5
-            ax.bar(x=x, height=df[val[0]], width=width, color=palete[1], label=val[0])
+        width = 0.5
+        ax.barh(y=x, width=df[val], height=width, color=palete[1], label=val)
         # no colors
         fig.patch.set_facecolor(alpha_color)
         ax.set_facecolor(alpha_color)
@@ -226,14 +217,15 @@ class AssetGenerator(DBEngineer):
         ax.spines["right"].set_visible(False)
         ax.spines["bottom"].set_visible(False)
         ax.spines["left"].set_visible(False)
-        ax.get_yaxis().set_ticks([])
+        plt.tight_layout()
+        ax.get_xaxis().set_ticks([])
         # text
-        ax.set_xticks(x, df[labels], fontweight=600, rotation=20)
+        ax.set_yticks(x, df[labels], fontweight=300)
         for container in ax.containers:
             ax.bar_label(container, fontweight=600, padding=5)
         # export
         if not df.empty:
-            plt.savefig(Path(f"assets/generated/{name}.svg"), transparent=True)
+            plt.savefig(Path(f"assets/generated/{name}.svg"), transparent=True, bbox_inches = 'tight')
         else:
             logging.warning(
                 f"REPORT: '{name}' bar chart was not created because of the lacking data"
@@ -313,7 +305,7 @@ class AssetGenerator(DBEngineer):
 
         self.export_dict(
             name="recent_best_employee",
-            dictionary={"name": best_empl},
+            dictionary={"name": str(best_empl)},
         )
         # top players per game
         self.export_group_list(
@@ -360,9 +352,9 @@ class AssetGenerator(DBEngineer):
         try:
             reven_data = {
                 "worst.date": f'{calendar.month_name[worst_revenue["month"].values[0]]} {worst_revenue["year"].values[0]}',
-                "worst.amount": worst_revenue["amount"].values[0],
+                "worst.amount": str(worst_revenue["amount"].values[0]),
                 "best.date": f'{calendar.month_name[best_revenue["month"].values[0]]} ,{best_revenue["year"].values[0]}',
-                "best.amount": best_revenue["amount"].values[0],
+                "best.amount": str(best_revenue["amount"].values[0]),
             }
         except IndexError:
             logging.warning("REPORT: Revenue data not valid.")
@@ -390,21 +382,25 @@ class AssetGenerator(DBEngineer):
             inplace=True,
         )
         self.export_barchart(
-            name="plot_sales_n_dates",
+            name="plot_sales_n_dates_sales",
             df=self.data["sales_n_dates"],
-            val=["Dates", "Sales"],
+            val="Sales",
             labels="Employee",
         )
-        corr = self.data["sales_n_dates"]["Dates"].corr(
-            self.data["sales_n_dates"]["Sales"], method="pearson"
+        self.export_barchart(
+            name="plot_sales_n_dates_dates",
+            df=self.data["sales_n_dates"],
+            val="Dates",
+            labels="Employee",
         )
+        corr = self.data["sales_n_dates"].corr(numeric_only=True, method="pearson").loc["Sales", "Dates"]
         corr = np.round(corr, 2)
         if np.isnan(corr):
             corr = "NONE"
             logging.warning("REPORT: Dates & sales correlation could not be evaluated.")
         self.export_dict(
             name="correlation",
-            dictionary={"pearson": corr},
+            dictionary={"pearson": str(corr)},
         )
 
     def run(self) -> None:
@@ -456,7 +452,7 @@ class ReportCreator:
                     "best.date"
                 ]
             # dates & sales correlation
-            with open(Path("assets/generated/correlation.json")) as f:
+            with open(Path("assets/generated/correlation.json"), "r") as f:
                 recent_best_employee = json.load(f)
                 self.context["correlation_pearson"] = recent_best_employee["pearson"]
             # best emplotyees - table

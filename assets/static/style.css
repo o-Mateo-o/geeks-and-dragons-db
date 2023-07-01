@@ -64,6 +64,7 @@ p {
 
 .section .table-area,
 .section .image-area {
+    page-break-inside: avoid;
     display: grid;
     justify-content: center;
     margin-bottom: 20px;
@@ -84,7 +85,7 @@ p {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 50%;
+    width: 75%;
 }
 
 thead {
@@ -102,7 +103,7 @@ table {
     background-color: rgb(247, 247, 247);
 }
 
-td {
+td, th {
     padding-left: 10px;
     padding-right: 10px;
     text-align: left;

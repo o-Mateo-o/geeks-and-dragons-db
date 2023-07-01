@@ -41,36 +41,43 @@ WHERE rank = 1
 ORDER BY year DESC,
     month DESC;
 -- q 2
-CREATE VIEW top_players AS
+CREATE OR REPLACE VIEW top_players AS
 SELECT game,
     player,
     avg_score
 FROM (
-        SELECT g.title game,
-            CONCAT_WS(" ", c.first_name, c.last_name) player,
+        SELECT player,
+            title game,
+            avg_score,
             ROW_NUMBER() OVER (
-                PARTITION BY g.title,
-                c.customer_id
-                ORDER BY AVG(p.score) DESC
-            ) AS group_rank,
-            AVG(p.score) OVER (
-                PARTITION BY g.title,
-                c.customer_id
-            ) AS avg_score
-        FROM customers c
-            RIGHT JOIN (
-                SELECT customer_id,
-                    tournament_id,
-                    (
-                        MAX(place) OVER (PARTITION BY tournament_id) - place
-                    ) / MAX(place) OVER (PARTITION BY tournament_id) AS score
-                FROM participations
-            ) p USING(customer_id)
-            RIGHT JOIN tournaments t USING(tournament_id)
-            LEFT JOIN games g USING(game_id)
-        HAVING g.title IS NOT NULL
-            AND player IS NOT NULL
-    ) tp
+                PARTITION BY title
+                ORDER BY avg_score DESC
+            ) AS group_rank
+        FROM (
+                SELECT p.score,
+                    t.tournament_id,
+                    g.title,
+                    g.game_id,
+                    AVG(p.score) OVER (
+                        PARTITION BY g.title,
+                        c.customer_id
+                    ) AS avg_score,
+                    CONCAT_WS(" ", c.first_name, c.last_name) player
+                FROM customers c
+                    RIGHT JOIN (
+                        SELECT customer_id,
+                            tournament_id,
+                            (
+                                MAX(place) OVER (PARTITION BY tournament_id) - place
+                            ) / MAX(place) OVER (PARTITION BY tournament_id) AS score
+                        FROM participations
+                    ) p USING (customer_id)
+                    RIGHT JOIN tournaments t USING(tournament_id)
+                    LEFT JOIN games g USING(game_id)
+                WHERE g.title IS NOT NULL
+                    AND CONCAT_WS(" ", c.first_name, c.last_name) IS NOT NULL
+            ) subsub
+    ) sub
 WHERE group_rank <= 10
 ORDER BY game,
     group_rank;
@@ -147,11 +154,11 @@ SELECT DAYNAME(s.date) name_of_day,
 FROM sales s
 WHERE s.return_oper IS FALSE
 GROUP BY DAYNAME(s.date)
-ORDER BY WEEKDAY(s.sale_id) ASC;
+ORDER BY WEEKDAY(s.date) ASC;
 -- q 4.4
 CREATE VIEW sales_n_dates AS
 SELECT rr.employee,
-    rr.dates_number,
+    CAST(COALESCE(rr.dates_number, 0) AS INT) dates_number,
     COUNT(DISTINCT sa.sale_id) sales_number
 FROM (
         SELECT st.staff_id,
