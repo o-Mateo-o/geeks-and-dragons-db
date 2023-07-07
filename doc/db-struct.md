@@ -247,7 +247,7 @@ Nie może się tu wiele więcej zdarzyć. Można by też myśleć o sytuacji, gd
 
 <a id="tabela-customers"></a>
 
-Mamy tutaj zarejestrowanych klientów sklepu, czyli uczesników gier turniejowych oraz tych, którzy choć raz wypożyczali jakiś produkt. Zapisujemy ich podstawowe dane. W uproszczeniu nie zbieramy całego ich adresu zamieszkania, a jedynie miasto. Zakładamy także, że wszyscy są z Dolnego Śląska (jest to uzasadnione przybliżenie, gdyż skala działania nie jest taka, aby posiadać klientów z całego kraju, ale też nie są oni tylko z Wrocławia).
+Mamy tutaj zarejestrowanych klientów sklepu, czyli uczestników gier turniejowych oraz tych, którzy choć raz wypożyczali jakiś produkt. Zapisujemy ich podstawowe dane. W uproszczeniu nie zbieramy całego ich adresu zamieszkania, a jedynie miasto. Zakładamy także, że wszyscy są z Dolnego Śląska (jest to uzasadnione przybliżenie, gdyż skala działania nie jest taka, aby posiadać klientów z całego kraju, ale też nie są oni tylko z Wrocławia).
 
 | Atrybut | Opis |
 |-------------|--------|
@@ -295,7 +295,7 @@ Para identyfikatora turnieju oraz klienta jest sama w sobie kluczem kandydujący
 
 <a id="tabela-tournaments"></a>
 
-Są to turnieje organizowane przez sklep. Jeden turniej dotyczy jednej konkretnej gry. Każdy składa się z konkretnej ilości meczy i ma jednego pracownika-opiekuna. Każdy rekord przechowuje dodatkowe dane na temat wydarzenia samego w sobie. Wydatki na organizację obejmują zakup nagród itp. (przy czym traktujemy wszystkie wydatki razem, jako jedna płatność). W jednym czasie zaś może odbywać się wyłącznie jednen turniej. Zakładamy, że lokal nie ma możliwości na więcej.
+Są to turnieje organizowane przez sklep. Jeden turniej dotyczy jednej konkretnej gry. Każdy składa się z konkretnej ilości meczy i ma jednego pracownika-opiekuna. Każdy rekord przechowuje dodatkowe dane na temat wydarzenia samego w sobie. Wydatki na organizację obejmują zakup nagród itp. (przy czym traktujemy wszystkie wydatki razem, jako jedna płatność). W jednym czasie zaś może odbywać się wyłącznie jeden turniej. Zakładamy, że lokal nie ma możliwości na więcej.
 
 Jeżeli chodzi o schemat przeprowadzania turnieju, to dla wybranej gry rozgrywki planowane są na zasadzie drzewa. Jego wielkość zależy też od liczby zapisanych uczestników. Uczestnicy w miarę możliwości rozdzielani są tak, żeby wszystkie poziomy bazowe drzewa rozgrywek były związane z jakimś meczem (oczywiście nie zawsze z liczbą uczestników równą maksymalnej możliwej dla gry). W razie problemów z tą zasadą, któryś mecz może być opuszczony, zgodnie z regulaminem tego turnieju. Nie wpływa to jednak na zarejestrowaną dla turnieju ustaloną łączną liczbę partii.
 
@@ -344,13 +344,13 @@ Zależności funkcyjne to:
 - {`inventory_id`, `rental_date`} &rarr; {`rental_id`, `customer_id`, `return_date`, `staff_id`, `payment_id`, `penalty_payment_id`, `rate`, `updated_at`}
 - {`payment_id`} &rarr; {`rental_id`, `inventory_id`, `customer_id`, `rental_date`, `return_date`, `staff_id`, `penalty_payment_id`, `rate`, `updated_at`}
 
-Konkretny prodykukt w jednym momencie wzkazukje na wszystkie pola rekordu, bo jest unikalny. Para kliena i daty wypożyczenia, bez wskazania produktu, nie identyfikuje usługi. Klient może chcieć za jednym razem przecież kilka gier. Podobnie klient i produkt, gdyż każdy może wypożyczać produkt wiele razy. Płatność zaś identyfikuje konkretną pozycję. Przy okazji tabeli `payments` omówimy, iż faktycznie klient może w teorii robić większe zakupy na jeden rachunek. W takim przypadku poszczególne "płatności" są grupowane w cały "koszyk" już w tamtej tabeli. Reszta faktów jest dość oczywista, m.in. opcjonalny identyfikator płatności kary nie może niczego wskazywać.
+Konkretny produkt w jednym momencie wskazuje na wszystkie pola rekordu, bo jest unikalny. Para klienta i daty wypożyczenia, bez wskazania produktu, nie identyfikuje usługi. Klient może chcieć za jednym razem przecież kilka gier. Podobnie klient i produkt, gdyż każdy może wypożyczać produkt wiele razy. Płatność zaś identyfikuje konkretną pozycję. Przy okazji tabeli `payments` omówimy, iż faktycznie klient może w teorii robić większe zakupy na jeden rachunek. W takim przypadku poszczególne "płatności" są grupowane w cały "koszyk" już w tamtej tabeli. Reszta faktów jest dość oczywista, m.in. opcjonalny identyfikator płatności kary nie może niczego wskazywać.
 
 ### Tabela `inventory`
 
 <a id="tabela-inventory"></a>
 
-Wszystkie posiadane kiedykolwiek przez sklep gry, bo Geeks & Dragons ma na stanie wyłącznie gry. Te, które są cały czas na magazynie (lub są wypożyczone i jeszcze nie oddane) mają status aktywnych (`active = TRUE`). Jeżeli są już zniszczone, zaginą itd., ich status jest negatywny. Pozostają wtedy zatem jedynie historycznym zapisem. Każda gra jest kiedyś zakupowana przez sklep jeżeli jest w obrocie, ma ustalaną cenę. Cena będzie oczywiście mniejsza dla wynajmu. Każdy produkt ma też osobne przeznaczenie - albo jest do sprzedaży (`S`), albo na wypożyczenie (`R`), albo do użytku turniejowego (`T`). Nigdy te przeznaczenia nie są mieszane w jednym momencie, gdyż nie można wypożyczać produktu, który ma być używany w turnieju, a z drugiej strony, używane gry nie będą sprzedawane. Mamy więc ekskluzywność kategorii.
+Wszystkie posiadane kiedykolwiek przez sklep gry, bo Geeks & Dragons ma na stanie wyłącznie gry. Te, które są cały czas na magazynie (lub są wypożyczone i jeszcze nie oddane) mają status aktywnych (`active = TRUE`). Jeżeli są już zniszczone, zaginą itd., ich status jest negatywny. Pozostają wtedy zatem jedynie historycznym zapisem. Każda gra jest kiedyś zakupywana przez sklep jeżeli jest w obrocie, ma ustalaną cenę. Cena będzie oczywiście mniejsza dla wynajmu. Każdy produkt ma też osobne przeznaczenie - albo jest do sprzedaży (`S`), albo na wypożyczenie (`R`), albo do użytku turniejowego (`T`). Nigdy te przeznaczenia nie są mieszane w jednym momencie, gdyż nie można wypożyczać produktu, który ma być używany w turnieju, a z drugiej strony, używane gry nie będą sprzedawane. Mamy więc ekskluzywność kategorii.
 
 | Atrybut | Opis |
 |-------------|--------|
@@ -367,7 +367,7 @@ Zależności funkcyjne to:
 
 - {`inventory_id`} &rarr; {`game_id`, `destination`, `price_id`, `active`, `purchase_payment_id`, `delivery_date`, `updated_at`}
 
-Celowo nie wspominamy tu o zależności ceny od pary gry i jej przeznaczenia. Chcemy dopuścić możliwość, że nawet pośród tych samych gier i przeznaczenia (np. do sprzedaży), można nadawać w celach marketingowych przeceny tylko kilku sztukom (powiedzmy tym, które wystawione są na półkach podczas, gdy takie same produky leżą z inną ceną w magazynie). Naturalnie, jeżeli produkt jest przeznaczony na turnieje, nie musi dostawać swojej ceny, ale nie są to jedyne przypadki pustego pola z `price_id`. Jeżeli pracownik przyjmie dostawę, a nie zdąży wprowadzić ceny, pole pozostaje z wartością `NULL`. Nie jest to groźne, gdyż w każdym momencie można cenę nadać według bieżącej polityki sklepu. Z drugiej strony wartość `T` przeznaczenia nie zawsze wiąże się z brakiem ceny, gdyż produkt mógł z kategorii wypożyczanego być tymczasowo przeniesiony do kategorii turniejowego, bez likwidacji przypisanej ceny.
+Celowo nie wspominamy tu o zależności ceny od pary gry i jej przeznaczenia. Chcemy dopuścić możliwość, że nawet pośród tych samych gier i przeznaczenia (np. do sprzedaży), można nadawać w celach marketingowych przeceny tylko kilku sztukom (powiedzmy tym, które wystawione są na półkach podczas, gdy takie same produkty leżą z inną ceną w magazynie). Naturalnie, jeżeli produkt jest przeznaczony na turnieje, nie musi dostawać swojej ceny, ale nie są to jedyne przypadki pustego pola z `price_id`. Jeżeli pracownik przyjmie dostawę, a nie zdąży wprowadzić ceny, pole pozostaje z wartością `NULL`. Nie jest to groźne, gdyż w każdym momencie można cenę nadać według bieżącej polityki sklepu. Z drugiej strony wartość `T` przeznaczenia nie zawsze wiąże się z brakiem ceny, gdyż produkt mógł z kategorii wypożyczanego być tymczasowo przeniesiony do kategorii turniejowego, bez likwidacji przypisanej ceny.
 
 ### Tabela `staff`
 
@@ -414,7 +414,7 @@ Zależności funkcyjne to:
 
 - {`relationship_id`} &rarr; {`staff_id`, `partner_id`, `dates_number`, `updated_at`}
 
-W związkiu z możliwymi odejściami i powrotami, dopuszczamy możliwość kilku relacji między danym pracownikiem a partnerem, z osobnym licznikiem spotkań. Przecież czasem trzeba sobie dać szanse na start od nowa, z czystą kartą... Ponadto, znając identyfikator partnera, nie możemy jednoznacznie ocenić, jakiego pracownika dotyczył związek miłosny. Teoretyczne romanse w pracy mogą skutkować odbijaniem sobie nawzajem partnerów.
+W związku z możliwymi odejściami i powrotami, dopuszczamy możliwość kilku relacji między danym pracownikiem a partnerem, z osobnym licznikiem spotkań. Przecież czasem trzeba sobie dać szanse na start od nowa, z czystą kartą... Ponadto, znając identyfikator partnera, nie możemy jednoznacznie ocenić, jakiego pracownika dotyczył związek miłosny. Teoretyczne romanse w pracy mogą skutkować odbijaniem sobie nawzajem partnerów.
 
 ### Tabela `partners`
 
@@ -439,7 +439,7 @@ Widać wyraźnie, że nie da się budować innych zależności funkcyjnych z tak
 
 <a id="tabela-payments"></a>
 
-To rejestr wszystkich płatności związanych z działalnością sklepu. Jeżeli w bazie pojawia się jakikolwiek wydatek, swoim kluczem obcym odnosi się do rekordów tej tabeli. W zależności, czy pozycja w rejestrze dotyczy przychodu (np. ze sprzedaży), czy wydatku, kwoty mogą być dodatnie lub ujemne. Dodatkowo, uznajemy na ogół każdą wartość jako jedną konkretną pozycję, dotycząc jednego produktu, specyfiki itp. To, że kilka gier może być przykładowo kupione na jednen paragon notujemy numerem atrybutu `invoice`. Jest identyfikator paragonu czy faktury związanej z daną grupą płatności lub jedną płatnością. Każda płatność ma przypisaną jakąś "fakturę".
+To rejestr wszystkich płatności związanych z działalnością sklepu. Jeżeli w bazie pojawia się jakikolwiek wydatek, swoim kluczem obcym odnosi się do rekordów tej tabeli. W zależności, czy pozycja w rejestrze dotyczy przychodu (np. ze sprzedaży), czy wydatku, kwoty mogą być dodatnie lub ujemne. Dodatkowo, uznajemy na ogół każdą wartość jako jedną konkretną pozycję, dotycząc jednego produktu, specyfiki itp. To, że kilka gier może być przykładowo kupione na jeden paragon notujemy numerem atrybutu `invoice`. Jest identyfikator paragonu czy faktury związanej z daną grupą płatności lub jedną płatnością. Każda płatność ma przypisaną jakąś "fakturę".
 
 | Atrybut | Opis |
 |-------------|--------|
@@ -478,7 +478,7 @@ Przedstawione zależności funkcyjne są raczej oczywiste.
 
 <a id="tabela-maintenance_expenses"></a>
 
-Wszystkie historyczne wydatki związane z utrzymaniem sklepu, mediami, płacami dla pracowników (zantowane przy pracowanikach kwoty to tylko ich obecne stawki a nie cała historia) itp. Zauważmy, że nie obejmują one dostaw, gdyż te zanotowane są już przy produktach w magazynie.
+Wszystkie historyczne wydatki związane z utrzymaniem sklepu, mediami, płacami dla pracowników (zanotowane przy pracownikach kwoty to tylko ich obecne stawki a nie cała historia) itp. Zauważmy, że nie obejmują one dostaw, gdyż te zanotowane są już przy produktach w magazynie.
 
 | Atrybut | Opis |
 |-------------|--------|
@@ -515,7 +515,7 @@ Zależności funkcyjne to:
 - {`title_id`} &rarr; {`title`, `expenses_type_id`, `updated_at`}
 - {`title`} &rarr; {`title_id`, `expenses_type_id`, `updated_at`}
 
-Tytuły zą z założenia unikalne.
+Tytuły z założenia unikalne.
 
 ### Tabela `expense_types`
 
@@ -546,7 +546,7 @@ Jest to zestawienie wszystkich operacji zakupowych dokonanych przez klientów - 
 |-------------|--------|
 | `sale_id` | numer identyfikacyjny zakupu/zwrotu (PK) |
 | `inventory_id` | numer identyfikacyjny produktu (FK) |
-| `staff_id` | numer identyfilkacyjny pracownika obsługującego sprzedaż (FK) |
+| `staff_id` | numer identyfikacyjny pracownika obsługującego sprzedaż (FK) |
 | `payment_id` | numer identyfikacyjny płatności (FK) |
 | `date` | data i godzina związana z zakupem |
 | `return_oper` | flaga oznaczająca, że dana operacja jest zwrotem produktu |
@@ -644,7 +644,7 @@ Nie pozostawiają one wiele do tłmaczenia. Zdaje się, że takie wynikanie jest
 
 <a id="uzasadnienie-normalnosci-postaci-bazy"></a>
 
-Do tego momentu właściwie już wykazaliśmy że baza jest w standardzie EKNF. Formalnie wyjaśmimy to jeszcze niżej.
+Do tego momentu właściwie już wykazaliśmy że baza jest w standardzie EKNF. Formalnie wyjaśnimy to jeszcze niżej.
 
 Wszystkie wartości w kolumnach są skalarne, a wiersze unikalne, dzięki dbającym o to, dodanym osobno (unikalnym) kluczom głównym (_1NF_).
 
@@ -654,6 +654,6 @@ Wreszcie, wszystkie przedstawione przypadki zależności funkcyjnych (zarówno t
 
 Wiemy, że omawiane atrybuty rozpoczynające zależności są nadkluczami, ponieważ - jak widać - identyfikują one pełne krotki. Wypisane punkty obejmują szczególne przypadki, bo tylko klucze kandydujące, ale konstruując wg. zasad wnioskowania pozostałe zależności, mamy też takie, które rozpoczynają się od niekandydujących nadkluczy.
 
-Nadmieńmy także, że zawarte w każdej tabeli kolumny `updated_at` mogą być zasadniczo dowoną datą - nawet związaną z poprawką wcześniejszego błędu. Nie informują o niczym oprócz poglądowego teminu zmian, dlatego nie rozpoczynają zależności funkcyjnych.
+Nadmieńmy także, że zawarte w każdej tabeli kolumny `updated_at` mogą być zasadniczo dowolną datą - nawet związaną z poprawką wcześniejszego błędu. Nie informują o niczym oprócz poglądowego terminu zmian, dlatego nie rozpoczynają zależności funkcyjnych.
 
 [^1]: Razem z wieloma innymi - założenie podjęte w ramach szczegółowej decyzji, o rodzaju działalności przedsiębiorstwa, będącego obiektem rozważań.
