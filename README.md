@@ -36,7 +36,7 @@ Połączone strony:
 
 - [Wrażenia z realizacji projektu](doc/impressions.md),
 - [Pliki projektu i konfiguracja](doc/file-struct.md),
-- [Strukura i mechanika bazy danych](doc/db-struct.md),
+- [Struktura i mechanika bazy danych](doc/db-struct.md),
 - [Dokumentacja kodu źródłowego](doc/src/index.html).
 
 ## Wstęp
@@ -71,7 +71,7 @@ Dobrze naśladują one rzeczywistość, ale znajdujemy równocześnie pewne upro
 Pełny projekt składa się zaś z następujących części:
 
 1. projekt i utworzenie schematu,
-2. skryptowe wpełnienie bazy,
+2. skryptowe wypełnienie bazy,
 3. analiza danych,
 4. raport,
 5. dokumentacja.
@@ -94,7 +94,7 @@ __Lista plików wraz z opisem ich zawartości__ dostępna jest na podstronie o [
 
 <a id="szczegoly-dotyczace-bazy"></a>
   
-W osobnym dokumencie o [strukurze i mechanice bazy danych](doc/db-struct.md) przede wszystkim obejrzeć można __schemat bazy__, wraz z nazwami atrybutów, ich typami oraz oznaczeniami kluczy.
+W osobnym dokumencie o [strukturze i mechanice bazy danych](doc/db-struct.md) przede wszystkim obejrzeć można __schemat bazy__, wraz z nazwami atrybutów, ich typami oraz oznaczeniami kluczy.
   
 Dalej, opisane są tam metody konstrukcji tabel (razem z wyjaśnieniem rodzajów danych w poszczególnych kolumnach), założenia techniczne oraz __lista zależności funkcyjnych__. Wszystko w punktach - tabela po tabeli.
   
@@ -124,7 +124,7 @@ Dodatkowo, należy upewnić się, iż ścieżka w pliku `config/pdf.gener.json` 
 
 ### 2. Pobranie repozytorium
 
-Repozytorium można pobrać bezpośrednio przez wywołanie w termianlu Bash
+Repozytorium można pobrać bezpośrednio przez wywołanie w terminalu Bash
 
 ```bash
 git clone https://github.com/o-Mateo-o/geeks-and-dragons-db.git
