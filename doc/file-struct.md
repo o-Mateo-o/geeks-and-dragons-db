@@ -37,7 +37,7 @@ Poniższe drzewo projektu zawiera opisy zawartości folderów oraz poszczególny
 ┣ 📂doc                         - wszelkie pliki dokumentacji
 ┃ ┣ 📂images                    - ilustracje używane w dokumentacji
 ┃ ┣ ┣ 🖼️ERD_simplified.png      - uproszczony rastrowy schemat bazy danych
-┃ ┣ ┣ 🖼️ERD.svg                 - pełny waktorowy schemat bazy danych
+┃ ┣ ┣ 🖼️ERD.svg                 - pełny wektorowy schemat bazy danych
 ┃ ┣ ┣ ...
 ┃ ┣ 📄db-struct.md              - dokumentacja mechaniki struktury bazy danych
 ┃ ┣ 📄file-struct.md            - dokumentacja struktury projektu i konfiguracji
